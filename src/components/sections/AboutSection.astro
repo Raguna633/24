@@ -1,0 +1,123 @@
+---
+// Short About Us Section Component
+// Who Us? Text, Paragraph Text, Background Image dengan fade opacity
+
+---
+
+<section
+  id="about-section"
+  class="relative py-20 sm:py-28 md:py-36 lg:py-44
+          overflow-hidden"
+  data-bg-image="src/assets/l-banyakan.webp"
+>
+
+  <!-- Decorative background elements -->
+  <div class="absolute top-0 left-0 w-full h-full">
+    <div class="absolute top-10 left-10 w-32 h-32 bg-primary-100 rounded-full opacity-20 animate-pulse"></div>
+    <div class="absolute bottom-20 right-20 w-24 h-24 bg-accent-100 rounded-full opacity-30 animate-pulse" style="animation-delay: 1s;"></div>
+    <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-secondary-200 rounded-full opacity-25 animate-pulse" style="animation-delay: 2s;"></div>
+  </div>
+
+  <!-- Content Container -->
+  <div class="relative z-10 container-custom px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto text-center">
+      <!-- Who Us? Heading -->
+      <h2
+        class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl
+               font-heading font-bold text-white mb-6 sm:mb-8 md:mb-10
+               leading-tight animate-fade-in"
+      >
+        Who Us?
+      </h2>
+
+      <!-- Decorative line -->
+      <div class="flex items-center justify-center gap-4 mb-8 sm:mb-12">
+        <div class="w-16 sm:w-24 h-px bg-primary-300"></div>
+        <div class="w-3 h-3 bg-primary-500 rounded-full"></div>
+        <div class="w-16 sm:w-24 h-px bg-primary-300"></div>
+      </div>
+
+      <!-- About Paragraph -->
+      <div class="space-y-6 sm:space-y-8">
+        <p
+          class="text-lg sm:text-xl md:text-2xl lg:text-3xl
+                 text-white leading-relaxed font-light
+                 animate-slide-up max-w-3xl mx-auto"
+        >
+          Kami adalah Angkatan 2025, generasi yang penuh semangat dan kreativitas.
+          Dalam tiga tahun perjalanan bersama di bangku sekolah, kami telah menorehkan
+          berbagai kenangan indah yang tak terlupakan.
+        </p>
+
+        <p
+          class="text-base sm:text-lg md:text-xl lg:text-2xl
+                 text-white leading-relaxed
+                 animate-slide-up max-w-2xl mx-auto"
+          style="animation-delay: 0.2s;"
+        >
+          Dari momen orientasi yang penuh kegembiraan, hingga acara wisuda yang membanggakan,
+          setiap langkah kami diisi dengan persahabatan sejati dan pengalaman berharga
+          yang membentuk karakter kami menjadi lebih kuat dan bijak.
+        </p>
+
+        <p
+          class="text-sm sm:text-base md:text-lg lg:text-xl
+                 text-white italic leading-relaxed
+                 animate-slide-up max-w-xl mx-auto"
+          style="animation-delay: 0.4s;"
+        >
+          Yearbook ini adalah bentuk apresiasi kami terhadap masa-masa berharga ini,
+          dan sebagai wadah untuk selalu terhubung meskipun waktu terus berjalan.
+        </p>
+      </div>
+
+      <!-- Call to action hint -->
+      <div
+        class="mt-12 sm:mt-16 animate-fade-in"
+        style="animation-delay: 0.6s;"
+      >
+        <p class="text-primary-600 font-medium text-sm sm:text-base">
+          Scroll ke bawah untuk melihat pesan dari guru dan panitia kami
+        </p>
+        <div class="mt-4 animate-bounce">
+          <svg
+            class="w-6 h-6 mx-auto text-primary-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Custom animations untuk about section */
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 1s ease-out;
+    animation-fill-mode: both;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 1s ease-out;
+    animation-fill-mode: both;
+  }
+</style>

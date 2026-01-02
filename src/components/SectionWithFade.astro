@@ -1,0 +1,55 @@
+---
+/**
+ * SectionWithFade
+ * Reusable section with vertical fade background
+ * Best practice: no JS, GPU-friendly, accessible
+ */
+
+interface Props {
+  backgroundImage: string;
+  minHeight?: string;
+  fadeTop?: boolean;
+  fadeBottom?: boolean;
+  fadeHeight?: string;
+  fadeColor?: string;
+}
+
+const {
+  backgroundImage,
+  minHeight = "min-h-screen",
+  fadeTop = false,
+  fadeBottom = false,
+  fadeHeight = "h-40",
+  fadeColor = "slate-950",
+} = Astro.props;
+---
+
+<section
+  class={`relative ${minHeight} bg-cover bg-center bg-${fadeColor}`}
+  style={`background-image: url('${backgroundImage}')`}
+>
+  <!-- Fade TOP -->
+  {
+    fadeTop && (
+      <div
+        class={`pointer-events-none absolute top-0 left-0 w-full ${fadeHeight}
+              bg-gradient-to-b from-${fadeColor} to-transparent`}
+      />
+    )
+  }
+
+  <!-- Content -->
+  <div class="relative z-10">
+    <slot />
+  </div>
+
+  <!-- Fade BOTTOM -->
+  {
+    fadeBottom && (
+      <div
+        class={`pointer-events-none absolute bottom-0 left-0 w-full ${fadeHeight}
+              bg-gradient-to-t from-${fadeColor} to-transparent`}
+      />
+    )
+  }
+</section>

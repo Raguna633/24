@@ -1,0 +1,398 @@
+---
+// Floating Header with Advanced Animations
+
+// Get current path untuk active state
+const currentPath = Astro.url.pathname;
+
+// Navigation items
+const navItems = [
+  { href: "/", label: "Home", icon: "🏠" },
+  { href: "/students", label: "Students", icon: "👥" },
+  { href: "/gallery", label: "Gallery", icon: "🖼️" },
+  { href: "/memories", label: "Memories", icon: "📅" },
+  { href: "/teachers", label: "Teachers", icon: "👨‍🏫" },
+  { href: "/about", label: "About", icon: "ℹ️" },
+];
+
+// Helper function untuk check active link
+function isActive(href: string, currentPath: string): boolean {
+  if (href === "/") {
+    return currentPath === "/";
+  }
+  return currentPath.startsWith(href);
+}
+---
+
+<!-- Floating Header Container -->
+<div id="floating-header" class="fixed top-4 right-4 z-50">
+  <!-- Logo Button (Floating) -->
+  <button
+    id="logo-button"
+    class="group relative flex items-center justify-center
+           w-14 h-14 backdrop-blur-md rounded-full
+           shadow-lg border border-white/20
+           opacity-0 scale-0 transform transition-all duration-500 ease-out
+           hover:shadow-xl hover:scale-110
+           focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2"
+    aria-label="Toggle navigation menu"
+  >
+    <!-- Logo SVG -->
+    <div
+      class="w-8 h-8 bg-[url('/src/assets/azzarqo.svg')] bg-contain bg-center bg-no-repeat"
+    >
+    </div>
+
+    <!-- Pulse effect on hover -->
+    <div
+      class="absolute inset-0 rounded-full bg-white/20 scale-0 group-hover:scale-100 transition-transform duration-300"
+    >
+    </div>
+  </button>
+
+  <!-- Desktop Navigation Menu (Toggle from logo click) -->
+  <nav
+    id="desktop-nav"
+    class="hidden max-w-screen md:flex absolute right-16 top-0 items-center overflow-auto
+           bg-white/35 backdrop-blur-md rounded-2xl shadow-xl border border-white/20
+           opacity-0 translate-x-[-20px] pointer-events-none
+           transition-all duration-300 ease-out px-6 py-3"
+  >
+    <!-- Navigation Items in one background -->
+    <div class="flex items-center gap-4">
+      {
+        navItems.map((item, index) => (
+          <a
+            href={item.href}
+            class={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium
+                   transition-all duration-200 transform
+                   ${
+                     isActive(item.href, currentPath)
+                       ? "bg-primary-500 text-white shadow-md scale-105"
+                       : "text-gray-700 hover:bg-gray-100 hover:scale-105"
+                   }`}
+            style={`animation-delay: ${index * 50}ms;`}
+            aria-current={isActive(item.href, currentPath) ? "page" : undefined}
+          >
+            <span class="text-sm">{item.icon}</span>
+            <span>{item.label}</span>
+          </a>
+        ))
+      }
+
+      <!-- CTA Button -->
+      <a
+        href="/contact"
+        class="ml-2 px-4 py-2 bg-primary text-white rounded-lg font-medium
+               hover:bg-primary-600 hover:shadow-lg transform hover:scale-105
+               transition-all duration-200"
+      >
+        Contact
+      </a>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Pills (Floating) -->
+  <div
+    id="mobile-nav"
+    class="hidden absolute right-4 top-20 flex flex-col gap-3
+           opacity-0 translate-y-[-20px] pointer-events-none
+           transition-all duration-300 ease-out"
+  >
+    {
+      navItems.map((item, index) => (
+        <a
+          href={item.href}
+          class={`flex items-center gap-3 px-4 py-3 rounded-2xl font-medium
+                 transition-all duration-200 transform hover:scale-105 shadow-lg
+                 ${
+                   isActive(item.href, currentPath)
+                     ? "bg-primary-500 text-white"
+                     : "bg-white/95 backdrop-blur-md text-gray-700 border border-white/20"
+                 }`}
+          style={`animation-delay: ${index * 50}ms;`}
+          aria-current={isActive(item.href, currentPath) ? "page" : undefined}
+        >
+          <span class="text-lg">{item.icon}</span>
+          <span>{item.label}</span>
+          {isActive(item.href, currentPath) && (
+            <div class="ml-auto w-2 h-2 bg-white rounded-full" />
+          )}
+        </a>
+      ))
+    }
+
+    <!-- CTA Button -->
+    <a
+      href="/contact"
+      class="flex items-center justify-center px-4 py-3 rounded-2xl
+             bg-primary-500 text-white font-medium shadow-lg
+             hover:bg-primary-600 hover:shadow-xl transform hover:scale-105
+             transition-all duration-200"
+    >
+      📞 Contact Us
+    </a>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div id="mobile-overlay" class="hidden fixed inset-0 backdrop-blur-sm -z-10">
+  </div>
+</div>
+
+<script>
+  // Advanced Floating Header Behavior
+  document.addEventListener("DOMContentLoaded", () => {
+    const logoButton = document.getElementById("logo-button");
+    const desktopNav = document.getElementById("desktop-nav");
+    const mobileNav = document.getElementById("mobile-nav");
+    const mobileOverlay = document.getElementById("mobile-overlay");
+
+    let isLogoVisible = false;
+    let isDesktopNavVisible = false;
+    let isDesktopNavHovered = false;
+    let isMobileNavVisible = false;
+
+    // Scroll detection for logo visibility
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const shouldShowLogo = scrollTop > 100; // Show after 100px scroll
+
+      if (shouldShowLogo !== isLogoVisible) {
+        isLogoVisible = shouldShowLogo;
+
+        if (logoButton) {
+          if (shouldShowLogo) {
+            // Show logo with scale animation
+            logoButton.classList.remove("opacity-0", "scale-0");
+            logoButton.classList.add("opacity-100", "scale-100");
+          } else {
+            // Hide logo
+            logoButton.classList.remove("opacity-100", "scale-100");
+            logoButton.classList.add("opacity-0", "scale-0");
+          }
+        }
+      }
+    };
+
+    // Desktop nav toggle (from logo click)
+    const toggleDesktopNav = () => {
+      if (window.innerWidth >= 768) {
+        // Desktop only
+        isDesktopNavVisible = !isDesktopNavVisible;
+
+        if (desktopNav) {
+          if (isDesktopNavVisible) {
+            // Show desktop nav
+            desktopNav.classList.remove(
+              "hidden",
+              "opacity-0",
+              "translate-x-[-20px]",
+              "pointer-events-none"
+            );
+            desktopNav.classList.add(
+              "opacity-100",
+              "translate-x-0",
+              "pointer-events-auto"
+            );
+          } else {
+            // Hide desktop nav
+            desktopNav.classList.remove(
+              "opacity-100",
+              "translate-x-0",
+              "pointer-events-auto"
+            );
+            desktopNav.classList.add(
+              "opacity-0",
+              "translate-x-[-20px]",
+              "pointer-events-none"
+            );
+
+            // Remove focus ring when nav closes
+            logoButton?.blur();
+          }
+        }
+      }
+    };
+
+    // Mobile nav toggle
+    const toggleMobileNav = () => {
+      if (window.innerWidth < 768) {
+        // Mobile only
+        isMobileNavVisible = !isMobileNavVisible;
+
+        if (mobileNav && mobileOverlay) {
+          if (isMobileNavVisible) {
+            // Show mobile nav
+            mobileNav.classList.remove(
+              "hidden",
+              "opacity-0",
+              "translate-y-[-20px]",
+              "pointer-events-none"
+            );
+            mobileNav.classList.add(
+              "opacity-100",
+              "translate-y-0",
+              "pointer-events-auto"
+            );
+            mobileOverlay.classList.remove("hidden");
+          } else {
+            // Hide mobile nav
+            mobileNav.classList.remove(
+              "opacity-100",
+              "translate-y-0",
+              "pointer-events-auto"
+            );
+            mobileNav.classList.add(
+              "opacity-0",
+              "translate-y-[-20px]",
+              "pointer-events-none"
+            );
+            mobileOverlay.classList.add("hidden");
+
+            logoButton?.blur(); 
+
+            // Restore body scroll
+            document.body.style.overflow = "";
+          }
+        }
+      }
+    };
+
+    // Separate hover logic for desktop
+    const showDesktopNavOnHover = () => {
+      if (window.innerWidth >= 768 && !isDesktopNavVisible) {
+        isDesktopNavHovered = true;
+        if (desktopNav) {
+          desktopNav.classList.remove(
+            "hidden",
+            "opacity-0",
+            "translate-x-[-20px]",
+            "pointer-events-none"
+          );
+          desktopNav.classList.add(
+            "opacity-100",
+            "translate-x-0",
+            "pointer-events-auto"
+          );
+        }
+      }
+    };
+
+    const hideDesktopNavOnLeave = () => {
+      if (window.innerWidth >= 768 && !isDesktopNavVisible) {
+        // Only hide if not clicked (persistent)
+        setTimeout(() => {
+          if (!desktopNav?.matches(":hover") && isDesktopNavHovered) {
+            isDesktopNavHovered = false;
+            if (desktopNav) {
+              desktopNav.classList.remove(
+                "opacity-100",
+                "translate-x-0",
+                "pointer-events-auto"
+              );
+              desktopNav.classList.add(
+                "opacity-0",
+                "translate-x-[-20px]",
+                "pointer-events-none"
+              );
+            }
+          }
+        }, 100);
+      }
+    };
+
+    // Event listeners
+    if (logoButton) {
+      // Desktop hover behavior (separate from click)
+      logoButton.addEventListener("mouseenter", showDesktopNavOnHover);
+      logoButton.addEventListener("mouseleave", hideDesktopNavOnLeave);
+
+      // Logo click for both desktop and mobile
+      logoButton.addEventListener("click", () => {
+        if (window.innerWidth >= 768) {
+          toggleDesktopNav();
+        } else {
+          toggleMobileNav();
+        }
+      });
+    }
+
+    // Mobile overlay click to close
+    if (mobileOverlay) {
+      mobileOverlay.addEventListener("click", toggleMobileNav);
+    }
+
+    // Auto-close mobile nav when clicking outside
+    document.addEventListener("click", (event) => {
+      if (isDesktopNavVisible || isMobileNavVisible) {
+        const target = event.target as Element;
+        const isClickInsideLogo = logoButton?.contains(target);
+        const isClickInsideMobileNav = mobileNav?.contains(target);
+        const isClickOnOverlay = mobileOverlay?.contains(target);
+
+        // Close if click is outside logo and mobile nav area
+        if (!isClickInsideLogo) {
+          toggleMobileNav();
+          toggleDesktopNav();
+        }
+      }
+    });
+
+    // Close on escape
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        if (isDesktopNavVisible) toggleDesktopNav();
+        if (isMobileNavVisible) toggleMobileNav();
+      }
+    });
+
+    // Close mobile nav on resize to desktop
+    window.addEventListener("resize", () => {
+      if (window.innerWidth >= 768 && isMobileNavVisible) {
+        toggleMobileNav();
+      }
+    });
+
+    // Scroll listener
+    window.addEventListener("scroll", handleScroll, { passive: true });
+  });
+</script>
+
+<style>
+  /* Floating header custom styles */
+  #floating-header {
+    /* Ensure proper stacking */
+    will-change: transform;
+  }
+
+  #desktop-nav a {
+    /* Stagger animation */
+    animation: slideInRight 0.3s ease-out both;
+  }
+
+  #mobile-nav a {
+    /* Stagger animation */
+    animation: slideInUp 0.3s ease-out both;
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

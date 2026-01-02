@@ -1,0 +1,247 @@
+---
+// ConnectedSections.astro
+// Advanced component untuk transisi fade mulus antara 2 section
+// Semua props memberikan efek yang berguna dan reusable
+
+interface Props {
+  // Background images (required & actually used)
+  topImage: string;
+  bottomImage: string;
+
+  // Fade configuration
+  fadeHeight?: string;
+  fadeColor?: string;
+  fadeOpacity?: string;
+
+  // Section heights
+  topHeight?: string;
+  bottomHeight?: string;
+
+  // Simple overlay (optional utility)
+  topOverlayColor?: string;
+  topOverlayOpacity?: string;
+  bottomOverlayColor?: string;
+  bottomOverlayOpacity?: string;
+
+  // Connector styling (useful utility)
+  connectorColor?: string;
+  connectorHeight?: string;
+
+  // Enable/disable features
+  enableFade?: boolean;
+  enableOverlay?: boolean;
+  enableConnector?: boolean;
+}
+
+const {
+  topImage,
+  bottomImage,
+  fadeHeight = "h-96",
+  fadeColor = "primary",
+  fadeOpacity = "75",
+  topHeight = "min-h-screen",
+  bottomHeight = "min-h-screen",
+  topOverlayColor = "primary",
+  topOverlayOpacity = "0.1",
+  bottomOverlayColor = "accent-dark",
+  bottomOverlayOpacity = "0.5",
+  connectorColor = "primary",
+  connectorHeight = "h-8 lg:h-16",
+  enableFade = true,
+  enableOverlay = false,
+  enableConnector = true,
+} = Astro.props;
+
+// Prepare data attributes for JavaScript
+const dataAttributes = {
+  ...(topImage && { "data-top-image": topImage }),
+  ...(bottomImage && { "data-bottom-image": bottomImage }),
+};
+---
+
+<div class="connected-sections-wrapper relative" {...dataAttributes}>
+  <!-- Top Section -->
+  <div
+    class={`relative ${topHeight} overflow-hidden`}
+    data-connected-section="top"
+  >
+    <!-- Top Background Layer -->
+    <div
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat z-5"
+      data-bg-layer="top"
+    >
+    </div>
+
+    <!-- Overlay (conditional) -->
+    {enableOverlay && (
+      <div
+        class="absolute inset-0 z-10"
+        style={`background-color: rgb(var(--color-${topOverlayColor}) / ${topOverlayOpacity});`}
+      ></div>
+    )}
+
+    <!-- Fade ke bawah: transparan → fadeColor → fadeColor solid (conditional) -->
+    {enableFade && (
+      <div
+        class:list={[
+          "absolute bottom-0 left-0 w-full pointer-events-none z-15",
+          fadeHeight,
+        ]}
+        style={`
+          background: linear-gradient(to bottom,
+            transparent,
+            rgb(var(--color-${fadeColor}) / ${fadeOpacity}%),
+            rgb(var(--color-${fadeColor}))
+          );
+        `}
+      ></div>
+    )}
+
+    <!-- Top Content -->
+    <div class="relative z-20">
+      <slot name="top-section" />
+    </div>
+  </div>
+
+  <!-- Connector (conditional) -->
+  {enableConnector && (
+    <div
+      class={connectorHeight}
+      style={`background-color: rgb(var(--color-${connectorColor}));`}
+    ></div>
+  )}
+
+  <!-- Bottom Section -->
+  <div
+    class={`relative ${bottomHeight} align-middle overflow-hidden`}
+    data-connected-section="bottom"
+  >
+    
+    <!-- Bottom Background Layer -->
+    <div
+    class="absolute inset-0 bg-cover bg-center bg-no-repeat z-5"
+    data-bg-layer="bottom"
+    >
+  </div>
+
+  <!-- Overlay (conditional) -->
+  {enableOverlay && (
+    <div
+      class="absolute inset-0 z-10"
+      style={`background-color: rgb(var(--color-${bottomOverlayColor}) / ${bottomOverlayOpacity});`}
+    ></div>
+  )}
+  
+    <!-- Fade ke atas: fadeColor solid → fadeColor → transparan (conditional) -->
+    {enableFade && (
+      <div
+        class:list={[
+          "absolute top-0 left-0 w-full pointer-events-none z-15",
+          fadeHeight,
+        ]}
+        style={`
+          background: linear-gradient(to bottom,
+            rgb(var(--color-${fadeColor})),
+            rgb(var(--color-${fadeColor}) / ${fadeOpacity}%),
+            transparent
+          );
+        `}
+      ></div>
+    )}
+
+    <!-- Bottom Content -->
+    <div class="relative z-20">
+      <slot name="bottom-section" />
+    </div>
+  </div>
+</div>
+
+<script>
+  // ConnectedSections JavaScript
+  // Handle background image assignment dengan hybrid approach
+
+  class ConnectedSectionsManager {
+    wrapper: Element;
+    topSection: Element | null;
+    bottomSection: Element | null;
+    topBgLayer: Element | null;
+    bottomBgLayer: Element | null;
+
+    constructor(wrapper: Element) {
+      this.wrapper = wrapper;
+      this.topSection = wrapper.querySelector('[data-connected-section="top"]');
+      this.bottomSection = wrapper.querySelector(
+        '[data-connected-section="bottom"]'
+      );
+      this.topBgLayer = wrapper.querySelector('[data-bg-layer="top"]');
+      this.bottomBgLayer = wrapper.querySelector('[data-bg-layer="bottom"]');
+
+      this.init();
+    }
+
+    init() {
+      // Get props dari data attributes (set by Astro)
+      const topImageOverride = this.wrapper.getAttribute("data-top-image");
+      const bottomImageOverride =
+        this.wrapper.getAttribute("data-bottom-image");
+
+      // Get fallback images dari slot content
+      const topSlotContent = this.topSection?.querySelector("[data-bg-image]");
+      const bottomSlotContent =
+        this.bottomSection?.querySelector("[data-bg-image]");
+
+      const topFallbackImage = topSlotContent?.getAttribute("data-bg-image");
+      const bottomFallbackImage =
+        bottomSlotContent?.getAttribute("data-bg-image");
+
+      // Set background images (props override → fallback → none)
+      const topImage = topImageOverride || topFallbackImage;
+      const bottomImage = bottomImageOverride || bottomFallbackImage;
+
+      if (topImage && this.topBgLayer) {
+        (this.topBgLayer as HTMLElement).style.backgroundImage =
+          `url('${topImage}')`;
+      }
+
+      if (bottomImage && this.bottomBgLayer) {
+        (this.bottomBgLayer as HTMLElement).style.backgroundImage =
+          `url('${bottomImage}')`;
+        (this.bottomBgLayer as HTMLElement).style.opacity = "1";
+      }
+    }
+  }
+
+  // Initialize ketika DOM ready
+  document.addEventListener("DOMContentLoaded", () => {
+    const wrappers = document.querySelectorAll(".connected-sections-wrapper");
+    wrappers.forEach((wrapper) => {
+      new ConnectedSectionsManager(wrapper);
+    });
+  });
+
+  // Support untuk dynamic content (HTMX, etc)
+  document.addEventListener("connected-sections:init", (e) => {
+    const target = e.target as Element;
+    if (target.classList.contains("connected-sections-wrapper")) {
+      new ConnectedSectionsManager(target);
+    }
+  });
+</script>
+
+<style>
+  /* Ensure smooth transitions */
+  .connected-sections-wrapper [data-bg-layer] {
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  /* Prevent any margin/padding issues */
+  .connected-sections-wrapper > section {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Ensure fade layers don't interfere with content */
+  .connected-sections-wrapper [class*="bg-gradient"] {
+    mix-blend-mode: normal;
+  }
+</style>
