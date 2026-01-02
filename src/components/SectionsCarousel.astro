@@ -1,5 +1,5 @@
 ---
-
+// SectionsCarousel.astro - Client-only Swiper carousel
 ---
 
 <div class="relative w-full">
@@ -9,13 +9,75 @@
     </div>
 
     <div class="swiper-pagination z-50"></div>
-    <div class="swiper-button-prev z-50 text-[rgb(245,240,234)]! bg-black/10 p-3 rounded-4xl" ></div>
-    <div class="swiper-button-next z-50 text-[rgb(245,240,234)]! bg-black/10 p-3 rounded-4xl"></div>
+    <div
+      class="swiper-button-prev z-50 text-[rgb(245,240,234)]! bg-black/10 p-3 rounded-4xl"
+    >
+    </div>
+    <div
+      class="swiper-button-next z-50 text-[rgb(245,240,234)]! bg-black/10 p-3 rounded-4xl"
+    >
+    </div>
   </div>
 </div>
 
-<script type="module" is:inline>
-  import { initGreetingSwiper } from "/src/scripts/swiper.ts";
+<script>
+  // Import Swiper modules
+  import Swiper from 'swiper';
+  import { Autoplay, Navigation, Pagination, EffectFade } from 'swiper/modules';
+  import 'swiper/css';
+  import 'swiper/css/autoplay';
+  import 'swiper/css/navigation';
+  import 'swiper/css/pagination';
+  import 'swiper/css/effect-fade';
 
-  initGreetingSwiper();
+  // Initialize Swiper
+  const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+
+  const swiper = new Swiper('.greeting-swiper', {
+    modules: [Navigation, Pagination, Autoplay, EffectFade],
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+    loop: true,
+    speed: 1500,
+    autoplay: isDesktop ? { delay: 5000, disableOnInteraction: false } : false,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    on: {
+      slideChangeTransitionStart() {
+        // Close any open greeting sections when slide changes
+        const greetingSections = document.querySelectorAll('[data-greeting]');
+        greetingSections.forEach((section) => {
+          const excerpt = section.querySelector('[id$="-excerpt"]');
+          const full = section.querySelector('[id$="-full"]');
+          const button = section.querySelector('button[aria-expanded]');
+
+          if (excerpt && full) {
+            excerpt.classList.remove('hidden');
+            full.classList.add('hidden');
+          }
+
+          if (button) {
+            button.setAttribute('aria-expanded', 'false');
+            const textEl = button.querySelector('.toggle-text');
+            const iconEl = button.querySelector('.toggle-icon');
+            if (textEl) textEl.textContent = 'Read More';
+            if (iconEl) iconEl.classList.remove('rotate-180');
+          }
+
+          delete (section as any).dataset.expanded;
+
+          const content = section.querySelector('.greeting-text-content');
+          if (content) content.scrollTo({ top: 0, behavior: 'instant' });
+        });
+      },
+    },
+  });
+
+  console.log('Greeting Swiper initialized:', swiper);
 </script>

@@ -2,9 +2,12 @@
 // Start Our Journey Section Component
 // Start Our Journey Text, CTA button, Gradient Background
 
+import Image from 'astro/components/Image.astro';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   disableBackground?: boolean;
-  backgroundImage?: string;
+  backgroundImage: ImageMetadata;
 }
 
 const { disableBackground = false
@@ -20,7 +23,15 @@ const { disableBackground = false
   {!disableBackground && (
     <>
       <!-- Base gradient background -->
-      <div class="absolute inset-0 bg-cover bg-center" style={`background-image: url('${backgroundImage}');`}></div>
+      <div class="absolute inset-0 bg-cover bg-center">
+        <Image
+          src={backgroundImage}
+          width={1920}
+          height={1080}
+          alt="Background Image"
+          class="w-full h-full object-cover"
+          loading="lazy"/>
+      </div>
       <div class="absolute z-10 inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/20"></div>
 
       <!-- Animated background elements -->
