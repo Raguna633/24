@@ -2,17 +2,30 @@
 // Short About Us Section Component
 // Who Us? Text, Paragraph Text, Background Image dengan fade opacity
 
+import Image from 'astro/components/Image.astro';
+import type { ImageMetadata } from 'astro';
+
 ---
 
 <section
   id="about-section"
   class="relative py-20 sm:py-28 md:py-36 lg:py-44
           overflow-hidden"
-  data-bg-image="src/assets/l-banyakan.webp"
 >
 
+  <!-- Background Image -->
+  <!-- <Image
+    src={bgImage}
+    alt="About section background"
+    class="absolute inset-0 w-full h-full object-cover z-0"
+    loading="eager"
+    width={1920}
+    height={1080}
+    format="webp"
+  /> -->
+
   <!-- Decorative background elements -->
-  <div class="absolute top-0 left-0 w-full h-full">
+  <div class="absolute top-0 left-0 w-full h-full z-5">
     <div class="absolute top-10 left-10 w-32 h-32 bg-primary-100 rounded-full opacity-20 animate-pulse"></div>
     <div class="absolute bottom-20 right-20 w-24 h-24 bg-accent-100 rounded-full opacity-30 animate-pulse" style="animation-delay: 1s;"></div>
     <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-secondary-200 rounded-full opacity-25 animate-pulse" style="animation-delay: 2s;"></div>

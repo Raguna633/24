@@ -3,10 +3,13 @@
 // Advanced component untuk transisi fade mulus antara 2 section
 // Semua props memberikan efek yang berguna dan reusable
 
+import Image from 'astro/components/Image.astro';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   // Background images (required & actually used)
-  topImage: string;
-  bottomImage: string;
+  topImage: ImageMetadata;
+  bottomImage: ImageMetadata;
 
   // Fade configuration
   fadeHeight?: string;
@@ -52,25 +55,27 @@ const {
   enableConnector = true,
 } = Astro.props;
 
-// Prepare data attributes for JavaScript
-const dataAttributes = {
-  ...(topImage && { "data-top-image": topImage }),
-  ...(bottomImage && { "data-bottom-image": bottomImage }),
-};
+// No data attributes needed - images are handled by Astro's Image component
 ---
 
-<div class="connected-sections-wrapper relative" {...dataAttributes}>
+<div class="connected-sections-wrapper relative">
   <!-- Top Section -->
   <div
     class={`relative ${topHeight} overflow-hidden`}
     data-connected-section="top"
   >
-    <!-- Top Background Layer -->
-    <div
-      class="absolute inset-0 bg-cover bg-center bg-no-repeat z-5"
-      data-bg-layer="top"
-    >
-    </div>
+    <!-- Top Background Image -->
+    {topImage && (
+      <Image
+        src={topImage}
+        alt="Top section background"
+        class="absolute inset-0 w-full h-full object-cover z-5"
+        loading="eager"
+        width={1920}
+        height={1080}
+        format="webp"
+      />
+    )}
 
     <!-- Overlay (conditional) -->
     {enableOverlay && (
@@ -116,22 +121,27 @@ const dataAttributes = {
     class={`relative ${bottomHeight} align-middle overflow-hidden`}
     data-connected-section="bottom"
   >
-    
-    <!-- Bottom Background Layer -->
-    <div
-    class="absolute inset-0 bg-cover bg-center bg-no-repeat z-5"
-    data-bg-layer="bottom"
-    >
-  </div>
+    <!-- Bottom Background Image -->
+    {bottomImage && (
+      <Image
+        src={bottomImage}
+        alt="Bottom section background"
+        class="absolute inset-0 w-full h-full object-cover z-5"
+        loading="lazy"
+        width={1920}
+        height={1080}
+        format="webp"
+      />
+    )}
 
-  <!-- Overlay (conditional) -->
-  {enableOverlay && (
-    <div
-      class="absolute inset-0 z-10"
-      style={`background-color: rgb(var(--color-${bottomOverlayColor}) / ${bottomOverlayOpacity});`}
-    ></div>
-  )}
-  
+    <!-- Overlay (conditional) -->
+    {enableOverlay && (
+      <div
+        class="absolute inset-0 z-10"
+        style={`background-color: rgb(var(--color-${bottomOverlayColor}) / ${bottomOverlayOpacity});`}
+      ></div>
+    )}
+
     <!-- Fade ke atas: fadeColor solid → fadeColor → transparan (conditional) -->
     {enableFade && (
       <div
@@ -156,84 +166,9 @@ const dataAttributes = {
   </div>
 </div>
 
-<script>
-  // ConnectedSections JavaScript
-  // Handle background image assignment dengan hybrid approach
-
-  class ConnectedSectionsManager {
-    wrapper: Element;
-    topSection: Element | null;
-    bottomSection: Element | null;
-    topBgLayer: Element | null;
-    bottomBgLayer: Element | null;
-
-    constructor(wrapper: Element) {
-      this.wrapper = wrapper;
-      this.topSection = wrapper.querySelector('[data-connected-section="top"]');
-      this.bottomSection = wrapper.querySelector(
-        '[data-connected-section="bottom"]'
-      );
-      this.topBgLayer = wrapper.querySelector('[data-bg-layer="top"]');
-      this.bottomBgLayer = wrapper.querySelector('[data-bg-layer="bottom"]');
-
-      this.init();
-    }
-
-    init() {
-      // Get props dari data attributes (set by Astro)
-      const topImageOverride = this.wrapper.getAttribute("data-top-image");
-      const bottomImageOverride =
-        this.wrapper.getAttribute("data-bottom-image");
-
-      // Get fallback images dari slot content
-      const topSlotContent = this.topSection?.querySelector("[data-bg-image]");
-      const bottomSlotContent =
-        this.bottomSection?.querySelector("[data-bg-image]");
-
-      const topFallbackImage = topSlotContent?.getAttribute("data-bg-image");
-      const bottomFallbackImage =
-        bottomSlotContent?.getAttribute("data-bg-image");
-
-      // Set background images (props override → fallback → none)
-      const topImage = topImageOverride || topFallbackImage;
-      const bottomImage = bottomImageOverride || bottomFallbackImage;
-
-      if (topImage && this.topBgLayer) {
-        (this.topBgLayer as HTMLElement).style.backgroundImage =
-          `url('${topImage}')`;
-      }
-
-      if (bottomImage && this.bottomBgLayer) {
-        (this.bottomBgLayer as HTMLElement).style.backgroundImage =
-          `url('${bottomImage}')`;
-        (this.bottomBgLayer as HTMLElement).style.opacity = "1";
-      }
-    }
-  }
-
-  // Initialize ketika DOM ready
-  document.addEventListener("DOMContentLoaded", () => {
-    const wrappers = document.querySelectorAll(".connected-sections-wrapper");
-    wrappers.forEach((wrapper) => {
-      new ConnectedSectionsManager(wrapper);
-    });
-  });
-
-  // Support untuk dynamic content (HTMX, etc)
-  document.addEventListener("connected-sections:init", (e) => {
-    const target = e.target as Element;
-    if (target.classList.contains("connected-sections-wrapper")) {
-      new ConnectedSectionsManager(target);
-    }
-  });
-</script>
+<!-- No JavaScript needed - images are handled by Astro's Image component -->
 
 <style>
-  /* Ensure smooth transitions */
-  .connected-sections-wrapper [data-bg-layer] {
-    transition: opacity 0.5s ease-in-out;
-  }
-
   /* Prevent any margin/padding issues */
   .connected-sections-wrapper > section {
     margin: 0;

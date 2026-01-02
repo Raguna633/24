@@ -8,8 +8,32 @@ import AboutSection from "../components/sections/AboutSection.astro";
 import GreetingSection from "../components/sections/GreetingSection.astro";
 import JourneySection from "../components/sections/JourneySection.astro";
 import ConnectedSections from "../components/ConnectedSections.astro";
-
 import SectionsCarousel from "../components/SectionsCarousel.astro";
+
+import type { ImageMetadata } from 'astro';
+
+import "swiper/css";
+import "swiper/css/autoplay";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+
+import pimpinanPhoto from '/src/assets/pimpinan.webp';
+import kepsekPhoto from '/src/assets/dummy_kepsek.webp';
+import bg1 from '/src/assets/vlcsnap-2025-12-16-19h50m31s981.webp';
+import bg2 from '/src/assets/masjid.webp';
+import bg3 from '/src/assets/kantor.webp';
+import bg4 from '/src/assets/rps_apl0.webp';
+import bg5 from '/src/assets/maryamah.webp';
+import bg6 from '/src/assets/qoah0.webp';
+import bg7 from '/src/assets/arruqoyah.webp';
+import altieLogo from '/src/assets/altie.webp';
+import smaLogo from '/src/assets/sma.webp';
+import smkLogo from '/src/assets/smk.webp';
+import ip3aBg from '/src/assets/ip3a.webp';
+import aboutBg from '/src/assets/l-banyakan.webp';
+import heroBg from '/src/assets/27250374_1290.webp';
+
 
 interface GreetingData {
   layout: "teacher" | "generation";
@@ -17,9 +41,9 @@ interface GreetingData {
   title: string;
   excerptLength: number;
   greeting: string;
-  photo: string;
-  backgroundImage: string;
-  schoolLogo: string;
+  photo: ImageMetadata;
+  backgroundImage: ImageMetadata;
+  schoolLogo: ImageMetadata;
 }
 
 const pimpinanGreeting: GreetingData[] = [
@@ -45,9 +69,9 @@ dan ridho Allah SWT.
 8. Istiqomahlah dalam setiap keadaan.
 Anak-anakku, itulah yang dapat saya sampaikan pada kesempatan ini mudah-mudahan ada manfaat serta hikmahnya. Sebagaimana harapan yang amat dalam, semoga kalian menjadi orang yang sholeh dan sholehah yang senantiasa berjuang di jalan Allah dan berguna bagi bangsa dan negara.
 Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/pimpinan.webp",
-    backgroundImage: "/src/assets/vlcsnap-2025-12-16-19h50m31s981.webp",
-    schoolLogo: "/src/assets/altie.webp",
+    photo: pimpinanPhoto,
+    backgroundImage: bg1,
+    schoolLogo: altieLogo,
   },
 ];
 
@@ -65,14 +89,14 @@ const kepsekGreetings: GreetingData[] = [
   خري الناس أنفعهم للناس
   
   Camkan kata-kata ini :
-  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
-  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
-  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang”
+  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/dummy_kepsek.webp",
-    backgroundImage: "/src/assets/masjid.webp",
-    schoolLogo: "/src/assets/altie.webp",
+    photo: kepsekPhoto,
+    backgroundImage: bg2,
+    schoolLogo: altieLogo,
   },
   {
     layout: "teacher",
@@ -87,14 +111,14 @@ const kepsekGreetings: GreetingData[] = [
   خري الناس أنفعهم للناس
   
   Camkan kata-kata ini :
-  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
-  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
-  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang”
+  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/dummy_kepsek.webp",
-    backgroundImage: "/src/assets/kantor.webp",
-    schoolLogo: "/src/assets/sma.webp",
+    photo: kepsekPhoto,
+    backgroundImage: bg3,
+    schoolLogo: smaLogo,
   },
   {
     layout: "teacher",
@@ -109,14 +133,14 @@ const kepsekGreetings: GreetingData[] = [
   خري الناس أنفعهم للناس
   
   Camkan kata-kata ini :
-  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
-  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
-  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang”
+  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/dummy_kepsek.webp",
-    backgroundImage: "/src/assets/rps_apl0.webp",
-    schoolLogo: "/src/assets/smk.webp",
+    photo: kepsekPhoto,
+    backgroundImage: bg4,
+    schoolLogo: smkLogo,
   },
 ];
 
@@ -134,14 +158,14 @@ const angkatanGreetings: GreetingData[] = [
   خري الناس أنفعهم للناس
   
   Camkan kata-kata ini :
-  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
-  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
-  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang”
+  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/dummy_kepsek.webp",
-    backgroundImage: "/src/assets/maryamah.webp",
-    schoolLogo: "/src/assets/altie.webp",
+    photo: kepsekPhoto,
+    backgroundImage: bg5,
+    schoolLogo: altieLogo,
   },
   {
     layout: "generation",
@@ -156,14 +180,14 @@ const angkatanGreetings: GreetingData[] = [
   خري الناس أنفعهم للناس
   
   Camkan kata-kata ini :
-  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
-  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
-  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang”
+  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/dummy_kepsek.webp",
-    backgroundImage: "/src/assets/qoah0.webp",
-    schoolLogo: "/src/assets/sma.png",
+    photo: kepsekPhoto,
+    backgroundImage: bg6,
+    schoolLogo: altieLogo,
   },
   {
     layout: "generation",
@@ -178,14 +202,14 @@ const angkatanGreetings: GreetingData[] = [
   خري الناس أنفعهم للناس
   
   Camkan kata-kata ini :
-  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
-  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
-  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang”
+  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/dummy_kepsek.webp",
-    backgroundImage: "/src/assets/arruqoyah.webp",
-    schoolLogo: "",
+    photo: kepsekPhoto,
+    backgroundImage: bg7,
+    schoolLogo: altieLogo,
   },
   {
     layout: "generation",
@@ -200,14 +224,14 @@ const angkatanGreetings: GreetingData[] = [
   خري الناس أنفعهم للناس
   
   Camkan kata-kata ini :
-  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
-  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
-  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang”
+  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: "/src/assets/dummy_kepsek.webp",
-    backgroundImage: "/src/assets/qoah5.webp",
-    schoolLogo: "",
+    photo: kepsekPhoto,
+    backgroundImage: bg7,
+    schoolLogo: altieLogo,
   },
 ];
 ---
@@ -218,8 +242,8 @@ const angkatanGreetings: GreetingData[] = [
 >
   <!-- Connected Hero & About Sections -->
   <ConnectedSections
-    topImage="/src/assets/27250374_1290.webp"
-    bottomImage="/src/assets/l-banyakan.webp"
+    topImage={heroBg}
+    bottomImage={aboutBg}
     fadeColor="primary"
     enableOverlay={true}
   >
@@ -282,7 +306,7 @@ const angkatanGreetings: GreetingData[] = [
   </SectionsCarousel>
 
   <!-- Journey Section -->
-  <JourneySection backgroundImage="/src/assets/ip3a.webp" />
+  <JourneySection backgroundImage={ip3aBg} />
 
   <!-- Teacher Council Greeting -->
 </MainLayout>

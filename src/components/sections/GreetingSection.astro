@@ -1,14 +1,17 @@
 ---
 // GreetingSection.astro - Carousel-optimized with better mobile scroll
 
+import Image from 'astro/components/Image.astro';
+import type { ImageMetadata } from 'astro';
+
 interface Props {
   layout: "teacher" | "generation";
   name: string;
   title: string;
   greeting: string;
-  photo: string;
-  backgroundImage: string;
-  schoolLogo?: string;
+  photo: ImageMetadata;
+  backgroundImage: ImageMetadata;
+  schoolLogo: ImageMetadata;
   disableBackground?: boolean;
   excerptLength?: number;
 }
@@ -66,8 +69,14 @@ const overlayDirection = isTeacherLayout
     !disableBackground && (
       <div
         class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={`background-image: url('${backgroundImage}');`}
       >
+        <Image
+          src={backgroundImage}
+          width={1080}
+          height={720}
+          alt="Background Image"
+          class="w-full h-full object-cover"
+          loading="lazy"/>
         <div class="absolute z-10 inset-0" style={fadeDirection} />
         <div class={"absolute z-10 inset-0 " + overlayDirection} />
 
@@ -76,8 +85,10 @@ const overlayDirection = isTeacherLayout
             class="absolute aspect-square right-12 top-8 w-2xs md:top-16 
                        md:right-38 lg:right-8 xl:right-16 md:w-md p-3 z-5"
           >
-            <img
+            <Image
               src={schoolLogo}
+              width={256}
+              height={256}
               alt="School Logo"
               class="w-full h-full object-contain opacity-75"
               loading="lazy"
@@ -105,8 +116,10 @@ const overlayDirection = isTeacherLayout
       >
         <div class="relative">
           <div class="aspect-3/4 overflow-hidden z-10">
-            <img
+            <Image
               src={photo}
+              width={800}
+              height={600}
               alt={`Photo of ${name}`}
               class="w-full h-full object-cover"
               loading="lazy"
