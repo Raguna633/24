@@ -1,0 +1,21 @@
+---
+
+---
+
+<div class="relative w-full">
+  <div class="swiper greeting-swiper w-full h-full">
+    <div class="swiper-wrapper">
+      <slot />
+    </div>
+
+    <div class="swiper-pagination z-50"></div>
+    <div class="swiper-button-prev z-50 text-[rgb(245,240,234)]! bg-black/10 p-3 rounded-4xl" ></div>
+    <div class="swiper-button-next z-50 text-[rgb(245,240,234)]! bg-black/10 p-3 rounded-4xl"></div>
+  </div>
+</div>
+
+<script type="module" is:inline>
+  import { initGreetingSwiper } from "/src/scripts/swiper.ts";
+
+  initGreetingSwiper();
+</script>

@@ -1,0 +1,156 @@
+---
+// src/layouts/MainLayout.astro
+import '../styles/global.css';
+import '../styles/tailwind.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  noIndex?: boolean;
+}
+
+const { 
+  title, 
+  description = 'Yearbook Digital Angkatan 2025 - Kenangan indah perjalanan kami',
+  image = '/og-image.jpg',
+  noIndex = false
+} = Astro.props;
+
+// Site info
+const siteTitle = 'Yearbook Angkatan 2025';
+const fullTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
+const siteUrl = Astro.site?.toString() || 'https://yearbook2025.vercel.app';
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+---
+
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO -->
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    
+    {/* Robots meta tag - noindex untuk halaman tertentu */}
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+    
+    <!-- Open Graph (Facebook, WhatsApp) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, siteUrl)} />
+    <meta property="og:site_name" content={siteTitle} />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, siteUrl)} />
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+    
+    <!-- Theme color -->
+    <meta name="theme-color" content="#3b82f6" />
+    
+    <!-- Structured data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "Yearbook Angkatan 2025",
+        "description": description,
+        "url": siteUrl
+      }
+    </script>
+  </head>
+  
+  <body class="flex flex-col min-h-screen">
+    <!-- Skip to main content (accessibility) -->
+    <a 
+      href="#main-content" 
+      class="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 
+             focus:z-50 focus:p-4 focus:bg-primary-600 focus:text-white"
+    >
+      Skip to main content
+    </a>
+    
+    <!-- Header -->
+    <Header />
+    
+    <!-- Main content -->
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+    
+    <!-- Footer -->
+    <Footer />
+    
+    <!-- Back to top button -->
+    <button
+      id="back-to-top"
+      class="fixed bottom-8 right-8 z-40 p-3 bg-primary-600 text-white 
+             rounded-full shadow-lg opacity-0 pointer-events-none 
+             transition-all duration-300 hover:bg-primary-700 
+             hover:scale-110 focus:outline-none focus:ring-2 
+             focus:ring-primary-500 focus:ring-offset-2"
+      aria-label="Back to top"
+    >
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        class="h-6 w-6" 
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
+        <path 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M5 10l7-7m0 0l7 7m-7-7v18" 
+        />
+      </svg>
+    </button>
+    
+    <!-- Scripts -->
+    <script>
+      // Back to top button functionality
+      const backToTopButton = document.getElementById('back-to-top');
+      
+      if (backToTopButton) {
+        // Show/hide button based on scroll position
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 300) {
+            backToTopButton.classList.remove('opacity-0', 'pointer-events-none');
+          } else {
+            backToTopButton.classList.add('opacity-0', 'pointer-events-none');
+          }
+        });
+        
+        // Scroll to top on click
+        backToTopButton.addEventListener('click', () => {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

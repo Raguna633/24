@@ -1,0 +1,147 @@
+---
+// Hero Section Component
+// Logo Angkatan, Nama Angkatan, Quote, Background Image dengan fade opacity
+
+interface Props {
+  disableBackground?: boolean;
+}
+
+const { disableBackground = false } = Astro.props;
+---
+
+<section
+  class="relative min-h-screen flex items-center justify-center overflow-hidden
+         bg-gradient-to-br"
+  data-bg-image="/src/assets/27250374_1290.webp"
+>
+  <!-- Content Container -->
+  <div
+    class="relative z-10 container-custom text-center text-white px-4 sm:px-6 lg:px-8"
+  >
+    <!-- Logo Angkatan (responsive size) -->
+    <div class="mb-6 sm:mb-8">
+      <div
+        class="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48
+               mx-auto
+               flex items-center justify-center animate-fade-in bg-center bg-no-repeat bg-contain"
+               style="background-image: url('/src/assets/azzarqo.svg');"
+      >
+        <!-- Placeholder untuk logo angkatan -->
+        <div class="text-center">
+          <!-- <div
+            class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-1"
+          >
+            YB
+          </div> -->
+          <!-- <div class="text-xs sm:text-sm md:text-base text-white/80">2025</div> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Nama Angkatan -->
+    <h1
+      class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl
+             font-heading font-bold mb-4 sm:mb-6
+             animate-slide-up leading-tight"
+    >
+      AZ24RQO
+      <span
+        class="block text-accent-300 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mt-2"
+      >
+        Annual Website
+      </span>
+    </h1>
+
+    <!-- Quote Angkatan -->
+    <blockquote
+      class="text-lg sm:text-xl md:text-2xl lg:text-3xl
+             text-primary-100 max-w-4xl mx-auto mb-8 sm:mb-12
+             italic font-light leading-relaxed
+             animate-slide-up"
+      style="animation-delay: 0.2s;"
+    >
+      "Tiga tahun perjalanan yang penuh cerita, tawa, dan persahabatan yang tak
+      terlupakan.
+      <span class="block mt-2 text-accent-200 font-medium not-italic">
+        Mari abadikan kenangan kita bersama."
+      </span>
+    </blockquote>
+
+    <!-- Decorative Elements -->
+    <div class="flex items-center justify-center gap-4 sm:gap-6 mb-8 sm:mb-12">
+      <div class="w-12 sm:w-16 h-px bg-white/30"></div>
+      <div class="w-2 h-2 bg-accent-300 rounded-full animate-pulse"></div>
+      <div class="w-12 sm:w-16 h-px bg-white/30"></div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div
+      class="absolute bottom-8 left-1/2 -translate-x-1/2
+             animate-bounce opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+      onclick="document.getElementById('about-section')?.scrollIntoView({behavior: 'smooth'})"
+    >
+      <svg
+        class="w-6 h-6 sm:w-8 sm:h-8 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Floating decorative elements -->
+  <div
+    class="absolute top-20 left-10 w-2 h-2 bg-accent-300 rounded-full opacity-60 animate-pulse"
+  >
+  </div>
+  <div
+    class="absolute top-32 right-16 w-1 h-1 bg-white rounded-full opacity-40 animate-pulse"
+    style="animation-delay: 1s;"
+  >
+  </div>
+  <div
+    class="absolute bottom-32 left-20 w-3 h-3 bg-accent-200 rounded-full opacity-50 animate-pulse"
+    style="animation-delay: 2s;"
+  >
+  </div>
+</section>
+
+<style>
+  /* Custom animations untuk hero */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 1s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 1s ease-out;
+    animation-fill-mode: both;
+  }
+</style>

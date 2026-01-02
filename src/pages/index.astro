@@ -1,0 +1,288 @@
+---
+// src/pages/index.astro
+import MainLayout from "../layouts/MainLayout.astro";
+
+// Import section components
+import HeroSection from "../components/sections/HeroSection.astro";
+import AboutSection from "../components/sections/AboutSection.astro";
+import GreetingSection from "../components/sections/GreetingSection.astro";
+import JourneySection from "../components/sections/JourneySection.astro";
+import ConnectedSections from "../components/ConnectedSections.astro";
+
+import SectionsCarousel from "../components/SectionsCarousel.astro";
+
+interface GreetingData {
+  layout: "teacher" | "generation";
+  name: string;
+  title: string;
+  excerptLength: number;
+  greeting: string;
+  photo: string;
+  backgroundImage: string;
+  schoolLogo: string;
+}
+
+const pimpinanGreeting: GreetingData[] = [
+  {
+    layout: "teacher",
+    name: "KH. Kamali Abdul Ghani",
+    title: "Pimpinan Ponpes Al Ittihad",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+Puji Syukur bagi Allah SWT, yang dengan nikmat dan karunia-Nya kita telah sampai pada suasana yang sangat berbahagia dimana kita telah dapat menyelesaikan tahapan-tahapan di Pondok Pesantren Al-Ittihad dengan baik.
+Anak-anakku, berbahagialah kalian karena telah mampu menghadapi berbagai ujian dan tantangan dengan penuh suka, duka, tawa, tangis, terpaan dan cobaan. Semoga Allah SWT melimpahkan karunia-Nya akan usaha dan jerih payah kalian.
+Anak-anakku, hanya sampai disinilah setetes ilmu yang dapat kalian peroleh dari Pondok Pesantren Al-Ittihad, masih jauh dari harapan kita semua, namun mudah-mudahan kalian dapat memanfaatkannya untuk mengarungi bahtera kehidupan yang penuh godaan dan tantangan. Semoga kalian menjadi makhluk yang berguna bagi agama, nusa, dan bangsa. Anak-anakku, saya mohon maaf yang sangat dalam apabila masih banyak kekurangan dan kesalahan dalam membina, membimbing, mendidik, dan mengasuh kalian karena keterbatasan dan kemampuan  dalam, semoga kalian menjadi orang yang sholeh yang ada. Namun demikian, saya tidak bosan bosan  dan sholehah yang senantiasa berjuang di jalan Al-selalu memberikan arahan dan nasihat kapanpun dan dimanapun, untuk itu camkanlah dengan baik-baik:
+1. Jangan sekali kalian merasa puas dengan ilmu yang telah kalian peroleh, karena itu adalah awal daripada bencana. Tapi harus terus belajar tanpa mengenal batas waktu dan kesempatan.
+2. Janganlah bersifat sombong dengan ilmu yang kalian dapat. Karena tidak pantas berlaku sombong, tapi rendah hatilah.
+3. Janganlah berburuk sangka pada Allah SWT dan merasa putus asa dari rahmat-Nya karena rah
+mat Allah sangat luas dan tidak ada batasann-
+ya. Tetapi harus senantiasa mengharap rahmat 
+dan ridho Allah SWT.
+4. Jujurlah dalam setiap tindakan dan perkataan.
+5. Berjuanglah sesuai dengan kemampuan untuk menegakkan agama Allah.
+6. Bantulah orang yang memerlukan bantuan.
+7. Bergaulah dengan orang-orang yang sholeh.
+8. Istiqomahlah dalam setiap keadaan.
+Anak-anakku, itulah yang dapat saya sampaikan pada kesempatan ini mudah-mudahan ada manfaat serta hikmahnya. Sebagaimana harapan yang amat dalam, semoga kalian menjadi orang yang sholeh dan sholehah yang senantiasa berjuang di jalan Allah dan berguna bagi bangsa dan negara.
+Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/pimpinan.webp",
+    backgroundImage: "/src/assets/vlcsnap-2025-12-16-19h50m31s981.webp",
+    schoolLogo: "/src/assets/altie.webp",
+  },
+];
+
+const kepsekGreetings: GreetingData[] = [
+  {
+    layout: "teacher",
+    name: "H. Teguh Santoso, M. Pd.",
+    title: "Kepala Kepesantrenan Ponpes Al Ittihad",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
+  Ya Abnaaiy wa banaaty….
+  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
+  
+  خري الناس أنفعهم للناس
+  
+  Camkan kata-kata ini :
+  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
+  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
+  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang”
+  Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/dummy_kepsek.webp",
+    backgroundImage: "/src/assets/masjid.webp",
+    schoolLogo: "/src/assets/altie.webp",
+  },
+  {
+    layout: "teacher",
+    name: "Mulyawan Tirta, S, M. Pd.",
+    title: "Kepala Sekolah SMAS Al Ittihad",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
+  Ya Abnaaiy wa banaaty….
+  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
+  
+  خري الناس أنفعهم للناس
+  
+  Camkan kata-kata ini :
+  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
+  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
+  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang”
+  Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/dummy_kepsek.webp",
+    backgroundImage: "/src/assets/kantor.webp",
+    schoolLogo: "/src/assets/sma.webp",
+  },
+  {
+    layout: "teacher",
+    name: "Evi Asmawaty, S. Kom.",
+    title: "Kepala Sekolah SMKS Al Ittihad",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
+  Ya Abnaaiy wa banaaty….
+  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
+  
+  خري الناس أنفعهم للناس
+  
+  Camkan kata-kata ini :
+  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
+  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
+  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang”
+  Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/dummy_kepsek.webp",
+    backgroundImage: "/src/assets/rps_apl0.webp",
+    schoolLogo: "/src/assets/smk.webp",
+  },
+];
+
+const angkatanGreetings: GreetingData[] = [
+  {
+    layout: "generation",
+    name: "Manusia A",
+    title: "Ketua Angkatan Putra",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
+  Ya Abnaaiy wa banaaty….
+  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
+  
+  خري الناس أنفعهم للناس
+  
+  Camkan kata-kata ini :
+  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
+  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
+  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang”
+  Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/dummy_kepsek.webp",
+    backgroundImage: "/src/assets/maryamah.webp",
+    schoolLogo: "/src/assets/altie.webp",
+  },
+  {
+    layout: "generation",
+    name: "Manusia B",
+    title: "Ketua Angkatan Putri",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
+  Ya Abnaaiy wa banaaty….
+  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
+  
+  خري الناس أنفعهم للناس
+  
+  Camkan kata-kata ini :
+  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
+  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
+  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang”
+  Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/dummy_kepsek.webp",
+    backgroundImage: "/src/assets/qoah0.webp",
+    schoolLogo: "/src/assets/sma.png",
+  },
+  {
+    layout: "generation",
+    name: "Manusia C",
+    title: "Ketua Haflah Putra",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
+  Ya Abnaaiy wa banaaty….
+  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
+  
+  خري الناس أنفعهم للناس
+  
+  Camkan kata-kata ini :
+  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
+  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
+  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang”
+  Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/dummy_kepsek.webp",
+    backgroundImage: "/src/assets/arruqoyah.webp",
+    schoolLogo: "",
+  },
+  {
+    layout: "generation",
+    name: "Manusia D",
+    title: "Ketua Haflah Putri",
+    excerptLength: 300,
+    greeting: `Assalamu'alaikum Wr. Wb.
+  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
+  Ya Abnaaiy wa banaaty….
+  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
+  
+  خري الناس أنفعهم للناس
+  
+  Camkan kata-kata ini :
+  •	“Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya”
+  •	“Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya”
+  •	“Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
+  bisa menang”
+  Wassalamu'alaikum Wr. Wb.`,
+    photo: "/src/assets/dummy_kepsek.webp",
+    backgroundImage: "/src/assets/qoah5.webp",
+    schoolLogo: "",
+  },
+];
+---
+
+<MainLayout
+  title="Yearbook Angkatan 2025"
+  description="Kenangan indah perjalanan kami selama 3 tahun bersama"
+>
+  <!-- Connected Hero & About Sections -->
+  <ConnectedSections
+    topImage="/src/assets/27250374_1290.webp"
+    bottomImage="/src/assets/l-banyakan.webp"
+    fadeColor="primary"
+    enableOverlay={true}
+  >
+    <HeroSection slot="top-section" />
+    <AboutSection slot="bottom-section" />
+  </ConnectedSections>
+
+  {
+    pimpinanGreeting.map((greeting) => (
+      <GreetingSection
+        layout={greeting.layout}
+        name={greeting.name}
+        title={greeting.title}
+        excerptLength={greeting.excerptLength}
+        greeting={greeting.greeting}
+        photo={greeting.photo}
+        backgroundImage={greeting.backgroundImage}
+        schoolLogo={greeting.schoolLogo}
+      />
+    ))
+  }
+
+  <SectionsCarousel>
+    {
+      kepsekGreetings.map((greeting) => (
+        <div class="swiper-slide">
+          <GreetingSection
+            layout={greeting.layout}
+            name={greeting.name}
+            title={greeting.title}
+            excerptLength={greeting.excerptLength}
+            greeting={greeting.greeting}
+            photo={greeting.photo}
+            backgroundImage={greeting.backgroundImage}
+            schoolLogo={greeting.schoolLogo}
+          />
+        </div>
+      ))
+    }
+  </SectionsCarousel>
+
+  <!-- Generation Council Greeting -->
+  <SectionsCarousel>
+    {
+      angkatanGreetings.map((greeting) => (
+        <div class="swiper-slide">
+          <GreetingSection
+            layout={greeting.layout}
+            name={greeting.name}
+            title={greeting.title}
+            excerptLength={greeting.excerptLength}
+            greeting={greeting.greeting}
+            photo={greeting.photo}
+            backgroundImage={greeting.backgroundImage}
+            schoolLogo={greeting.schoolLogo}
+          />
+        </div>
+      ))
+    }
+  </SectionsCarousel>
+
+  <!-- Journey Section -->
+  <JourneySection backgroundImage="/src/assets/ip3a.webp" />
+
+  <!-- Teacher Council Greeting -->
+</MainLayout>

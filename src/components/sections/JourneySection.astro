@@ -1,0 +1,214 @@
+---
+// Start Our Journey Section Component
+// Start Our Journey Text, CTA button, Gradient Background
+
+interface Props {
+  disableBackground?: boolean;
+  backgroundImage?: string;
+}
+
+const { disableBackground = false
+  , backgroundImage
+ } = Astro.props;
+---
+
+<section
+  class="relative py-20 sm:py-28 md:py-36 lg:py-44 overflow-hidden"
+  data-bg-image=""
+>
+  <!-- Background (conditional) -->
+  {!disableBackground && (
+    <>
+      <!-- Base gradient background -->
+      <div class="absolute inset-0 bg-cover bg-center" style={`background-image: url('${backgroundImage}');`}></div>
+      <div class="absolute z-10 inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/20"></div>
+
+      <!-- Animated background elements -->
+      <div class="absolute inset-0">
+        <!-- Floating geometric shapes -->
+        <div class="absolute top-20 left-10 w-32 h-32 bg-white/5 rounded-full animate-pulse"></div>
+        <div class="absolute bottom-32 right-16 w-24 h-24 bg-accent-300/20 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-white/10 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-16 right-1/3 w-20 h-20 bg-primary-300/20 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+
+        <!-- Gradient mesh effect -->
+        <div class="absolute inset-0 bg-gradient-to-br from-accent-500/10 via-transparent to-primary-500/10"></div>
+      </div>
+    </>
+  )}
+
+  <!-- Content Container -->
+  <div class="relative z-10 container-custom px-4 sm:px-6 lg:px-8 text-center">
+    <!-- Main Heading -->
+    <h2
+      class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl
+             font-heading font-bold text-white mb-6 sm:mb-8 md:mb-10
+             leading-tight animate-fade-in"
+    >
+      Start Our
+      <span class="block text-accent-200">Journey</span>
+    </h2>
+
+    <!-- Decorative elements -->
+    <div class="flex items-center justify-center gap-6 mb-8 sm:mb-12">
+      <div class="w-20 sm:w-28 h-px bg-accent-300"></div>
+      <div class="w-4 h-4 bg-accent-300 rounded-full animate-pulse"></div>
+      <div class="w-20 sm:w-28 h-px bg-accent-300"></div>
+    </div>
+
+    <!-- Description -->
+    <p
+      class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white
+             text-primary-100 max-w-3xl mx-auto mb-12 sm:mb-16
+             leading-relaxed font-light animate-slide-up"
+    >
+      Mari mulai perjalanan mengeksplorasi kenangan indah Angkatan 2025.
+      Temukan profil teman-teman, galeri foto, dan timeline perjalanan kita bersama.
+    </p>
+
+    <!-- CTA Buttons -->
+    <div
+      class="flex flex-col sm:flex-row items-center justify-center
+             gap-6 sm:gap-8 animate-slide-up"
+      style="animation-delay: 0.3s;"
+    >
+      <!-- Primary CTA -->
+      <a
+        href="/students"
+        class="group relative inline-flex items-center gap-3
+               px-8 sm:px-10 py-4 sm:py-5
+               bg-white text-primary-700 font-bold text-lg sm:text-xl
+               rounded-full shadow-2xl hover:shadow-3xl
+               transform hover:-translate-y-1 transition-all duration-300
+               overflow-hidden"
+      >
+        <!-- Button background effect -->
+        <div class="absolute inset-0 bg-gradient-to-r from-accent-400 to-accent-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+        <!-- Button content -->
+        <span class="relative z-10">Explore Students</span>
+        <svg
+          class="relative z-10 w-6 h-6 sm:w-7 sm:h-7 transform group-hover:translate-x-1 transition-transform duration-300"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 7l5 5m0 0l-5 5m5-5H6"
+          />
+        </svg>
+      </a>
+
+      <!-- Secondary CTA -->
+      <a
+        href="/gallery"
+        class="group inline-flex items-center gap-3
+               px-6 sm:px-8 py-3 sm:py-4
+               border-3 border-white text-white font-semibold text-base sm:text-lg
+               rounded-full hover:bg-white/10
+               transform hover:scale-105 transition-all duration-300"
+      >
+        <svg
+          class="w-5 h-5 sm:w-6 sm:h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+          />
+        </svg>
+        View Gallery
+      </a>
+    </div>
+
+    <!-- Quick Navigation -->
+    <div
+      class="mt-16 sm:mt-20 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8
+             animate-fade-in"
+      style="animation-delay: 0.6s;"
+    >
+      <!-- Students -->
+      <a
+        href="/students"
+        class="group p-6 bg-white/5 backdrop-blur-sm rounded-2xl
+               border border-white/10 hover:bg-white/10
+               transform hover:scale-105 transition-all duration-300"
+      >
+        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+        </div>
+        <h3 class="text-white font-semibold text-lg mb-2">Students</h3>
+        <p class="text-white/70 text-sm">Kenali profil lengkap teman-teman angkatan</p>
+      </a>
+
+      <!-- Memories -->
+      <a
+        href="/memories"
+        class="group p-6 bg-white/5 backdrop-blur-sm rounded-2xl
+               border border-white/10 hover:bg-white/10
+               transform hover:scale-105 transition-all duration-300"
+      >
+        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-white font-semibold text-lg mb-2">Memories</h3>
+        <p class="text-white/70 text-sm">Timeline perjalanan 3 tahun kita</p>
+      </a>
+
+      <!-- Gallery -->
+      <a
+        href="/gallery"
+        class="group p-6 bg-white/5 backdrop-blur-sm rounded-2xl
+               border border-white/10 hover:bg-white/10
+               transform hover:scale-105 transition-all duration-300"
+      >
+        <div class="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-white font-semibold text-lg mb-2">Gallery</h3>
+        <p class="text-white/70 text-sm">Koleksi foto kegiatan dan momen berharga</p>
+      </a>
+    </div>
+
+    <!-- Bottom decorative element -->
+    <div class="mt-16 sm:mt-20">
+      <div class="w-24 h-1 bg-accent-300 rounded-full mx-auto opacity-50"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Custom animations */
+  @keyframes fade-in {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slide-up {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 1s ease-out;
+    animation-fill-mode: both;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 1s ease-out;
+    animation-fill-mode: both;
+  }
+</style>
