@@ -4,6 +4,8 @@ import '../styles/global.css';
 import '../styles/tailwind.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { ClientRouter } from 'astro:transitions';
+import Analytics from '@vercel/analytics/astro'
 
 interface Props {
   title: string;
@@ -79,9 +81,12 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
         "url": siteUrl
       }
     </script>
+
+    <ClientRouter />
   </head>
   
   <body class="flex flex-col min-h-screen">
+    <Analytics/>
     <!-- Skip to main content (accessibility) -->
     <a 
       href="#main-content" 

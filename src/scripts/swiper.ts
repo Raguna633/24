@@ -63,3 +63,4 @@ function closeAllGreetingSections() {
 }
 
 
+export default initGreetingSwiper;
