@@ -1,0 +1,335 @@
+---
+// WaveCanvas.astro - Advanced Canvas Wave with Gradient Support
+// Supports: Solid, Linear Gradient, Radial Gradient, Two-Color Gradient
+
+interface Props {
+  // Basic Properties
+  color?: string;
+  position?: 'top' | 'bottom';
+  height?: number;
+  speed?: number;
+  amplitude?: number;
+  frequency?: number;
+  opacity?: number;
+  
+  // Gradient Properties
+  gradientMode?: 'solid' | 'linear' | 'radial' | 'two-color';
+  gradientDirection?: 'to-top' | 'to-bottom' | 'to-left' | 'to-right';
+  gradientStops?: Array<{ offset: number; color: string; opacity?: number }>;
+  secondaryColor?: string; // For two-color gradient
+}
+
+const {
+  // Defaults
+  color = '#3b82f6',
+  position = 'bottom',
+  height = 100,
+  speed = 0.02,
+  amplitude = 20,
+  frequency = 0.01,
+  opacity = 1,
+  
+  // Gradient defaults
+  gradientMode = 'solid',
+  gradientDirection = 'to-top',
+  gradientStops,
+  secondaryColor,
+} = Astro.props;
+
+const canvasId = `wave-canvas-${Math.random().toString(36).substr(2, 9)}`;
+const positionClass = position === 'top' ? 'top-0 rotate-180' : 'bottom-0';
+
+// Serialize gradient config for data attributes
+const gradientConfig = JSON.stringify({
+  mode: gradientMode,
+  direction: gradientDirection,
+  stops: gradientStops,
+  secondaryColor,
+});
+---
+
+<div 
+  class={`absolute left-0 w-full overflow-hidden ${positionClass}`}
+  style={`height: ${height}px; opacity: ${opacity};`}
+>
+  <canvas
+    id={canvasId}
+    class="w-full h-full"
+    data-color={color}
+    data-speed={speed}
+    data-amplitude={amplitude}
+    data-frequency={frequency}
+    data-gradient={gradientConfig}
+  ></canvas>
+</div>
+
+<script>
+  interface GradientConfig {
+    mode: 'solid' | 'linear' | 'radial' | 'two-color';
+    direction: 'to-top' | 'to-bottom' | 'to-left' | 'to-right';
+    stops?: Array<{ offset: number; color: string; opacity?: number }>;
+    secondaryColor?: string;
+  }
+
+  class WaveCanvas {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    width: number;
+    height: number;
+    offset: number;
+    color: string;
+    speed: number;
+    amplitude: number;
+    frequency: number;
+    gradientConfig: GradientConfig;
+    animationId: number | null;
+
+    constructor(canvas: HTMLCanvasElement) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d')!;
+      this.offset = 0;
+      
+      // Get config from data attributes
+      this.color = canvas.dataset.color || '#3b82f6';
+      this.speed = parseFloat(canvas.dataset.speed || '0.02');
+      this.amplitude = parseFloat(canvas.dataset.amplitude || '20');
+      this.frequency = parseFloat(canvas.dataset.frequency || '0.01');
+      
+      // Parse gradient config
+      try {
+        this.gradientConfig = JSON.parse(canvas.dataset.gradient || '{}');
+      } catch {
+        this.gradientConfig = { mode: 'solid', direction: 'to-top' };
+      }
+      
+      this.width = 0;
+      this.height = 0;
+      this.animationId = null;
+
+      this.resize();
+      this.animate();
+
+      // Handle resize
+      window.addEventListener('resize', () => this.resize());
+    }
+
+    resize() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = this.canvas.getBoundingClientRect();
+      
+      this.width = rect.width;
+      this.height = rect.height;
+      
+      // Set canvas size with device pixel ratio for sharp rendering
+      this.canvas.width = this.width * dpr;
+      this.canvas.height = this.height * dpr;
+      
+      this.ctx.scale(dpr, dpr);
+    }
+
+    /**
+     * Create gradient based on mode
+     * Returns CanvasGradient or solid color string
+     */
+    createGradient(): CanvasGradient | string {
+      const { ctx, width, height, color, gradientConfig } = this;
+      const { mode, direction, stops, secondaryColor } = gradientConfig;
+
+      // ============================================
+      // MODE 1: SOLID COLOR (Default)
+      // ============================================
+      if (mode === 'solid' || !mode) {
+        return color;
+      }
+
+      // ============================================
+      // MODE 2: LINEAR GRADIENT
+      // ============================================
+      if (mode === 'linear') {
+        let x0 = 0, y0 = 0, x1 = 0, y1 = 0;
+
+        // Determine gradient direction
+        switch (direction) {
+          case 'to-top':
+            x0 = 0; y0 = height;  // Start bottom
+            x1 = 0; y1 = 0;       // End top
+            break;
+          case 'to-bottom':
+            x0 = 0; y0 = 0;       // Start top
+            x1 = 0; y1 = height;  // End bottom
+            break;
+          case 'to-left':
+            x0 = width; y0 = 0;   // Start right
+            x1 = 0; y1 = 0;       // End left
+            break;
+          case 'to-right':
+            x0 = 0; y0 = 0;       // Start left
+            x1 = width; y1 = 0;   // End right
+            break;
+        }
+
+        const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+
+        // ✅ Custom gradient stops (if provided)
+        if (stops && stops.length > 0) {
+          stops.forEach(stop => {
+            const colorWithOpacity = stop.opacity !== undefined
+              ? this.hexToRgba(stop.color, stop.opacity)
+              : stop.color;
+            gradient.addColorStop(stop.offset, colorWithOpacity);
+          });
+        } else {
+          // ✅ Default: transparent to solid
+          gradient.addColorStop(0, 'transparent');
+          gradient.addColorStop(1, color);
+        }
+
+        return gradient;
+      }
+
+      // ============================================
+      // MODE 3: RADIAL GRADIENT
+      // ============================================
+      if (mode === 'radial') {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = Math.max(width, height) / 2;
+
+        const gradient = ctx.createRadialGradient(
+          centerX, centerY, 0,        // Inner circle (center)
+          centerX, centerY, radius    // Outer circle
+        );
+
+        if (stops && stops.length > 0) {
+          stops.forEach(stop => {
+            const colorWithOpacity = stop.opacity !== undefined
+              ? this.hexToRgba(stop.color, stop.opacity)
+              : stop.color;
+            gradient.addColorStop(stop.offset, colorWithOpacity);
+          });
+        } else {
+          // Default: center solid, edges transparent
+          gradient.addColorStop(0, color);
+          gradient.addColorStop(1, 'transparent');
+        }
+
+        return gradient;
+      }
+
+      // ============================================
+      // MODE 4: TWO-COLOR GRADIENT
+      // ============================================
+      if (mode === 'two-color') {
+        let x0 = 0, y0 = 0, x1 = 0, y1 = 0;
+
+        switch (direction) {
+          case 'to-top':
+            x0 = 0; y0 = height;
+            x1 = 0; y1 = 0;
+            break;
+          case 'to-bottom':
+            x0 = 0; y0 = 0;
+            x1 = 0; y1 = height;
+            break;
+          case 'to-left':
+            x0 = width; y0 = 0;
+            x1 = 0; y1 = 0;
+            break;
+          case 'to-right':
+            x0 = 0; y0 = 0;
+            x1 = width; y1 = 0;
+            break;
+        }
+
+        const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+        
+        // Two colors: primary and secondary
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, secondaryColor || '#ffffff');
+
+        return gradient;
+      }
+
+      // Fallback
+      return color;
+    }
+
+    /**
+     * Convert hex color to rgba
+     */
+    hexToRgba(hex: string, alpha: number): string {
+      // Remove # if present
+      hex = hex.replace('#', '');
+      
+      // Parse RGB values
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    draw() {
+      const { ctx, width, height, offset, amplitude, frequency } = this;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // ✅ Set fill with gradient or solid color
+      ctx.fillStyle = this.createGradient();
+      
+      // Begin wave path
+      ctx.beginPath();
+      ctx.moveTo(0, height);
+      
+      // Draw wave
+      for (let x = 0; x <= width; x++) {
+        const y = height / 2 + 
+                  Math.sin((x * frequency) + offset) * amplitude;
+        ctx.lineTo(x, y);
+      }
+      
+      // Complete path
+      ctx.lineTo(width, height);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    animate = () => {
+      this.offset += this.speed;
+      this.draw();
+      this.animationId = requestAnimationFrame(this.animate);
+    }
+
+    destroy() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+      window.removeEventListener('resize', () => this.resize());
+    }
+  }
+
+  // Initialize all wave canvases
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvases = document.querySelectorAll('[id^="wave-canvas-"]');
+    const waves: WaveCanvas[] = [];
+    
+    canvases.forEach((canvas) => {
+      waves.push(new WaveCanvas(canvas as HTMLCanvasElement));
+    });
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      waves.forEach(wave => wave.destroy());
+    });
+  });
+</script>
+
+<style>
+  canvas {
+    display: block;
+    /* Smooth rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+</style>

@@ -1,12 +1,23 @@
 // tailwind.config.mjs
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+    content: [
+        "./src/**/*.{astro,html,js,jsx,ts,tsx,vue,mdx}",
+        "./public/**/*.html",
+    ],
+    safelist: [
+    "bg-primary",
+    "bg-primary-500",
+    "bg-secondary",
+    "bg-accent",
+  ],
+
     theme: {
         extend: {
             // Custom colors (sesuaikan dengan brand yearbook kamu)
             colors: {
                 primary: {
+                    DEFAULT: '#f5f0ea',
                     50: '#fef7f0',
                     100: '#fef0e1',
                     200: '#fce1c7',

@@ -1,0 +1,133 @@
+---
+import MainLayout from "../../../layouts/MainLayout.astro";  
+import ClassesCard from "../../../components/ClassesCard.astro";
+import PageTitle from "../../../components/PageTitle.astro";
+
+import aPPLGPict from "../../../assets/ip3a.webp";
+import bAPLPict from "../../../assets/ip3a.webp";
+import cAPLPict from "../../../assets/ip3a.webp";
+import dOTKPPict from "../../../assets/ip3a.webp";
+import ipaI from "../../../assets/ip3a.webp";
+import ipaII from "../../../assets/ip3a.webp";
+import ipaIII from "../../../assets/ip3a.webp";
+import ipaIV from "../../../assets/ip3a.webp";
+import ipsI from "../../../assets/ip3a.webp";
+import ipsII from "../../../assets/ip3a.webp";
+import ipsIII from "../../../assets/ip3a.webp";
+
+export function getStaticPaths() {
+    return [
+        { params: { jenjang: "smk"}},
+        { params: { jenjang: "sma" }}
+    ]
+}
+
+const { jenjang } = Astro.params;
+
+const classTitle = "Foto bersama dengan wali kelas XII";
+
+interface Classes {
+  name: string;
+  img: ImageMetadata;
+  width: number;
+  height: number;
+  alt: string;
+}
+
+const smkClasses: Classes[] = [
+  {
+    name: "A PPLG",
+    img: aPPLGPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} A PPLG`,
+  },
+  {
+    name: "B APL",
+    img: bAPLPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} B APL`,
+  },
+  {
+    name: "C APL",
+    img: cAPLPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} C APL`,
+  },
+  {
+    name: "D MPLB",
+    img: dOTKPPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} D OTKP`,
+  },
+];
+
+const smaClasses: Classes[] = [
+  {
+    name: "IPA I",
+    img: ipaI,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA I`,
+  },
+  {
+    name: "IPA II",
+    img: ipaII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA II`,
+  },
+  {
+    name: "IPA III",
+    img: ipaIII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA III`,
+  },
+  {
+    name: "IPA IV",
+    img: ipaIV,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA IV`,
+  },
+  {
+    name: "IPS I",
+    img: ipsI,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPS I`,
+  },
+  {
+    name: "IPS II",
+    img: ipsII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPS II`,
+  },
+  {
+    name: "IPS III",
+    img: ipsIII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPS III`,
+  },
+];
+
+const classes = jenjang === "smk" ? smkClasses : smaClasses;
+
+if (jenjang !== "smk" && jenjang !== "sma") {
+    return Astro.redirect("/404");
+}
+---
+
+<MainLayout title="" description="">
+  <section class="flex flex-col bg-[#f5f0ea] min-h-screen min-w-screen justify-center items-center w-full py-[168px] bg-cover">
+    <PageTitle/>
+    <ClassesCard classes={classes}/>
+  </section>
+</MainLayout>
+

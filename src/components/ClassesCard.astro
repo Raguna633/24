@@ -1,0 +1,63 @@
+---
+import Image from "astro/components/Image.astro";
+import type { ImageMetadata } from "astro";
+
+// import bgTitle from "../../assets/27250374_1290.webp";
+import bgPattern from "../../../src/assets/bg-pattern.webp";
+import bgTitle from "../../assets/27250374_1290.webp";
+
+interface Classes {
+  name: string;
+  img: ImageMetadata;
+  width: number;
+  height: number;
+  alt: string;
+}
+
+interface Props {
+  classes: Classes[];
+}
+
+const { classes } = Astro.props as Props;
+---
+
+<div class="class-grid max-w-4xl p-8" data-count={classes.length}>
+  {
+    classes.map((kelas, i) => (
+      <div class={`class-item ${i === 3 && classes.length % 2 === 1 ? "center-fourth grid-rows-4!" : ""}`}>
+        <Image
+          src={kelas.img}
+          width={kelas.width}
+          height={kelas.height}
+          alt={kelas.alt}
+          class="rounded-2xl"
+        />
+        <h2 class="font-bold text-center mt-4">XII {kelas.name}</h2>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .class-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  /* Tablet ke atas */
+  @media (min-width: 768px) {
+    .class-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, auto);
+      grid-auto-flow: column;
+    }
+
+    .center-fourth {
+      grid-column: 1 / -1; /* full width */
+      grid-row: 4; /* baris terakhir */
+      justify-self: center;
+      max-width: 60%;
+    }
+  }
+</style>
