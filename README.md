@@ -318,17 +318,17 @@ Homepage (/)
 # URL Structure
 
 ```text
-/                          → Homepage
-/about                     → About page
-/classes                   → All classes
-/classes/john-doe          → Individual student
-/gallery                   → All photos
-/gallery/graduation        → Category album
-/memories                  → Timeline
-/memories/study-tour-2024  → Event detail
-/teachers                  → Teachers page
-/guestbook                 → Guestbook
-/privacy-policy            → Privacy policy
-/terms                     → Terms of service
-/contact                   → Contact form
+/                                       → Homepage
+/about                                  → About page
+/classes                                → All classes
+/classes/[jenjang]/[student]            → Individual student
+/gallery                                → All photos
+/gallery/graduation                     → Category album
+/memories                               → Timeline
+/memories/study-tour-2024               → Event detail
+/teachers                               → Teachers page
+/guestbook                              → Guestbook
+/privacy-policy                         → Privacy policy
+/terms                                  → Terms of service
+/contact                                → Contact form
 ```
