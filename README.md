@@ -33,14 +33,18 @@ Angkatan lain (untuk inspirasi)
 
 Must Have (MVP):
 
-Homepage dengan hero section & navigasi
+Homepage dengan hero section, sambutan & navigasi
 Profil siswa (nama, kelas, foto, quote)
+Profil kelas (foto bersama wali kelas, sambutan wali kelas, foto grup siswa, grid list siswa)
 Galeri foto kegiatan
 Timeline/memories section
 Halaman teachers/staff
 About/credits page
 Search & filter siswa
 Mobile responsive
+Student Image download (password protected with each student have unique password)
+General Image download
+Global animation on page transition
 
 Nice to Have (Post-MVP):
 
@@ -242,92 +246,137 @@ Post-Launch (1 month):
 - Hosting : Vercel
 - Version Control : GitHub
 - CI/CD : GitHub Actions + Vercel (auto)
-- Domain : .vercel.app (gratis) atau .com (Rp 150k/tahun)
+- Domain : .vercel.app (gratis)
 - Analytics : Vercel Analytics (gratis)
 - Forms : Formspree (gratis)
+- Animation : Gsap & AOS
 
 ## 🚀 Project Structure
 
 ```text
-Homepage (/)
-│
-├─── About (/about)
-│    ├─ Tentang Angkatan
-│    ├─ Visi Misi
-│    └─ Panitia Yearbook
-│
-├─── Classes (/classes)
-│    ├─ Class Index (grid view)
-│    │   ├─ Filter by SMK or SMA
-│    │   └─ Search by name
-│    │
-│    └─ Class Profile (/classes/[slug])
-│        ├─ Photo
-│        ├─ Name, Class
-│        ├─ Quote
-│        ├─ Hobbies
-│        └─ Social media (optional)
-│
-├─── Gallery (/gallery)
-│    ├─ All Photos (masonry grid)
-│    │   ├─ Filter by category
-│    │   └─ Lightbox view
-│    │
-│    └─ Album by Category
-│        ├─ Orientation
-│        ├─ Study Tour
-│        ├─ Sports Day
-│        ├─ Cultural Festival
-│        ├─ Graduation
-│        └─ Daily Activities
-│
-├─── Memories (/memories)
-│    ├─ Timeline (chronological)
-│    │   ├─ Year 1 (2022/2023)
-│    │   ├─ Year 2 (2023/2024)
-│    │   └─ Year 3 (2024/2025)
-│    │
-│    └─ Event Detail (/memories/[slug])
-│        ├─ Title
-│        ├─ Date
-│        ├─ Description
-│        └─ Photos
-│
-├─── Teachers (/teachers)
-│    ├─ Grid of Teachers
-│    ├─ Photo
-│    ├─ Name
-│    ├─ Subject
-│    └─ Message/Quote
-│
-├─── Guestbook (/guestbook) [Optional]
-│    ├─ View messages
-│    ├─ Write message form
-│    └─ Moderation (admin only)
+src/
+├── pages/
+│   ├── index.astro                        # Homepage
+│   ├── about/
+│   │   ├── index.astro                    # About overview
+│   │   ├── sejarah.astro                  # Sejarah
+│   │   ├── mars.astro                     # Mars
+│   │   └── fasilitas.astro                # Fasilitas
+│   ├── classes/
+│   │   ├── index.astro                    # Jenjang selection (SMK/SMA)
+│   │   └── [jenjang]/
+│   │       ├── index.astro                # SMK/SMA classes list
+│   │       └── [kelas].astro               # SMK/SMA class detail
+│   ├── students/
+│   │   └── [slug].astro                   # Individual student profile
+│   ├── memories/
+│   │   ├── gallery.astro                  # Photo gallery
+│   │   ├── uniforms.astro                 # Uniforms collection
+│   │   └── school-corners.astro           # School corners
+│   ├── teachers.astro                     # Teachers page
+│   └── yearbook-team.astro                # Yearbook team
+├── components/
+│   ├── sections/
+│   │   ├── HeroSection.astro              # Homepage hero
+│   │   ├── AboutSection.astro             # About content
+│   │   ├── ClassesSection.astro           # Classes overview
+│   │   ├── StudentsSection.astro          # Students grid
+│   │   ├── UniformsSection.astro          # Uniforms gallery
+│   │   ├── MemoriesSection.astro          # Memories gallery
+│   │   ├── TeachersSection.astro          # Teachers grid
+│   │   └── TeamSection.astro              # Yearbook team
+│   ├── cards/
+│   │   ├── StudentCard.astro              # Student profile card
+│   │   ├── TeacherCard.astro              # Teacher profile card
+│   │   ├── UniformCard.astro              # Uniform photo card
+│   │   └── MemoryCard.astro               # Memory photo card
+│   └── layouts/
+│       └── MainLayout.astro               # Main layout
+├── content/
+│   ├── leadership/
+│   │   ├── pimpinan.md                    # Pimpinan content
+│   │   ├── kepala-kepesantrenan.md        # Kepala Kepesantrenan
+│   │   ├── kepala-sekolah.md              # Kepala Sekolah
+│   │   ├── ketua-angkatan.md              # Ketua Angkatan
+│   │   └── ketua-panitia.md               # Ketua Panitia
+│   ├── about/
+│   │   ├── sejarah.md                     # Sejarah content
+│   │   ├── mars.md                        # Mars content
+│   │   └── fasilitas.md                   # Fasilitas content
+│   ├── classes/
+│   │   ├── smk/
+│   │   │   └── [class].md                 # SMK class content
+│   │   └── sma/
+│   │       └── [class].md                 # SMA class content
+│   ├── students/
+│   │   └── [student].md                   # Student profiles
+│   ├── uniforms/
+│   │   ├── putra.md                       # Putra uniforms
+│   │   ├── putri.md                       # Putri uniforms
+│   │   └── khusus.md                      # Khusus uniforms
+│   ├── memories/
+│   │   ├── gallery.md                     # Gallery content
+│   │   └── school-corners.md              # School corners
+│   ├── teachers/
+│   │   ├── smk.md                         # SMK teachers
+│   │   └── sma.md                         # SMA teachers
+│   └── yearbook-team.md                   # Team content
+├── assets/
+│   ├── images/
+│   │   ├── leadership/                    # Leadership photos
+│   │   ├── about/                         # About photos
+│   │   ├── classes/                       # Class photos
+│   │   ├── students/                      # Student photos
+│   │   ├── uniforms/                      # Uniform photos
+│   │   ├── memories/                      # Memory photos
+│   │   ├── teachers/                      # Teacher photos
+│   │   └── team/                          # Team photos
+│   └── logos/                            # Logos & branding
 │
 ├─── Privacy Policy (/privacy-policy)
 │
 ├─── Terms of Service (/terms)
 │
-├─── Contact (/contact)
-│    └─ Contact form
-│
-└─── Login (/login) [If password protected]
+└─── Contact (/contact)
+     └─ Contact form
 ```
 
 # URL Structure
 
 ```text
 /                                       → Homepage
-/about                                  → About page
-/classes                                → All classes
-/classes/[jenjang]/[student]            → Individual student
-/gallery                                → All photos
-/gallery/graduation                     → Category album
-/memories                               → Timeline
-/memories/study-tour-2024               → Event detail
-/teachers                               → Teachers page
-/guestbook                              → Guestbook
+│   ├─ Hero section (Logo angkatan)
+│   ├─ Pengenalan singkat angkatan
+│   ├─ Sambutan Pimpinan
+│   ├─ Sambutan Kepala Kepesantrenan
+│   ├─ Sambutan Kepala Sekolah
+│   ├─ Sambutan Ketua Angkatan
+│   ├─ Sambutan Ketua Panitia Kelulusan
+│   ├─ Navigation menu
+│   └─ CTA buttons
+/about                                  → Tentang Pesantren
+│   ├─ /about/sejarah                   → Sejarah sekolah
+│   ├─ /about/mars                     → Mars sekolah
+│   └─ /about/fasilitas                → Fasilitas
+/classes                                → Kelas & Siswa
+│   ├─ /classes/smk                    → Daftar Kelas SMK
+│   │   └─ /classes/smk/[slug]         → Profil Kelas SMK
+│   │       └─ /classes/smk/[slug]/[student] → Profil Siswa
+│   └─ /classes/sma                    → Daftar Kelas SMA
+│       └─ /classes/sma/[slug]         → Profil Kelas SMA
+/students                                → Daftar semua siswa dari SMA & SMK 
+│   └─ /students/[slug]                  → Profil siswa
+/uniforms                               → Koleksi Seragam
+│   ├─ Seragam Putra
+│   ├─ Seragam Putri
+│   └─ Seragam Khusus
+/memories                               → Dokumentasi
+│   ├─ /memories/gallery               → galeri foto dokumentasi
+│   └─ /memories/school-corners        → Foto Gedung
+/teachers                               → Guru & Staff
+│   ├─ Guru SMK
+│   └─ Guru SMA
+/yearbook-team                          → Tim Panitia
 /privacy-policy                         → Privacy policy
 /terms                                  → Terms of service
 /contact                                → Contact form
