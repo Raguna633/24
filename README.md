@@ -33,27 +33,25 @@ Angkatan lain (untuk inspirasi)
 
 Must Have (MVP):
 
-Homepage dengan hero section, sambutan & navigasi
-Profil siswa (nama, kelas, foto, quote)
-Profil kelas (foto bersama wali kelas, sambutan wali kelas, foto grup siswa, grid list siswa)
-Galeri foto kegiatan
-Timeline/memories section
-Halaman teachers/staff
-About/credits page
-Search & filter siswa
-Mobile responsive
-Student Image download (password protected with each student have unique password)
-General Image download
-Global animation on page transition
+- [x] Homepage dengan hero section, sambutan & navigasi
+- [] Profil siswa (nama, kelas, foto, quote)
+- [] Profil kelas (foto bersama wali kelas, sambutan wali kelas, foto grup siswa, grid list siswa)
+- [] Galeri foto kegiatan
+- [] Timeline/memories section
+- [] Halaman teachers/staff
+- [] About/credits page
+- [] Search & filter siswa
+- [] Mobile responsive
+- [] Global animation on page transition (book flip alike)
 
 Nice to Have (Post-MVP):
 
-Digital guestbook
-Download certificate
-Fun facts/statistics
-Video highlights
-Dark mode
-Multi-language (ID/EN)
+- [] Student Image download (password protected with each student have unique password)
+- [] General Image download
+- [] Fun facts/statistics
+- [] Video highlights
+- [] Dark mode
+- [] Multi-language (ID/EN)
 
 # Content Requirements
 
