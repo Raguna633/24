@@ -1,0 +1,25 @@
+{
+  "name": "Dina Putri",
+  "class": "SMA - Bahasa 1",
+  "photo": "../assets/uniform/paskibra_1_putri.webp",
+  "quote": "Kunci sukses adalah konsistensi dan disiplin.",
+  "hobbies": [
+    "Bulutangkis",
+    "Fotografi"
+  ],
+  "instagram": "dina_putri",
+  "address": "Jl. Gatot Subroto No. 51, Surabaya",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

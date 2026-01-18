@@ -1,0 +1,26 @@
+{
+  "name": "Tomi Prasetyo",
+  "class": "SMA - Bahasa 2",
+  "photo": "../assets/uniform/pramuka_1_putra.webp",
+  "quote": "Mimpi besar dimulai dengan langkah kecil.",
+  "hobbies": [
+    "Mendengarkan musik",
+    "Programming",
+    "Yoga"
+  ],
+  "instagram": "tomi_prasetyo",
+  "address": "Jl. Imam Bonjol No. 19, Bekasi",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

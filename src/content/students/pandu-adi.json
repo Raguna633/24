@@ -1,0 +1,25 @@
+{
+  "name": "Pandu Adi",
+  "class": "SMK - Tata Boga",
+  "photo": "../assets/uniform/batik_3_putra.webp",
+  "quote": "Kegagalan adalah guru terbaik dalam hidup.",
+  "hobbies": [
+    "Memasak",
+    "Menari"
+  ],
+  "instagram": "pandu_adi",
+  "address": "Jl. HOS Cokroaminoto No. 53, Bogor",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

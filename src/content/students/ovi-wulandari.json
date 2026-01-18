@@ -1,0 +1,26 @@
+{
+  "name": "Ovi Wulandari",
+  "class": "SMK - Tata Boga",
+  "photo": "../assets/uniform/pplg_2_putri.webp",
+  "quote": "Setiap hari adalah kesempatan baru untuk belajar.",
+  "hobbies": [
+    "Bermain musik",
+    "Membuat kerajinan",
+    "Melukis"
+  ],
+  "instagram": "ovi_wulandari",
+  "address": "Jl. Diponegoro No. 24, Jakarta",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

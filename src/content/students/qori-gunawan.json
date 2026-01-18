@@ -1,0 +1,26 @@
+{
+  "name": "Qori Gunawan",
+  "class": "SMA - IPS 2",
+  "photo": "../assets/uniform/pmr_1_putra.webp",
+  "quote": "Setiap orang memiliki potensi untuk menjadi luar biasa.",
+  "hobbies": [
+    "Menggambar",
+    "Bermain game",
+    "Basket"
+  ],
+  "instagram": "qori_gunawan",
+  "address": "Jl. HOS Cokroaminoto No. 29, Lombok",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

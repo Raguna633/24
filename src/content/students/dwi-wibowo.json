@@ -1,0 +1,26 @@
+{
+  "name": "Dwi Wibowo",
+  "class": "SMK - Desain Komunikasi Visual",
+  "photo": "../assets/uniform/olahraga_3_putra.webp",
+  "quote": "Setiap orang memiliki potensi untuk menjadi luar biasa.",
+  "hobbies": [
+    "Bermain alat musik",
+    "Melukis",
+    "Bulutangkis"
+  ],
+  "instagram": "dwi_wibowo",
+  "address": "Jl. Diponegoro No. 63, Bekasi",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

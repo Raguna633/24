@@ -1,0 +1,27 @@
+{
+  "name": "Salsa Wati",
+  "class": "SMK - Teknik Kendaraan Ringan",
+  "photo": "../assets/uniform/pplg_3_putri.webp",
+  "quote": "Tantangan membuat kita lebih kuat dan lebih bijaksana.",
+  "hobbies": [
+    "Menari",
+    "Programming",
+    "Bermain game",
+    "Melukis"
+  ],
+  "instagram": "salsa_wati",
+  "address": "Jl. Imam Bonjol No. 42, Pontianak",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Farah Kusuma",
+  "class": "SMK - Tata Boga",
+  "photo": "../assets/uniform/abu_putih_3_putri.webp",
+  "quote": "Pendidikan adalah senjata paling ampuh untuk mengubah dunia.",
+  "hobbies": [
+    "Traveling",
+    "Menggambar"
+  ],
+  "instagram": "farah_kusuma",
+  "address": "Jl. Gatot Subroto No. 97, Samarinda",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

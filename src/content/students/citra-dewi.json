@@ -1,0 +1,25 @@
+{
+  "name": "Citra Dewi",
+  "class": "SMA - IPA 1",
+  "photo": "../assets/uniform/abu_putih_3_putri.webp",
+  "quote": "Kesuksesan adalah hasil dari ketekunan dan kerja keras.",
+  "hobbies": [
+    "Bersepeda",
+    "Bermain game"
+  ],
+  "instagram": "citra_dewi",
+  "address": "Jl. Jend Sudirman No. 41, Malang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Umar Prasetya",
+  "class": "SMA - Bahasa 1",
+  "photo": "../assets/uniform/olahraga_3_putra.webp",
+  "quote": "Pendidikan adalah senjata paling ampuh untuk mengubah dunia.",
+  "hobbies": [
+    "Menonton film",
+    "Olahraga",
+    "Desain grafis",
+    "Fotografi"
+  ],
+  "instagram": "umar_prasetya",
+  "address": "Jl. HOS Cokroaminoto No. 47, Ambon",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

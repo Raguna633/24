@@ -1,0 +1,26 @@
+{
+  "name": "Hana Dewi",
+  "class": "SMA - Bahasa 2",
+  "photo": "../assets/uniform/apl_2_putri.webp",
+  "quote": "Mimpi besar dimulai dengan langkah kecil.",
+  "hobbies": [
+    "Membuat kerajinan",
+    "Bulutangkis",
+    "Bermain game"
+  ],
+  "instagram": "hana_dewi",
+  "address": "Jl. Imam Bonjol No. 31, Makassar",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

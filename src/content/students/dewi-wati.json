@@ -1,0 +1,27 @@
+{
+  "name": "Dewi Wati",
+  "class": "SMA - IPA 1",
+  "photo": "../assets/uniform/abu_putih_1_putri.webp",
+  "quote": "Jadilah versi terbaik dari dirimu sendiri.",
+  "hobbies": [
+    "Menulis",
+    "Bersepeda",
+    "Olahraga",
+    "Mendaki gunung"
+  ],
+  "instagram": "dewi_wati",
+  "address": "Jl. Imam Bonjol No. 40, Padang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

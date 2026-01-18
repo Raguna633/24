@@ -1,0 +1,27 @@
+{
+  "name": "Tika Permata",
+  "class": "SMA - Bahasa 2",
+  "photo": "../assets/uniform/apl_3_putri.webp",
+  "quote": "Setiap kesulitan adalah kesempatan untuk belajar.",
+  "hobbies": [
+    "Menulis",
+    "Basket",
+    "Bernyanyi",
+    "Meditation"
+  ],
+  "instagram": "tika_permata",
+  "address": "Jl. HOS Cokroaminoto No. 71, Bali",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

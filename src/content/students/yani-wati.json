@@ -1,0 +1,26 @@
+{
+  "name": "Yani Wati",
+  "class": "SMA - IPA 3",
+  "photo": "../assets/uniform/pmr_1_putri.webp",
+  "quote": "Kerja keras mengalahkan bakat tanpa usaha.",
+  "hobbies": [
+    "Menonton film",
+    "Bernyanyi",
+    "Sepakbola"
+  ],
+  "instagram": "yani_wati",
+  "address": "Jl. Diponegoro No. 44, Aceh",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Bagus Purnomo",
+  "class": "SMA - IPA 2",
+  "photo": "../assets/uniform/mahad_3_putra.webp",
+  "quote": "Jangan takut gagal, takutlah tidak mencoba.",
+  "hobbies": [
+    "Desain grafis",
+    "Menulis"
+  ],
+  "instagram": "bagus_purnomo",
+  "address": "Jl. Merdeka No. 61, Depok",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

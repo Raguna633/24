@@ -1,0 +1,26 @@
+{
+  "name": "Wulan Wati",
+  "class": "SMA - IPS 2",
+  "photo": "../assets/uniform/paskibra_2_putri.webp",
+  "quote": "Jangan pernah berhenti belajar karena hidup tidak pernah berhenti mengajar.",
+  "hobbies": [
+    "Berkebun",
+    "Bersepeda",
+    "Meditation"
+  ],
+  "instagram": "wulan_wati",
+  "address": "Jl. Merdeka No. 41, Denpasar",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

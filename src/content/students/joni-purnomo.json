@@ -1,0 +1,25 @@
+{
+  "name": "Joni Purnomo",
+  "class": "SMA - Bahasa 1",
+  "photo": "../assets/uniform/olahraga_1_putra.webp",
+  "quote": "Jadilah pembelajar seumur hidup.",
+  "hobbies": [
+    "Meditation",
+    "Memasak"
+  ],
+  "instagram": "joni_purnomo",
+  "address": "Jl. Gatot Subroto No. 51, Pontianak",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

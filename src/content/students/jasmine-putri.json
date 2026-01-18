@@ -1,0 +1,26 @@
+{
+  "name": "Jasmine Putri",
+  "class": "SMA - Bahasa 1",
+  "photo": "../assets/uniform/mplb_1_putri.webp",
+  "quote": "Kesuksesan adalah hasil dari ketekunan dan kerja keras.",
+  "hobbies": [
+    "Membaca",
+    "Menonton film",
+    "Basket"
+  ],
+  "instagram": "jasmine_putri",
+  "address": "Jl. Thamrin No. 98, Semarang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

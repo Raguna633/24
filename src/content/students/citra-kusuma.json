@@ -1,0 +1,24 @@
+{
+  "name": "Citra Kusuma",
+  "class": "SMK - Teknik Komputer dan Jaringan",
+  "photo": "../assets/uniform/mahad_3_putri.webp",
+  "quote": "Kegagalan adalah guru terbaik dalam hidup.",
+  "hobbies": [
+    "Mendengarkan musik"
+  ],
+  "instagram": "citra_kusuma",
+  "address": "Jl. Pahlawan No. 6, Solo",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

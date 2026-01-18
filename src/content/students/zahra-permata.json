@@ -1,0 +1,27 @@
+{
+  "name": "Zahra Permata",
+  "class": "SMA - IPS 2",
+  "photo": "../assets/uniform/mahad_2_putri.webp",
+  "quote": "Setiap hari adalah kesempatan baru untuk belajar.",
+  "hobbies": [
+    "Melukis",
+    "Mendengarkan musik",
+    "Desain grafis",
+    "Bulutangkis"
+  ],
+  "instagram": "zahra_permata",
+  "address": "Jl. A Yani No. 92, Malang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

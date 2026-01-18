@@ -1,0 +1,26 @@
+{
+  "name": "Yani Sari",
+  "class": "SMA - IPA 3",
+  "photo": "../assets/uniform/paskibra_1_putri.webp",
+  "quote": "Pendidikan adalah senjata paling ampuh untuk mengubah dunia.",
+  "hobbies": [
+    "Voli",
+    "Fotografi",
+    "Programming"
+  ],
+  "instagram": "yani_sari",
+  "address": "Jl. A Yani No. 30, Palembang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

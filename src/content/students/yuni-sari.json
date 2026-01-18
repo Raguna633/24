@@ -1,0 +1,25 @@
+{
+  "name": "Yuni Sari",
+  "class": "SMA - IPA 3",
+  "photo": "../assets/uniform/olahraga_3_putri.webp",
+  "quote": "Tantangan membuat kita lebih kuat dan lebih bijaksana.",
+  "hobbies": [
+    "Sepakbola",
+    "Membaca"
+  ],
+  "instagram": "yuni_sari",
+  "address": "Jl. Gatot Subroto No. 71, Palembang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

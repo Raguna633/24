@@ -1,0 +1,25 @@
+{
+  "name": "Ovi Wati",
+  "class": "SMK - Desain Komunikasi Visual",
+  "photo": "../assets/uniform/apl_2_putri.webp",
+  "quote": "Setiap langkah kecil membawa kita lebih dekat ke tujuan.",
+  "hobbies": [
+    "Memasak",
+    "Membaca"
+  ],
+  "instagram": "ovi_wati",
+  "address": "Jl. A Yani No. 80, Jayapura",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Bunga Putri",
+  "class": "SMA - Bahasa 2",
+  "photo": "../assets/uniform/pramuka_2_putri.webp",
+  "quote": "Tantangan membuat kita lebih kuat dan lebih bijaksana.",
+  "hobbies": [
+    "Yoga",
+    "Desain grafis"
+  ],
+  "instagram": "bunga_putri",
+  "address": "Jl. Jend Sudirman No. 87, Surabaya",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

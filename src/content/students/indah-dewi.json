@@ -1,0 +1,25 @@
+{
+  "name": "Indah Dewi",
+  "class": "SMK - Rekayasa Perangkat Lunak",
+  "photo": "../assets/uniform/abu_putih_2_putri.webp",
+  "quote": "Jadilah versi terbaik dari dirimu sendiri.",
+  "hobbies": [
+    "Desain grafis",
+    "Renang"
+  ],
+  "instagram": "indah_dewi",
+  "address": "Jl. Pahlawan No. 85, Solo",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

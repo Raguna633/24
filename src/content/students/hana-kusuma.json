@@ -1,0 +1,26 @@
+{
+  "name": "Hana Kusuma",
+  "class": "SMA - IPA 2",
+  "photo": "../assets/uniform/abu_putih_2_putri.webp",
+  "quote": "Jangan takut gagal, takutlah tidak mencoba.",
+  "hobbies": [
+    "Olahraga",
+    "Bermain game",
+    "Membaca"
+  ],
+  "instagram": "hana_kusuma",
+  "address": "Jl. Jend Sudirman No. 8, Malang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

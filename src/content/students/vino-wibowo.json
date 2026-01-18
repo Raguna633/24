@@ -1,0 +1,26 @@
+{
+  "name": "Vino Wibowo",
+  "class": "SMK - Teknik Kendaraan Ringan",
+  "photo": "../assets/uniform/apl_1_putra.webp",
+  "quote": "Kerja keras mengalahkan bakat tanpa usaha.",
+  "hobbies": [
+    "Menggambar",
+    "Bernyanyi",
+    "Yoga"
+  ],
+  "instagram": "vino_wibowo",
+  "address": "Jl. HOS Cokroaminoto No. 36, Manado",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

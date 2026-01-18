@@ -1,0 +1,27 @@
+{
+  "name": "Vino Setyawan",
+  "class": "SMA - IPA 2",
+  "photo": "../assets/uniform/mahad_1_putra.webp",
+  "quote": "Kegagalan adalah guru terbaik dalam hidup.",
+  "hobbies": [
+    "Olahraga",
+    "Fotografi",
+    "Bernyanyi",
+    "Memasak"
+  ],
+  "instagram": "vino_setyawan",
+  "address": "Jl. Pahlawan No. 69, Jakarta",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

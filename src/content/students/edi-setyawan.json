@@ -1,0 +1,25 @@
+{
+  "name": "Edi Setyawan",
+  "class": "SMK - Tata Boga",
+  "photo": "../assets/uniform/batik_3_putra.webp",
+  "quote": "Pendidikan adalah senjata paling ampuh untuk mengubah dunia.",
+  "hobbies": [
+    "Bermain musik",
+    "Mendengarkan musik"
+  ],
+  "instagram": "edi_setyawan",
+  "address": "Jl. A Yani No. 63, Pontianak",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

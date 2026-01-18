@@ -1,0 +1,27 @@
+{
+  "name": "Fahri Prasetya",
+  "class": "SMA - IPA 3",
+  "photo": "../assets/uniform/abu_putih_3_putra.webp",
+  "quote": "Setiap hari adalah kesempatan baru untuk belajar.",
+  "hobbies": [
+    "Bersepeda",
+    "Bermain game",
+    "Voli",
+    "Bermain musik"
+  ],
+  "instagram": "fahri_prasetya",
+  "address": "Jl. Jend Sudirman No. 35, Bogor",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

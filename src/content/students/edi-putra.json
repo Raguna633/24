@@ -1,0 +1,27 @@
+{
+  "name": "Edi Putra",
+  "class": "SMA - IPS 1",
+  "photo": "../assets/uniform/mahad_3_putra.webp",
+  "quote": "Jadilah versi terbaik dari dirimu sendiri.",
+  "hobbies": [
+    "Fotografi",
+    "Olahraga",
+    "Programming",
+    "Menonton film"
+  ],
+  "instagram": "edi_putra",
+  "address": "Jl. Pahlawan No. 24, Jayapura",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

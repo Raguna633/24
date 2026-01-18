@@ -1,0 +1,27 @@
+{
+  "name": "Yani Permata",
+  "class": "SMA - IPS 1",
+  "photo": "../assets/uniform/pmr_3_putri.webp",
+  "quote": "Setiap langkah kecil membawa kita lebih dekat ke tujuan.",
+  "hobbies": [
+    "Membuat kerajinan",
+    "Melukis",
+    "Berkebun",
+    "Menari"
+  ],
+  "instagram": "yani_permata",
+  "address": "Jl. Sudirman No. 84, Bekasi",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

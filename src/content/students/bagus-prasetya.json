@@ -1,0 +1,26 @@
+{
+  "name": "Bagus Prasetya",
+  "class": "SMA - Bahasa 1",
+  "photo": "../assets/uniform/abu_putih_3_putra.webp",
+  "quote": "Jadilah pembelajar seumur hidup.",
+  "hobbies": [
+    "Meditation",
+    "Programming",
+    "Yoga"
+  ],
+  "instagram": "bagus_prasetya",
+  "address": "Jl. HOS Cokroaminoto No. 68, Jakarta",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

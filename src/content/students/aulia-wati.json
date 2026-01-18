@@ -1,0 +1,25 @@
+{
+  "name": "Aulia Wati",
+  "class": "SMA - Bahasa 1",
+  "photo": "../assets/uniform/apl_3_putri.webp",
+  "quote": "Kesabaran dan ketekunan mengalahkan segalanya.",
+  "hobbies": [
+    "Memasak",
+    "Menggambar"
+  ],
+  "instagram": "aulia_wati",
+  "address": "Jl. Imam Bonjol No. 26, Samarinda",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

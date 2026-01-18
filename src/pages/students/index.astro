@@ -1,0 +1,114 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import StudentCard from '../../components/StudentCard.astro';
+import StudentFilterWrapper from '../../components/StudentFilterWrapper';
+import { getCollection } from 'astro:content';
+
+const studentsData = await getCollection('students');
+
+// Normalize student data
+function normalizePhotoPath(path: string | undefined): string {
+  if (!path) return '/assets/placeholder.jpg';
+  if (path.startsWith('http') || path.startsWith('/')) return path;
+  const filename = path.split('/').pop() || 'placeholder.jpg';
+  return `/assets/uniform/${filename}`;
+}
+
+const students = studentsData.map(s => ({
+  name: s.data.name,
+  class: s.data.class,
+  photo: normalizePhotoPath(s.data.photo),
+  quote: s.data.quote,
+  hobbies: s.data.hobbies,
+  slug: s.id,
+  jenjang: s.data.jenjang,
+  gender: s.data.gender,
+}));
+---
+
+<MainLayout title="Daftar Siswa" description="Daftar lengkap siswa angkatan 2025">
+  <!-- Background with interesting elements -->
+  <div class="min-h-screen bg-gradient-to-br from-primary-500/10 to-secondary-500/5 relative overflow-hidden">
+    <!-- Decorative elements -->
+    <div class="absolute inset-0 opacity-5">
+      <svg class="w-full h-full" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <pattern id="grid" width="100" height="1000" patternUnits="userSpaceOnUse">
+          <path d="M 100 0 L 0 0 0 100" fill="none" stroke="currentColor" stroke-width="1"/>
+        </pattern>
+        <rect width="100%" height="1000%" fill="url(#grid)" />
+      </svg>
+    </div>
+  <div class="min-h-screen bg-gradient-to-br from-primary-500/10 to-secondary-500/5">
+    <div class="container mx-auto px-4 py-12">
+      {/* Header - Static Astro */}
+      <header class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          Daftar Siswa Angkatan 2025
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Temukan profil lengkap siswa dari SMK dan SMA
+        </p>
+      </header>
+
+      {/* 
+        React wrapper component yang handle filtering
+        Tapi render Astro StudentCard components via slots
+      */}
+      <StudentFilterWrapper students={students} client:load>
+        {/* 
+          Pass all StudentCard components as children
+          React akan show/hide based on filters
+        */}
+        {students.map((student, index) => (
+          <div 
+            data-student-card
+            data-index={index}
+            data-search-text={`${student.name} ${student.class} ${student.hobbies?.join(' ') || ''}`.toLowerCase()}
+            data-jenjang={student.jenjang}
+            data-gender={student.gender}
+            data-sort-key={student.name}
+            key={student.slug}
+          >
+            <StudentCard
+              name={student.name}
+              class={student.class}
+              photo={student.photo}
+              quote={student.quote}
+              hobbies={student.hobbies}
+              slug={student.slug}
+            />
+          </div>
+        ))}
+      </StudentFilterWrapper>
+
+      {/* Stats - Static Astro */}
+      <div class="mt-12 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-100">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Statistik Siswa</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="text-center p-4 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg">
+            <div class="text-3xl font-bold text-primary-600">{students.length}</div>
+            <div class="text-sm text-gray-600 mt-1">Total Siswa</div>
+          </div>
+          <div class="text-center p-4 bg-gradient-to-br from-secondary-50 to-secondary-100 rounded-lg">
+            <div class="text-3xl font-bold text-secondary-600">
+              {students.filter(s => s.jenjang === 'SMK').length}
+            </div>
+            <div class="text-sm text-gray-600 mt-1">Siswa SMK</div>
+          </div>
+          <div class="text-center p-4 bg-gradient-to-br from-accent-50 to-accent-100 rounded-lg">
+            <div class="text-3xl font-bold text-accent-600">
+              {students.filter(s => s.jenjang === 'SMA').length}
+            </div>
+            <div class="text-sm text-gray-600 mt-1">Siswa SMA</div>
+          </div>
+          <div class="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
+            <div class="text-3xl font-bold text-green-600" id="filteredCount">
+              {students.length}
+            </div>
+            <div class="text-sm text-gray-600 mt-1">Hasil Filter</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</MainLayout>

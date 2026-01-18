@@ -1,0 +1,25 @@
+{
+  "name": "Tono Purnama",
+  "class": "SMA - Bahasa 2",
+  "photo": "../assets/uniform/apl_2_putra.webp",
+  "quote": "Belajar adalah investasi terbaik untuk masa depan.",
+  "hobbies": [
+    "Traveling",
+    "Desain grafis"
+  ],
+  "instagram": "tono_purnama",
+  "address": "Jl. Merdeka No. 63, Bekasi",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

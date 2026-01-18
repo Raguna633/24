@@ -1,0 +1,26 @@
+{
+  "name": "Wawan Prasetya",
+  "class": "SMK - Teknik Mesin",
+  "photo": "../assets/uniform/abu_putih_3_putra.webp",
+  "quote": "Kesuksesan adalah hasil dari ketekunan dan kerja keras.",
+  "hobbies": [
+    "Menonton film",
+    "Membuat kerajinan",
+    "Bulutangkis"
+  ],
+  "instagram": "wawan_prasetya",
+  "address": "Jl. Imam Bonjol No. 37, Bogor",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

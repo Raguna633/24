@@ -1,0 +1,25 @@
+{
+  "name": "Rara Permata",
+  "class": "SMK - Perhotelan",
+  "photo": "../assets/uniform/pplg_2_putri.webp",
+  "quote": "Jadilah versi terbaik dari dirimu sendiri.",
+  "hobbies": [
+    "Renang",
+    "Menari"
+  ],
+  "instagram": "rara_permata",
+  "address": "Jl. Pahlawan No. 46, Padang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

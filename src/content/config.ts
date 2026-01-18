@@ -7,13 +7,13 @@ import { defineCollection, z } from 'astro:content';
  */
 const studentsCollection = defineCollection({
     type: 'data',
-    schema: ({ image }) => z.object({
+    schema: z.object({
         // Basic Info
         name: z.string(),
         class: z.string(),
 
-        // Photo (auto-validated by Astro)
-        photo: image(),
+        // Photo (using string path)
+        photo: z.string(),
 
         // Optional fields
         quote: z.string().optional(),

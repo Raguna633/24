@@ -1,0 +1,27 @@
+{
+  "name": "Maya Dewi",
+  "class": "SMK - Perhotelan",
+  "photo": "../assets/uniform/batik_1_putri.webp",
+  "quote": "Setiap hari adalah kesempatan baru untuk belajar.",
+  "hobbies": [
+    "Berkebun",
+    "Olahraga",
+    "Memasak",
+    "Meditation"
+  ],
+  "instagram": "maya_dewi",
+  "address": "Jl. Pahlawan No. 37, Bogor",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}
