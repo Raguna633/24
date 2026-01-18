@@ -1,0 +1,26 @@
+{
+  "name": "Hadi Setyawan",
+  "class": "SMK - Teknik Kendaraan Ringan",
+  "photo": "../assets/uniform/paskibra_3_putra.webp",
+  "quote": "Berani bermimpi, berani bertindak, berani sukses.",
+  "hobbies": [
+    "Menggambar",
+    "Melukis",
+    "Mendaki gunung"
+  ],
+  "instagram": "hadi_setyawan",
+  "address": "Jl. A Yani No. 35, Semarang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

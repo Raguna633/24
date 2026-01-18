@@ -1,0 +1,26 @@
+{
+  "name": "Ovi Kusuma",
+  "class": "SMA - IPS 1",
+  "photo": "../assets/uniform/apl_1_putri.webp",
+  "quote": "Setiap hari adalah kesempatan baru untuk belajar.",
+  "hobbies": [
+    "Berkebun",
+    "Menggambar",
+    "Menulis puisi"
+  ],
+  "instagram": "ovi_kusuma",
+  "address": "Jl. Gatot Subroto No. 64, Semarang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

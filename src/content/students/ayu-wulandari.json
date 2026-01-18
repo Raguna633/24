@@ -1,0 +1,26 @@
+{
+  "name": "Ayu Wulandari",
+  "class": "SMA - IPS 1",
+  "photo": "../assets/uniform/pramuka_2_putri.webp",
+  "quote": "Setiap hari adalah kesempatan baru untuk belajar.",
+  "hobbies": [
+    "Membaca",
+    "Olahraga",
+    "Menari"
+  ],
+  "instagram": "ayu_wulandari",
+  "address": "Jl. Thamrin No. 37, Semarang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

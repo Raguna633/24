@@ -1,0 +1,26 @@
+{
+  "name": "Fahri Prasetyo",
+  "class": "SMA - Bahasa 1",
+  "photo": "../assets/uniform/mahad_3_putra.webp",
+  "quote": "Tantangan membuat kita lebih kuat dan lebih bijaksana.",
+  "hobbies": [
+    "Menulis puisi",
+    "Basket",
+    "Programming"
+  ],
+  "instagram": "fahri_prasetyo",
+  "address": "Jl. Sudirman No. 11, Bali",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

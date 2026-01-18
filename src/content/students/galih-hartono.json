@@ -1,0 +1,27 @@
+{
+  "name": "Galih Hartono",
+  "class": "SMK - Teknik Mesin",
+  "photo": "../assets/uniform/olahraga_1_putra.webp",
+  "quote": "Kegagalan adalah guru terbaik dalam hidup.",
+  "hobbies": [
+    "Membaca",
+    "Bulutangkis",
+    "Bernyanyi",
+    "Meditation"
+  ],
+  "instagram": "galih_hartono",
+  "address": "Jl. Jend Sudirman No. 67, Palembang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

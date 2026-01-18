@@ -1,0 +1,25 @@
+{
+  "name": "Yuni Permata",
+  "class": "SMK - Teknik Listrik",
+  "photo": "../assets/uniform/pmr_1_putri.webp",
+  "quote": "Kunci sukses adalah konsistensi dan disiplin.",
+  "hobbies": [
+    "Melukis",
+    "Menulis puisi"
+  ],
+  "instagram": "yuni_permata",
+  "address": "Jl. Imam Bonjol No. 8, Padang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

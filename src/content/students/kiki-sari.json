@@ -1,0 +1,25 @@
+{
+  "name": "Kiki Sari",
+  "class": "SMA - IPA 3",
+  "photo": "../assets/uniform/pmr_1_putri.webp",
+  "quote": "Setiap kesulitan adalah kesempatan untuk belajar.",
+  "hobbies": [
+    "Bermain alat musik",
+    "Sepakbola"
+  ],
+  "instagram": "kiki_sari",
+  "address": "Jl. Imam Bonjol No. 5, Bandung",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

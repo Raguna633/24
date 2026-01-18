@@ -1,0 +1,25 @@
+{
+  "name": "Tomi Susilo",
+  "class": "SMK - Pemasaran",
+  "photo": "../assets/uniform/mahad_3_putra.webp",
+  "quote": "Jadilah pembelajar seumur hidup.",
+  "hobbies": [
+    "Menulis puisi",
+    "Menonton film"
+  ],
+  "instagram": "tomi_susilo",
+  "address": "Jl. Sudirman No. 69, Bekasi",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

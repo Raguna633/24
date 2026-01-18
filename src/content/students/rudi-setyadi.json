@@ -1,0 +1,26 @@
+{
+  "name": "Rudi Setyadi",
+  "class": "SMA - IPS 2",
+  "photo": "../assets/uniform/pmr_2_putra.webp",
+  "quote": "Setiap kesulitan adalah kesempatan untuk belajar.",
+  "hobbies": [
+    "Yoga",
+    "Sepakbola",
+    "Bulutangkis"
+  ],
+  "instagram": "rudi_setyadi",
+  "address": "Jl. Imam Bonjol No. 6, Manado",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

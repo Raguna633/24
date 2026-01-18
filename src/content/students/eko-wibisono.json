@@ -1,0 +1,26 @@
+{
+  "name": "Eko Wibisono",
+  "class": "SMK - Teknik Kendaraan Ringan",
+  "photo": "../assets/uniform/olahraga_3_putra.webp",
+  "quote": "Kegagalan adalah guru terbaik dalam hidup.",
+  "hobbies": [
+    "Programming",
+    "Voli",
+    "Menulis"
+  ],
+  "instagram": "eko_wibisono",
+  "address": "Jl. Merdeka No. 77, Manado",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

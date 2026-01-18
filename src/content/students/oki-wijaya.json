@@ -1,0 +1,26 @@
+{
+  "name": "Oki Wijaya",
+  "class": "SMK - Desain Komunikasi Visual",
+  "photo": "../assets/uniform/mahad_1_putra.webp",
+  "quote": "Kegagalan adalah guru terbaik dalam hidup.",
+  "hobbies": [
+    "Bulutangkis",
+    "Basket",
+    "Melukis"
+  ],
+  "instagram": "oki_wijaya",
+  "address": "Jl. A Yani No. 61, Bandung",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

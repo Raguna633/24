@@ -1,0 +1,27 @@
+{
+  "name": "Aulia Kusuma",
+  "class": "SMK - Perhotelan",
+  "photo": "../assets/uniform/batik_3_putri.webp",
+  "quote": "Jadilah pembelajar seumur hidup.",
+  "hobbies": [
+    "Mendaki gunung",
+    "Voli",
+    "Bulutangkis",
+    "Olahraga"
+  ],
+  "instagram": "aulia_kusuma",
+  "address": "Jl. Diponegoro No. 28, Ambon",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

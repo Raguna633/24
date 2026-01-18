@@ -1,0 +1,26 @@
+{
+  "name": "Vina Permata",
+  "class": "SMK - Teknik Kendaraan Ringan",
+  "photo": "../assets/uniform/olahraga_1_putri.webp",
+  "quote": "Pendidikan membuka pintu menuju masa depan yang lebih baik.",
+  "hobbies": [
+    "Traveling",
+    "Menulis puisi",
+    "Renang"
+  ],
+  "instagram": "vina_permata",
+  "address": "Jl. Merdeka No. 18, Palembang",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

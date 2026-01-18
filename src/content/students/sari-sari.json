@@ -1,0 +1,27 @@
+{
+  "name": "Sari Sari",
+  "class": "SMK - Teknik Komputer dan Jaringan",
+  "photo": "../assets/uniform/paskibra_2_putri.webp",
+  "quote": "Mimpi besar dimulai dengan langkah kecil.",
+  "hobbies": [
+    "Meditation",
+    "Traveling",
+    "Fotografi",
+    "Menonton film"
+  ],
+  "instagram": "sari_sari",
+  "address": "Jl. Merdeka No. 10, Solo",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

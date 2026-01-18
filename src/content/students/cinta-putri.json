@@ -1,0 +1,25 @@
+{
+  "name": "Cinta Putri",
+  "class": "SMA - IPA 2",
+  "photo": "../assets/uniform/mplb_3_putri.webp",
+  "quote": "Kesabaran dan ketekunan mengalahkan segalanya.",
+  "hobbies": [
+    "Renang",
+    "Sepakbola"
+  ],
+  "instagram": "cinta_putri",
+  "address": "Jl. Pahlawan No. 89, Denpasar",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

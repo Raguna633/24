@@ -1,0 +1,26 @@
+{
+  "name": "Kiki Saputra",
+  "class": "SMA - IPS 2",
+  "photo": "../assets/uniform/pmr_1_putra.webp",
+  "quote": "Kesabaran dan ketekunan mengalahkan segalanya.",
+  "hobbies": [
+    "Bermain game",
+    "Mendaki gunung",
+    "Memasak"
+  ],
+  "instagram": "kiki_saputra",
+  "address": "Jl. Pahlawan No. 97, Manado",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

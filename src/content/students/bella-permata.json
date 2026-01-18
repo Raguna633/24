@@ -1,0 +1,27 @@
+{
+  "name": "Bella Permata",
+  "class": "SMK - Perhotelan",
+  "photo": "../assets/uniform/pramuka_1_putri.webp",
+  "quote": "Belajar adalah investasi terbaik untuk masa depan.",
+  "hobbies": [
+    "Traveling",
+    "Bersepeda",
+    "Melukis",
+    "Mendengarkan musik"
+  ],
+  "instagram": "bella_permata",
+  "address": "Jl. Imam Bonjol No. 98, Manado",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

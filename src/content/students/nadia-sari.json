@@ -1,0 +1,27 @@
+{
+  "name": "Nadia Sari",
+  "class": "SMK - Teknik Komputer dan Jaringan",
+  "photo": "../assets/uniform/apl_1_putri.webp",
+  "quote": "Jadilah versi terbaik dari dirimu sendiri.",
+  "hobbies": [
+    "Bermain musik",
+    "Sepakbola",
+    "Menggambar",
+    "Bermain alat musik"
+  ],
+  "instagram": "nadia_sari",
+  "address": "Jl. Merdeka No. 38, Samarinda",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

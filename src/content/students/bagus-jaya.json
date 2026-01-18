@@ -1,0 +1,25 @@
+{
+  "name": "Bagus Jaya",
+  "class": "SMK - Desain Komunikasi Visual",
+  "photo": "../assets/uniform/pplg_3_putra.webp",
+  "quote": "Tantangan membuat kita lebih kuat dan lebih bijaksana.",
+  "hobbies": [
+    "Menggambar",
+    "Yoga"
+  ],
+  "instagram": "bagus_jaya",
+  "address": "Jl. Imam Bonjol No. 10, Jayapura",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

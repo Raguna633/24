@@ -6,8 +6,8 @@ import type { ImageMetadata } from "astro";
 interface Props {
   name: string;
   class: string;
-  quote: string;
-  photo: ImageMetadata;
+  quote?: string;
+  photo: string | ImageMetadata;
   slug: string;
   hobbies?: string[];
 }
@@ -19,27 +19,32 @@ const { name, class: className, quote, photo, slug, hobbies } = Astro.props;
   class="card group cursor-pointer transform transition-all duration-300
          hover:-translate-y-2"
 >
-  <a href={`/students/${slug}`} class="block">
+  <a href={`/students/${slug}`} class="block group bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden" data-student-link>
     <!-- Image container -->
-    <div class="relative aspect-photo overflow-hidden bg-gray-200">
-      <Image
-        src={photo}
-        alt={`Photo of ${name}`}
-        class="w-full h-full object-cover group-hover:scale-105
-               transition-transform duration-500"
-        widths={[300, 600]}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        format="webp"
-        quality={85}
-        loading="lazy"
-      />
+    <div class="relative aspect-photo overflow-hidden bg-gray-200 rounded-t-[16px]">
+      {typeof photo === 'string' ? (
+        <img
+          src={photo}
+          alt={`Photo of ${name}`}
+          class="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
+          loading="lazy"
+        />
+      ) : (
+        <Image
+          src={photo}
+          alt={`Photo of ${name}`}
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          widths={[300, 600]}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          format="webp"
+          quality={85}
+          loading="lazy"
+        />
+      )}
 
       <!-- Gradient overlay (visible on hover) -->
       <div
-        class="absolute inset-0 bg-gradient-to-t from-black/60
-                  via-black/0 to-black/0 opacity-0 group-hover:opacity-100
-                  transition-opacity duration-300"
-      >
+        class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
       </div>
 
       <!-- View profile badge (visible on hover) -->

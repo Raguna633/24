@@ -1,0 +1,25 @@
+{
+  "name": "Umi Wulandari",
+  "class": "SMA - IPA 2",
+  "photo": "../assets/uniform/batik_2_putri.webp",
+  "quote": "Jangan takut gagal, takutlah tidak mencoba.",
+  "hobbies": [
+    "Membaca",
+    "Renang"
+  ],
+  "instagram": "umi_wulandari",
+  "address": "Jl. Merdeka No. 67, Makassar",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

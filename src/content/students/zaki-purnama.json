@@ -1,0 +1,26 @@
+{
+  "name": "Zaki Purnama",
+  "class": "SMA - IPA 3",
+  "photo": "../assets/uniform/abu_putih_2_putra.webp",
+  "quote": "Setiap orang memiliki potensi untuk menjadi luar biasa.",
+  "hobbies": [
+    "Bermain musik",
+    "Menulis",
+    "Menulis puisi"
+  ],
+  "instagram": "zaki_purnama",
+  "address": "Jl. Jend Sudirman No. 35, Yogyakarta",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

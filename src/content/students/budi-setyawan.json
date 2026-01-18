@@ -1,0 +1,27 @@
+{
+  "name": "Budi Setyawan",
+  "class": "SMK - Akuntansi dan Keuangan",
+  "photo": "../assets/uniform/pramuka_1_putra.webp",
+  "quote": "Mimpi besar dimulai dengan langkah kecil.",
+  "hobbies": [
+    "Mendengarkan musik",
+    "Menonton film",
+    "Fotografi",
+    "Melukis"
+  ],
+  "instagram": "budi_setyawan",
+  "address": "Jl. Gatot Subroto No. 91, Ambon",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putra"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "Cinta Permata",
+  "class": "SMA - IPS 3",
+  "photo": "assets/uniform/pplg_1_putri.webp",
+  "quote": "Kesabaran dan ketekunan mengalahkan segalanya.",
+  "hobbies": [
+    "Memasak",
+    "Melukis",
+    "Desain grafis"
+  ],
+  "instagram": "cinta_permata",
+  "address": "Jl. A Yani No. 12, Aceh",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

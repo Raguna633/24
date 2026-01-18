@@ -1,0 +1,26 @@
+{
+  "name": "Zahra Wulandari",
+  "class": "SMK - Perhotelan",
+  "photo": "../assets/uniform/mahad_1_putri.webp",
+  "quote": "Setiap kesulitan adalah kesempatan untuk belajar.",
+  "hobbies": [
+    "Menari",
+    "Membuat kerajinan",
+    "Desain grafis"
+  ],
+  "instagram": "zahra_wulandari",
+  "address": "Jl. A Yani No. 41, Bogor",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMK",
+  "gender": "Putri"
+}

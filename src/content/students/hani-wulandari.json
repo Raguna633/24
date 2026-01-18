@@ -1,0 +1,25 @@
+{
+  "name": "Hani Wulandari",
+  "class": "SMA - IPA 1",
+  "photo": "../assets/uniform/apl_2_putri.webp",
+  "quote": "Tantangan membuat kita lebih kuat dan lebih bijaksana.",
+  "hobbies": [
+    "Menulis puisi",
+    "Bernyanyi"
+  ],
+  "instagram": "hani_wulandari",
+  "address": "Jl. Pahlawan No. 94, Jakarta",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "Vino Suryadi",
+  "class": "SMA - IPS 1",
+  "photo": "../assets/uniform/pmr_3_putra.webp",
+  "quote": "Berani bermimpi, berani bertindak, berani sukses.",
+  "hobbies": [
+    "Menggambar",
+    "Bermain musik"
+  ],
+  "instagram": "vino_suryadi",
+  "address": "Jl. Thamrin No. 61, Pontianak",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putra"
+}

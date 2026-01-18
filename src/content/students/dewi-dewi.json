@@ -1,0 +1,26 @@
+{
+  "name": "Dewi Dewi",
+  "class": "SMA - IPS 1",
+  "photo": "../assets/uniform/pramuka_2_putri.webp",
+  "quote": "Berani bermimpi, berani bertindak, berani sukses.",
+  "hobbies": [
+    "Menulis puisi",
+    "Programming",
+    "Menari"
+  ],
+  "instagram": "dewi_dewi",
+  "address": "Jl. Pahlawan No. 72, Lombok",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}

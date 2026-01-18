@@ -1,0 +1,25 @@
+{
+  "name": "Kiki Kusuma",
+  "class": "SMA - IPS 3",
+  "photo": "../assets/uniform/olahraga_2_putri.webp",
+  "quote": "Setiap hari adalah kesempatan baru untuk belajar.",
+  "hobbies": [
+    "Melukis",
+    "Olahraga"
+  ],
+  "instagram": "kiki_kusuma",
+  "address": "Jl. Imam Bonjol No. 24, Pontianak",
+  "privacyLevel": "public",
+  "consent": {
+    "displayName": true,
+    "displayPhoto": true,
+    "displayQuote": true,
+    "displayHobbies": true,
+    "displaySocialMedia": true,
+    "searchEngineIndex": true,
+    "consentDate": "2025-06-15",
+    "parentConsent": true
+  },
+  "jenjang": "SMA",
+  "gender": "Putri"
+}
