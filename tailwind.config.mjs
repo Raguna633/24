@@ -35,7 +35,7 @@ export default {
                     200: '#bfdbfe',
                     300: '#93c5fd',
                     400: '#60a5fa',
-                    500: '#3557A2', // Main secondary - blue
+                    500: '#3b507d', // Main secondary - blue
                     600: '#2563eb',
                     700: '#1d4ed8',
                     800: '#1e40af',

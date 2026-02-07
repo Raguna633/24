@@ -16,13 +16,15 @@ interface Props {
   description?: string;
   image?: string;
   noIndex?: boolean;
+  forceDesktopView?: boolean;
 }
 
 const { 
   title, 
   description = 'Yearbook Digital AZZARQO - Kenangan indah perjalanan kami',
   image = '/og-image.jpg',
-  noIndex = false
+  noIndex = false,
+  forceDesktopView = false // 👈 Ini akan memaksa halaman selalu desktop view
 } = Astro.props;
 
 // Site info
@@ -30,6 +32,9 @@ const siteTitle = 'Yearbook AZZARQO';
 const fullTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
 const siteUrl = Astro.site?.toString() || 'https://yearbook2025.vercel.app';
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+
+// 🔧 Pass forceDesktopView to client-side script
+const forceDesktopViewData = forceDesktopView;
 ---
 
 <!DOCTYPE html>
@@ -37,8 +42,57 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
   <head>
     <!-- Meta tags -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" id="viewport-meta" />
     <meta name="generator" content={Astro.generator} />
+
+    {/* Apply saved preference BEFORE page renders */}
+    <script is:inline define:vars={{ forceDesktopView: forceDesktopViewData }}>
+      (function() {
+        // 🔒 IMPORTANT: If page forces desktop view, ALWAYS use desktop
+        if (forceDesktopView) {
+          const viewport = document.getElementById('viewport-meta');
+          if (!viewport) return;
+          
+          const deviceWidth = window.screen.width;
+          const desktopWidth = 1440;
+          const scale = deviceWidth / desktopWidth;
+          
+          viewport.setAttribute('content', 
+            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+          );
+          
+          // Save to sessionStorage so toggle knows this page is forced
+          sessionStorage.setItem('forced-desktop-view', 'true');
+          return; // Exit early, don't check saved preference
+        }
+        
+        // Remove forced flag if not forced anymore
+        sessionStorage.removeItem('forced-desktop-view');
+        
+        // Get saved preference (normal behavior)
+        const savedMode = localStorage.getItem('view-mode');
+        const viewport = document.getElementById('viewport-meta');
+        
+        if (!viewport) return;
+        
+        if (savedMode === 'desktop') {
+          // Calculate perfect scale for current device
+          const deviceWidth = window.screen.width;
+          const desktopWidth = 1440;
+          const scale = deviceWidth / desktopWidth;
+          
+          // Apply desktop viewport with calculated scale
+          viewport.setAttribute('content', 
+            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+          );
+        } else {
+          // Mobile view (default)
+          viewport.setAttribute('content', 
+            'width=device-width, initial-scale=1.0, user-scalable=yes'
+          );
+        }
+      })();
+    </script>
     
     <!-- SEO -->
     <title>{fullTitle}</title>
@@ -89,7 +143,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <ClientRouter transition:persist />
   </head>
   
-  <body class=" min-h-screen">
+  <body class="min-h-screen">
     <Analytics/>
     <!-- Skip to main content (accessibility) -->
     <a 
@@ -114,34 +168,212 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <!-- Back to top button -->
     <button
       id="back-to-top"
-      class="fixed bottom-8 right-8 z-40 p-3 bg-primary-600 text-white 
-             rounded-full shadow-lg opacity-0 pointer-events-none 
-             transition-all duration-300 hover:bg-primary-700 
-             hover:scale-110 focus:outline-none focus:ring-2 
+      class="fixed bottom-8 right-8 z-40 p-3 bg-primary-600 text-white
+             rounded-full shadow-lg opacity-0 pointer-events-none
+             transition-all duration-300 hover:bg-primary-700
+             hover:scale-110 focus:outline-none focus:ring-2
              focus:ring-primary-500 focus:ring-offset-2"
       aria-label="Back to top"
     >
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        class="h-6 w-6" 
-        fill="none" 
-        viewBox="0 0 24 24" 
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
         stroke="currentColor"
       >
-        <path 
-          stroke-linecap="round" 
-          stroke-linejoin="round" 
-          stroke-width="2" 
-          d="M5 10l7-7m0 0l7 7m-7-7v18" 
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 10l7-7m0 0l7 7m-7-7v18"
         />
       </svg>
     </button>
+
+    {/* View Mode Toggle Button */}
+    <button 
+      id="viewModeToggle"
+      class="view-mode-toggle"
+      aria-label="Toggle view mode"
+    >
+      <span id="toggleIcon">📱</span>
+      <span id="toggleText">Mobile View</span>
+    </button>
+
+    <!-- ==================== DEBUGGING HELPER (Remove in production) ==================== -->
+    <div 
+      id="debugInfo" 
+      style="
+        position: fixed;
+        top: 80px;
+        left: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        z-index: 10000;
+        display: none;
+      "
+    >
+      <div id="debugContent"></div>
+      <button 
+        onclick="document.getElementById('debugInfo').style.display='none'"
+        style="margin-top: 4px; padding: 4px 8px; font-size: 10px;"
+      >
+        Close
+      </button>
+    </div>
     
     <!-- Scripts -->
     <script>
+      // ==================== VIEW MODE TOGGLE ====================
+      
+      const viewport = document.querySelector('meta[name="viewport"]');
+      const toggleButton = document.getElementById('viewModeToggle');
+      const toggleIcon = document.getElementById('toggleIcon');
+      const toggleText = document.getElementById('toggleText');
+
+      // 🔒 Check if this page is forced to desktop view
+      const isForced = sessionStorage.getItem('forced-desktop-view') === 'true';
+
+      function getCurrentMode(): 'mobile' | 'desktop' {
+        // If forced, always return desktop
+        if (isForced) return 'desktop';
+        
+        const saved = localStorage.getItem('view-mode');
+        if (saved) return saved as 'mobile' | 'desktop';
+        
+        // Auto-detect based on current viewport
+        const current = viewport?.getAttribute('content') || '';
+        return current.includes('1440') ? 'desktop' : 'mobile';
+      }
+
+      function updateToggleButton() {
+        const mode = getCurrentMode();
+        
+        if (mode === 'desktop') {
+          toggleIcon!.textContent = '🖥️';
+          toggleText!.textContent = isForced ? 'Desktop (Locked)' : 'Desktop View';
+          toggleButton?.classList.add('active');
+          
+          // 🔒 If forced, disable the button
+          if (isForced) {
+            toggleButton?.classList.add('forced');
+            toggleButton?.setAttribute('disabled', 'true');
+            toggleButton?.setAttribute('title', 'This page requires desktop view');
+          }
+        } else {
+          toggleIcon!.textContent = '📱';
+          toggleText!.textContent = 'Mobile View';
+          toggleButton?.classList.remove('active', 'forced');
+          toggleButton?.removeAttribute('disabled');
+          toggleButton?.removeAttribute('title');
+        }
+      }
+
+      function toggleViewMode() {
+        // 🔒 Prevent toggle if forced
+        if (isForced) {
+          showNotification('⚠️ This page requires desktop view');
+          return;
+        }
+        
+        if (!viewport) return;
+
+        const currentMode = getCurrentMode();
+        const newMode = currentMode === 'mobile' ? 'desktop' : 'mobile';
+
+        if (newMode === 'desktop') {
+          // Switch to desktop view
+          const deviceWidth = window.screen.width;
+          const desktopWidth = 1440;
+          
+          // Calculate scale to fit exactly 100% width
+          const scale = deviceWidth / desktopWidth;
+          
+          console.log('Device width:', deviceWidth);
+          console.log('Desktop width:', desktopWidth);
+          console.log('Calculated scale:', scale);
+
+          viewport.setAttribute('content', 
+            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+          );
+          
+          localStorage.setItem('view-mode', 'desktop');
+          
+          // Update button immediately
+          toggleIcon!.textContent = '🖥️';
+          toggleText!.textContent = 'Desktop View';
+          toggleButton?.classList.add('active');
+          
+          // Optional: Show success message
+          showNotification('Desktop view activated! Pinch to zoom.');
+        } else {
+          // Switch to mobile view
+          viewport.setAttribute('content', 
+            'width=device-width, initial-scale=1.0, user-scalable=yes'
+          );
+          
+          localStorage.setItem('view-mode', 'mobile');
+          
+          // Update button immediately
+          toggleIcon!.textContent = '📱';
+          toggleText!.textContent = 'Mobile View';
+          toggleButton?.classList.remove('active');
+          
+          // Optional: Show success message
+          showNotification('Mobile view activated!');
+        }
+      }
+
+      function showNotification(message: string) {
+        // Remove existing notification
+        const existing = document.getElementById('viewModeNotification');
+        if (existing) existing.remove();
+
+        // Create notification
+        const notification = document.createElement('div');
+        notification.id = 'viewModeNotification';
+        notification.className = 'view-mode-notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+          notification.classList.add('fade-out');
+          setTimeout(() => notification.remove(), 300);
+        }, 3000);
+      }
+
+      // Initialize button state
+      updateToggleButton();
+
+      // Add click handler
+      toggleButton?.addEventListener('click', toggleViewMode);
+
+      // Update button on orientation change
+      window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+          const mode = getCurrentMode();
+          if (mode === 'desktop') {
+            // Recalculate scale for new orientation
+            const deviceWidth = window.screen.width;
+            const desktopWidth = 1440;
+            const scale = deviceWidth / desktopWidth;
+            
+            viewport?.setAttribute('content', 
+              `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+            );
+          }
+          updateToggleButton();
+        }, 300);
+      });
+
       // Back to top button functionality
       const backToTopButton = document.getElementById('back-to-top');
-      
+
       if (backToTopButton) {
         // Show/hide button based on scroll position
         window.addEventListener('scroll', () => {
@@ -151,7 +383,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
             backToTopButton.classList.add('opacity-0', 'pointer-events-none');
           }
         });
-        
+
         // Scroll to top on click
         backToTopButton.addEventListener('click', () => {
           window.scrollTo({
@@ -161,5 +393,205 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
         });
       }
     </script>
+
+    <script>
+      // Show debug info (press 'd' key)
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'd' || e.key === 'D') {
+          const debugInfo = document.getElementById('debugInfo');
+          const debugContent = document.getElementById('debugContent');
+          
+          if (debugInfo && debugContent) {
+            const viewport = document.querySelector('meta[name="viewport"]');
+            const viewportContent = viewport?.getAttribute('content') || 'not found';
+            const isForced = sessionStorage.getItem('forced-desktop-view') === 'true';
+            
+            debugContent.innerHTML = `
+              <strong>Debug Info:</strong><br>
+              Screen Width: ${window.screen.width}px<br>
+              Window Width: ${window.innerWidth}px<br>
+              Device Pixel Ratio: ${window.devicePixelRatio}<br>
+              View Mode: ${localStorage.getItem('view-mode') || 'not set'}<br>
+              Forced Desktop: ${isForced ? 'YES' : 'NO'}<br>
+              Viewport: ${viewportContent}<br>
+              Calculated Scale: ${(window.screen.width / 1440).toFixed(3)}
+            `;
+            
+            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+          }
+        }
+      });
+    </script>
+
+    <style is:global>
+      /* ==================== VIEW MODE TOGGLE BUTTON ==================== */
+      .view-mode-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        padding: 12px 20px;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 50px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+        
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        /* Prevent text selection */
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .view-mode-toggle:hover {
+        background: #f9fafb;
+        border-color: #3557A2;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .view-mode-toggle:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .view-mode-toggle.active {
+        background: linear-gradient(135deg, #3557A2 0%, #2A358F 100%);
+        color: white;
+        border-color: #2A358F;
+      }
+
+      /* 🔒 FORCED STATE - Button is disabled */
+      .view-mode-toggle.forced {
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        border-color: #475569;
+        cursor: not-allowed;
+        opacity: 0.9;
+      }
+
+      .view-mode-toggle.forced:hover {
+        transform: none;
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        border-color: #475569;
+      }
+
+      /* Add lock icon indicator */
+      .view-mode-toggle.forced::after {
+        content: '🔒';
+        margin-left: 4px;
+        font-size: 12px;
+      }
+
+      .view-mode-toggle span {
+        line-height: 1;
+      }
+
+      /* Icon animation */
+      .view-mode-toggle #toggleIcon {
+        font-size: 20px;
+        transition: transform 0.3s ease;
+      }
+
+      .view-mode-toggle:hover #toggleIcon {
+        transform: scale(1.2) rotate(10deg);
+      }
+
+      /* Don't animate when forced */
+      .view-mode-toggle.forced:hover #toggleIcon {
+        transform: none;
+      }
+
+      /* ==================== NOTIFICATION ==================== */
+      .view-mode-notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 10000;
+        
+        padding: 12px 24px;
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        
+        font-size: 14px;
+        font-weight: 500;
+        
+        animation: slideDown 0.3s ease-out;
+      }
+
+      .view-mode-notification.fade-out {
+        animation: fadeOut 0.3s ease-out;
+        opacity: 0;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      /* ==================== RESPONSIVE ==================== */
+      @media (max-width: 640px) {
+        .view-mode-toggle {
+          bottom: 16px;
+          right: 16px;
+          padding: 10px 16px;
+          font-size: 13px;
+        }
+
+        .view-mode-toggle #toggleIcon {
+          font-size: 18px;
+        }
+
+        /* Hide text on very small screens */
+        @media (max-width: 380px) {
+          .view-mode-toggle #toggleText {
+            display: none;
+          }
+        }
+      }
+
+      /* ==================== DESKTOP MODE OPTIMIZATIONS ==================== */
+      /* When in desktop mode, ensure better mobile experience */
+      @media (max-width: 768px) {
+        /* Ensure minimum tap target size */
+        button, a {
+          min-height: 44px;
+          min-width: 44px;
+        }
+
+        /* Ensure text remains readable */
+        body {
+          -webkit-text-size-adjust: 100%;
+          text-size-adjust: 100%;
+        }
+      }
+    </style>
   </body>
 </html>

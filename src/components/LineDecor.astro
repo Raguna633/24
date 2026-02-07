@@ -1,0 +1,71 @@
+---
+/**
+ * LineDecor Component
+ * -------------------
+ * Decorative absolute line element
+ */
+
+interface Props {
+  /** Posisi absolute (top, left, right, bottom) */
+  top?: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+
+  /** Lebar & tinggi */
+  width?: string;
+  height?: string;
+
+  /** Warna background */
+  color?: string;
+
+  /** Box shadow */
+  shadow?: string;
+
+  /** Z-index */
+  zIndex?: number;
+
+  /** Rotate (optional) */
+  rotate?: string;
+
+  /** Custom class tambahan */
+  className?: string;
+}
+
+const {
+  top,
+  left,
+  right,
+  bottom,
+  width = "120%",
+  height = "2vw",
+  color = "#b1b2b5",
+  shadow = "4px 4px 4px 0px rgba(0,0,0,0.2)",
+  zIndex = 1,
+  rotate,
+  className = ""
+} = Astro.props;
+---
+
+<div
+  class={`line-decor ${className}`}
+  style={`
+    top: ${top ?? "auto"};
+    left: ${left ?? "auto"};
+    right: ${right ?? "auto"};
+    bottom: ${bottom ?? "auto"};
+    width: ${width};
+    height: ${height};
+    background: ${color};
+    box-shadow: ${shadow};
+    z-index: ${zIndex};
+    ${rotate ? `transform: rotate(${rotate});` : ""}
+  `}
+/>
+
+<style>
+.line-decor {
+  position: absolute;
+  pointer-events: none;
+}
+</style>

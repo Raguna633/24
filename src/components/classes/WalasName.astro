@@ -1,0 +1,73 @@
+---
+interface Props {
+  name: string;
+  title: string;
+  className?: string;
+}
+
+const { name, title, className = '' } = Astro.props;
+---
+
+<div class={`signature-card ${className} absolute left-[clamp(14vw,24vw,28vw)]`}>
+  <h3 class="signature-name">{name}</h3>
+  <hr class="signature-divider" aria-hidden="true" />
+  <p class="signature-title">{title}</p>
+</div>
+
+<style>
+  .signature-card {
+    display: inline-flex;
+    flex-direction: column;
+    gap: clamp(0.25rem, 0.5vw, 0.75rem);
+
+    /* FLUID POSITIONING */
+    max-width: max-content;
+    padding-inline: clamp(1rem, 4vw, 4rem);
+
+    pointer-events: none;
+  }
+
+  .signature-name {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: clamp(0.875rem, 0.645rem + 1.4719vw, 3rem);
+    font-weight: 500;
+    line-height: 1.2;
+    color: #000;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .signature-divider {
+    width: 100%;
+    height: clamp(1px, 0.15vw, 2px);
+    background: #000;
+    border: none;
+    margin: 0;
+    box-shadow: clamp(2px, 0.5vw, 4px)
+                 clamp(2px, 0.5vw, 4px)
+                 clamp(2px, 0.5vw, 4px)
+                 rgba(0, 0, 0, 0.2);
+  }
+
+  .signature-title {
+    font-family: 'Noir', 'Georgia', serif;
+    font-size: clamp(0.625rem, 0.368rem + 1.645vw, 3rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: #000;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  @media print {
+    .signature-card {
+      break-inside: avoid;
+    }
+
+    .signature-divider {
+      box-shadow: none;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+  }
+</style>

@@ -1,0 +1,34 @@
+---
+interface Props {
+  paragraphs: string[];   // isi pesan sambutan
+  className?: string;     // opsional positioning dari parent
+}
+
+const { paragraphs, className = '' } = Astro.props;
+---
+
+<div class={`walas-greeting ${className}`}>
+  {paragraphs.map((text) => (
+    <p>{text}</p>
+  ))}
+</div>
+
+<style>
+  .walas-greeting {
+    max-width: clamp(18rem, 45vw, 42rem);
+    font-family: "Poppins", system-ui, sans-serif;
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+    line-height: 1.6;
+    color: #000;
+  }
+
+  .walas-greeting p {
+    margin: 0 0 1rem 0;
+    text-align: justify;
+    text-rendering: geometricPrecision;
+  }
+
+  .walas-greeting p:last-child {
+    margin-bottom: 0;
+  }
+</style>

@@ -1,0 +1,416 @@
+---
+// TerminalCard.astro
+// Clean conversion from Penpot export
+
+interface Props {
+  username?: string;
+  hostname?: string;
+  branch?: string;
+  command?: string;
+  greeting?: string;
+  className?: string;
+}
+
+const {
+  username = "xii-a-pplg",
+  hostname = "BPL",
+  branch = "master",
+  command = "node greetingWalasPPLG.js",
+  greeting = `Assalamu'alaikum Wr. Wb.
+Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. Ya Abnaaiy wa banaaty…. Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain. خري الناس أنفعهم للناس
+Camkan kata-kata ini :
+• "Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
+• "Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
+• "Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita bisa menang"
+Wassalamu'alaikum Wr. Wb.`,
+  className = "jlkjlkjlkjlkj",
+} = Astro.props;
+---
+
+<div class={`terminal-card ${className}`}>
+  {/* Terminal Header */}
+  <div class="terminal-header">
+    {/* Git Icon */}
+    <div class="git-icon" aria-hidden="true">
+      <svg
+        width="31"
+        height="28"
+        viewBox="0 0 31 28"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10.141 12.771L-3.272 0.562c-.371-.338-.874-.528-1.399-.528-.525 0-1.029.19-1.4.528l-2.784 2.536 3.532 3.216c.847-.262 1.784-.063 2.417.513.637.58.854 1.44.558 2.215l3.406 3.1c.851-.27 1.796-.072 2.433.508.441.402.689.947.689 1.515 0 .569-.248 1.113-.689 1.515-.92.837-2.411.837-3.332 0-.673-.612-.874-1.532-.512-2.331l-3.176-2.891v7.608c.68.306 1.157.892 1.28 1.573.123.681-.121 1.375-.658 1.863-.441.402-1.04.628-1.664.628-.624 0-1.223-.226-1.665-.628-.441-.402-.689-.947-.689-1.515 0-.569.248-1.113.689-1.515.22-.201.482-.36.77-.468v-7.678c-.58-.217-1.04-.636-1.28-1.164-.24-.527-.239-1.12.003-1.647l-3.483-3.171-9.197 8.371c-.772.704-.772 1.844 0 2.548l13.414 12.211c.773.702 2.025.702 2.798 0l13.35-12.154c.772-.704.772-1.844 0-2.548"
+          fill="white"
+        />
+      </svg>
+    </div>
+
+    {/* Terminal Title */}
+    <span class="terminal-title" aria-label="Git Bash - Current directory">
+      MINGW64:/c/Users/{username}
+    </span>
+
+    {/* Minimize/Maximize/Close Buttons (decorative) */}
+    <div class="window-controls" aria-hidden="true">
+      <span class="control-btn minimize"></span>
+      <span class="control-btn maximize"></span>
+      <span class="control-btn close"></span>
+    </div>
+  </div>
+
+  {/* Terminal Body */}
+  <div class="terminal-body">
+    {/* Scrollbar */}
+    <div class="scrollbar" aria-hidden="true">
+      <div class="scrollbar-track">
+        <button class="scroll-up" aria-label="Scroll up">▲</button>
+        <div class="scroll-thumb"></div>
+        <button class="scroll-down" aria-label="Scroll down">▼</button>
+      </div>
+    </div>
+
+    {/* Terminal Content */}
+    <div class="terminal-content">
+      {/* Command Prompt */}
+      <div class="prompt-line">
+        <span class="prompt-user">{username}@{hostname}</span>
+        <span class="prompt-mingw">MINGW64</span>
+        <span class="prompt-path">~</span>
+        <span class="prompt-branch">({branch})</span>
+      </div>
+
+      {/* Command Execution */}
+      <div class="command-line">
+        <span class="prompt-symbol">$</span>
+        <span class="command-text">{command}</span>
+      </div>
+
+      {/* Command Output (Greeting Text) */}
+      <div class="output-text">
+        {greeting.split('\n').map((line, index) => (
+          <p key={index}>{line || '\u00A0'}</p>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ==================== TERMINAL CARD ==================== */
+  .terminal-card {
+    position: relative;
+    width: 100%;
+    max-width: 725px;
+    background: #000000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    font-family: 'Inconsolata', 'Consolas', 'Monaco', monospace;
+  }
+
+  /* ==================== TERMINAL HEADER ==================== */
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: #4c4c4c;
+    border-bottom: 1px solid #262626;
+    position: relative;
+  }
+
+  .git-icon {
+    width: 31px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .terminal-title {
+    flex: 1;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  /* Window Controls */
+  .window-controls {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  .control-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .control-btn:hover {
+    opacity: 0.8;
+  }
+
+  .control-btn.minimize {
+    background: #f59e0b;
+  }
+
+  .control-btn.maximize {
+    background: #10b981;
+  }
+
+  .control-btn.close {
+    background: #ef4444;
+  }
+
+  /* ==================== TERMINAL BODY ==================== */
+  .terminal-body {
+    position: relative;
+    background: #000000;
+    min-height: 400px;
+    max-height: 500px;
+  }
+
+  /* Scrollbar */
+  .scrollbar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 22px;
+    background: #262626;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .scrollbar-track {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .scroll-up,
+  .scroll-down {
+    width: 12px;
+    height: 12px;
+    background: transparent;
+    border: none;
+    color: #b1b2b5;
+    font-size: 8px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scroll-up:hover,
+  .scroll-down:hover {
+    color: #ffffff;
+  }
+
+  .scroll-thumb {
+    flex: 1;
+    width: 8px;
+    background: #4c4c4c;
+    margin: 4px 0;
+    border-radius: 4px;
+  }
+
+  /* ==================== TERMINAL CONTENT ==================== */
+  .terminal-content {
+    padding: 16px 20px;
+    padding-right: 42px; /* Space for scrollbar */
+    color: white;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-y: auto;
+    max-height: 500px;
+  }
+
+  /* Prompt Line */
+  .prompt-line {
+    margin-bottom: 4px;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .prompt-user {
+    color: #05b61a; /* Green */
+    font-weight: 400;
+  }
+
+  .prompt-mingw {
+    color: #a105b6; /* Purple */
+    font-weight: 400;
+  }
+
+  .prompt-path {
+    color: #b66d05; /* Orange */
+    font-weight: 400;
+  }
+
+  .prompt-branch {
+    color: #058cb6; /* Cyan */
+    font-weight: 400;
+  }
+
+  /* Command Line */
+  .command-line {
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .prompt-symbol {
+    color: white;
+    font-weight: 300;
+    margin-right: 8px;
+  }
+
+  .command-text {
+    color: white;
+    font-weight: 400;
+  }
+
+  /* Output Text */
+  .output-text {
+    color: white;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: justify;
+  }
+
+  .output-text p {
+    margin: 0 0 1em 0;
+  }
+
+  .output-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 768px) {
+    .terminal-card {
+      max-width: 100%;
+      border-radius: 0; /* Full width on mobile */
+    }
+
+    .terminal-content {
+      padding: 12px 16px;
+      padding-right: 38px;
+      font-size: 12px;
+    }
+
+    .prompt-line,
+    .command-line {
+      font-size: 12px;
+    }
+
+    .output-text {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .terminal-title {
+      font-size: 12px;
+    }
+
+    /* Hide window controls on mobile */
+    .window-controls {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .terminal-content {
+      padding: 10px 12px;
+      padding-right: 34px;
+      font-size: 11px;
+    }
+
+    .git-icon {
+      width: 24px;
+      height: 22px;
+    }
+
+    .terminal-title {
+      font-size: 11px;
+    }
+  }
+
+  /* ==================== ACCESSIBILITY ==================== */
+  /* Focus styles for keyboard navigation */
+  .scroll-up:focus,
+  .scroll-down:focus,
+  .control-btn:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .control-btn,
+    .scroll-up,
+    .scroll-down {
+      transition: none;
+    }
+  }
+
+  /* ==================== PRINT STYLES ==================== */
+  @media print {
+    .terminal-card {
+      box-shadow: none;
+      border: 1px solid #000;
+    }
+
+    .scrollbar,
+    .window-controls {
+      display: none;
+    }
+
+    .terminal-content {
+      padding-right: 20px;
+      max-height: none;
+      overflow: visible;
+    }
+  }
+</style>
+
+<script>
+  // Optional: Add typewriter effect for the output
+  // Uncomment if you want animated text
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const outputElements = document.querySelectorAll('.output-text p');
+    
+    outputElements.forEach((el, index) => {
+      const text = el.textContent || '';
+      el.textContent = '';
+      el.style.opacity = '0';
+      
+      setTimeout(() => {
+        el.style.opacity = '1';
+        let charIndex = 0;
+        
+        const typeInterval = setInterval(() => {
+          if (charIndex < text.length) {
+            el.textContent += text[charIndex];
+            charIndex++;
+          } else {
+            clearInterval(typeInterval);
+          }
+        }, 20); // Adjust speed here
+      }, index * 100); // Stagger each paragraph
+    });
+  });
+
+</script>

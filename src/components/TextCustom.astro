@@ -1,0 +1,120 @@
+---
+interface BaseProps {
+  /** Font family */
+  font?: string;
+
+  /** Custom class tambahan */
+  className?: string;
+
+  /** Line height */
+  lineHeight?: string;
+
+  /** Font size */
+  fontSize?: string;
+
+  /** Text color */
+  color?: string;
+
+  /** Max width text container */
+  maxWidth?: string;
+
+  /** Text align */
+  align?: "left" | "right" | "center" | "justify";
+
+  /** Margin bottom antar paragraf */
+  paragraphSpacing?: string;
+}
+
+interface TextModeProps extends BaseProps {
+  /** Array paragraf */
+  paragraphs: string[];
+  text?: never;
+  mode: "text";
+}
+
+interface CodeModeProps extends BaseProps {
+  text: string;
+  paragraphs?: never;
+  mode: "code";
+}
+
+type Props = TextModeProps | CodeModeProps;
+
+const {
+  paragraphs = [],
+  text = "",
+  mode = "text",
+  font = `"Poppins", system-ui, sans-serif`,
+  className = "",
+  lineHeight = "1.6",
+  fontSize = "clamp(0.875rem, 0.8rem + 0.3vw, 1rem)",
+  color = "#000",
+  maxWidth = "clamp(18rem, 45vw, 42rem)",
+  align = "justify",
+  paragraphSpacing = "1rem",
+} = Astro.props;
+---
+
+{
+  mode === "text" && (
+    <div
+      class={`text-custom ${className}`}
+      style={`
+        --font-family: ${font};
+        --line-height: ${lineHeight};
+        --font-size: ${fontSize};
+        --text-color: ${color};
+        --max-width: ${maxWidth};
+        --text-align: ${align};
+        --paragraph-spacing: ${paragraphSpacing};
+      `}
+    >
+      {paragraphs.map((text) => (
+        <p>{text}</p>
+      ))}
+    </div>
+  )
+}
+
+{
+  mode === "code" && (
+    <pre class={`code-block ${className}`}>
+      <code>{text}</code>
+    </pre>
+  )
+}
+
+<style>
+  .text-custom {
+    max-width: var(--max-width);
+    font-family: var(--font-family);
+    line-height: var(--line-height);
+    font-size: var(--font-size);
+    color: var(--text-color);
+    overflow: visible;
+  }
+
+  .text-custom p {
+    margin: 0 0 var(--paragraph-spacing) 0;
+    text-align: var(--text-align);
+    text-rendering: geometricPrecision;
+  }
+
+  .text-custom p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* CODE MODE */
+  .code-block {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #e5e7eb;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    overflow-x: visible;
+    white-space: pre; /* 🔥 KUNCI UTAMA */
+    pointer-events: none;
+  }
+</style>

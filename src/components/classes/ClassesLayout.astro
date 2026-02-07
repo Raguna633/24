@@ -1,0 +1,26 @@
+---
+---
+
+<div class="page-wrapper">
+  <div class="class-layout-container">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .page-wrapper {
+    min-height: 100vh;
+    background: #f5f0eaff;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+  
+  .class-layout-container {
+    width: 1440px;
+    min-width: 1440px;
+    max-width: 1440px;
+    position: relative;
+    flex-shrink: 0;
+  }
+</style>
