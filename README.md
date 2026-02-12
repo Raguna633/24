@@ -342,40 +342,44 @@ src/
 # URL Structure
 
 ```text
-/                                       → Homepage
-│   ├─ Hero section (Logo angkatan)
-│   ├─ Pengenalan singkat angkatan
-│   ├─ Sambutan Pimpinan
-│   ├─ Sambutan Kepala Kepesantrenan
-│   ├─ Sambutan Kepala Sekolah
-│   ├─ Sambutan Ketua Angkatan
-│   ├─ Sambutan Ketua Panitia Kelulusan
-│   ├─ Navigation menu
-│   └─ CTA buttons
-/about                                  → Tentang Pesantren
-│   ├─ /about/sejarah                   → Sejarah sekolah
-│   ├─ /about/mars                     → Mars sekolah
-│   └─ /about/fasilitas                → Fasilitas
-/classes                                → Kelas & Siswa
-│   ├─ /classes/smk                    → Daftar Kelas SMK
-│   │   └─ /classes/smk/[slug]         → Profil Kelas SMK
-│   │       └─ /classes/smk/[slug]/[student] → Profil Siswa
-│   └─ /classes/sma                    → Daftar Kelas SMA
-│       └─ /classes/sma/[slug]         → Profil Kelas SMA
-/students                                → Daftar semua siswa dari SMA & SMK 
-│   └─ /students/[slug]                  → Profil siswa
-/uniforms                               → Koleksi Seragam
-│   ├─ Seragam Putra
-│   ├─ Seragam Putri
-│   └─ Seragam Khusus
-/memories                               → Dokumentasi
-│   ├─ /memories/gallery               → galeri foto dokumentasi
-│   └─ /memories/school-corners        → Foto Gedung
-/teachers                               → Guru & Staff
-│   ├─ Guru SMK
-│   └─ Guru SMA
-/yearbook-team                          → Tim Panitia
-/privacy-policy                         → Privacy policy
-/terms                                  → Terms of service
-/contact                                → Contact form
+[x]     /                                       → Homepage 
+[ ]     │   ├─ Hero section (Logo angkatan)
+[ ]     │   ├─ Pengenalan singkat angkatan
+[ ]     │   ├─ Sambutan Pimpinan
+[ ]     │   ├─ Sambutan Kepala Kepesantrenan
+[ ]     │   ├─ Sambutan Kepala Sekolah
+[ ]     │   ├─ Sambutan Ketua Angkatan
+[ ]     │   ├─ Sambutan Ketua Panitia Kelulusan
+[ ]     │   ├─ Navigation menu
+[ ]     │   └─ CTA buttons
+[ ]     /about                                  → Tentang Pesantren
+[ ]     │   ├─ /about/altie                   → Sejarah pondok
+[ ]     │   ├─ /about/mars                     → Mars sekolah
+[ ]     │   └─ /about/fasilitas                → Fasilitas
+[ ]     /classes                                → Kelas & Siswa
+[ ]     │   ├─ /classes/smk                    → Daftar Kelas SMK
+[ ]     │   │   └─ /classes/smk/[slug]         → Profil Kelas SMK
+[ ]     │   │       └─ /classes/smk/[slug]/[student] → Profil Siswa
+[ ]     │   └─ /classes/sma                    → Daftar Kelas SMA
+[ ]     │       └─ /classes/sma/[slug]         → Profil Kelas SMA
+[ ]     /students                                → Daftar semua siswa dari SMA & SMK 
+[ ]     │   └─ /students/[slug]                  → Profil siswa
+[ ]     /uniforms                               → Koleksi Seragam
+[ ]     │   ├─ Seragam Putra
+[ ]     │   ├─ Seragam Putri
+[ ]     │   └─ Seragam Khusus
+[ ]     /memories                               → Dokumentasi
+[ ]     │   ├─ /memories/gallery               → galeri foto dokumentasi
+[ ]     │   └─ /memories/school-corners        → Foto Gedung
+[ ]     /teachers                               → Guru & Staff
+[ ]     │   ├─ Guru SMK
+[ ]     │   └─ Guru SMA
+[ ]     /yearbook-team                          → Tim Panitia
+[ ]     /privacy-policy                         → Privacy policy
+[ ]     /terms                                  → Terms of service
+[ ]     /contact                                → Contact form
 ```
+
+# Checklist
+
+[ ] 

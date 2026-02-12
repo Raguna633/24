@@ -7,8 +7,20 @@
 /* Color Palette */
 
 :root {
-  --color-primary: #f5f0eaff;
-  --color-secondary: #3b507d;
+  --color-primary: 245 240 234;
+  /* rgb(245, 240, 234) - beige */
+
+  /* Secondary */
+  --color-secondary: 53 87 162;
+  /* rgb(53, 87, 162) - blue */
+  --color-secondary-muted: 59 80 125;
+  /* rgb(59, 80, 125) - muted blue */
+
+  /* Accent */
+  --color-accent: 42 53 143;
+  /* rgb(42, 53, 143) - purple */
+  --color-accent-dark: 37 30 84;
+  /* rgb(37, 30, 84) - dark purple */
 }
 
 .dark {
