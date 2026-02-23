@@ -24,7 +24,7 @@ const {
 } = Astro.props;
 
 // Format date ke bahasa Indonesia
-const formattedDate = new Intl.DateFormat("id-ID", {
+const formattedDate = new Intl.DateTimeFormat("id-ID", {
   day: "numeric",
   month: "long",
   year: "numeric",

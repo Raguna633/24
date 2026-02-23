@@ -88,8 +88,8 @@ Wassalamu'alaikum Wr. Wb.`,
 
       {/* Command Output (Greeting Text) */}
       <div class="output-text">
-        {greeting.split('\n').map((line, index) => (
-          <p key={index}>{line || '\u00A0'}</p>
+        {greeting.split('\n').map((line) => (
+          <p set:html={line || '\u00A0'} />
         ))}
       </div>
     </div>
@@ -390,7 +390,7 @@ Wassalamu'alaikum Wr. Wb.`,
 
 
   document.addEventListener('DOMContentLoaded', () => {
-    const outputElements = document.querySelectorAll('.output-text p');
+    const outputElements = document.querySelectorAll('.output-text p') as NodeListOf<HTMLElement>;
     
     outputElements.forEach((el, index) => {
       const text = el.textContent || '';
