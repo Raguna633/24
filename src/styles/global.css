@@ -34,6 +34,20 @@
   /* Blue accent */
 }
 
+html {
+  scroll-behavior: auto;
+}
+
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+
 /* ====================================================================
    NUCLEAR OPTION: Force carousel behavior for GreetingSections
    This OVERRIDES all Tailwind classes and component styles
@@ -217,3 +231,26 @@
 /* ====================================================================
    END NUCLEAR OPTION
    ==================================================================== */
+
+.block-line-wrapper {
+  position: relative;
+  width: max-content;
+  display: block;
+  margin: 0 auto;
+}
+
+.block-line {
+  position: relative;
+  display: block;
+}
+
+.block-revealer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 101%;
+  height: 101%;
+  pointer-events: none;
+  will-change: transform;
+  z-index: 1;
+}

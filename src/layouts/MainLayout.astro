@@ -10,6 +10,7 @@ import {
   slide,
 } from 'astro:transitions';
 import Analytics from '@vercel/analytics/astro'
+import { initLenis } from "../scripts/lenis.js";
 
 interface Props {
   title: string;
@@ -301,7 +302,10 @@ const forceDesktopViewData = forceDesktopView;
             `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
           );
           
-          localStorage.setItem('view-mode', 'desktop');
+localStorage.setItem('view-mode', 'desktop');
+          
+          // Dispatch custom event for ScrollTrigger refresh
+          window.dispatchEvent(new CustomEvent('viewModeChange'));
           
           // Update button immediately
           toggleIcon!.textContent = '🖥️';
@@ -316,7 +320,10 @@ const forceDesktopViewData = forceDesktopView;
             'width=device-width, initial-scale=1.0, user-scalable=yes'
           );
           
-          localStorage.setItem('view-mode', 'mobile');
+localStorage.setItem('view-mode', 'mobile');
+          
+          // Dispatch custom event for ScrollTrigger refresh
+          window.dispatchEvent(new CustomEvent('viewModeChange'));
           
           // Update button immediately
           toggleIcon!.textContent = '📱';
@@ -353,7 +360,7 @@ const forceDesktopViewData = forceDesktopView;
       // Add click handler
       toggleButton?.addEventListener('click', toggleViewMode);
 
-      // Update button on orientation change
+// Update button on orientation change
       window.addEventListener('orientationchange', () => {
         setTimeout(() => {
           const mode = getCurrentMode();
@@ -366,6 +373,9 @@ const forceDesktopViewData = forceDesktopView;
             viewport?.setAttribute('content', 
               `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
             );
+            
+            // Dispatch custom event for ScrollTrigger refresh
+            window.dispatchEvent(new CustomEvent('viewModeChange'));
           }
           updateToggleButton();
         }, 300);
@@ -421,6 +431,14 @@ const forceDesktopViewData = forceDesktopView;
           }
         }
       });
+    </script>
+
+    <script type="module">
+      // import { initLenis } from "/src/scripts/lenis.js";
+
+      // window.addEventListener("DOMContentLoaded", () => {
+      //   initLenis();
+      // });
     </script>
 
     <style is:global>

@@ -104,9 +104,9 @@
 // });
 
 // Export collections
-export const collections = {
-    'students': studentsCollection,
+// export const collections = {
+//     'students': studentsCollection,
     // 'memories': memoriesCollection,
     // 'teachers': teachersCollection,
     // 'gallery': galleryCollection,
-};
+// };
