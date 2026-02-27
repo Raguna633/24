@@ -7,16 +7,34 @@ import { glob, file } from 'astro/loaders';
 // 3. Import Zod
 import { z } from 'astro/zod';
 
-// 4. Define your collection(s)
 const students = defineCollection({
-    loader: glob({ pattern: "**/*.mdx", base: "./src/content/students" }),
-    schema: z.object({
-        title: z.string(),
-        description: z.string(),
-        date: z.date(),
-        author: z.string()
-    })
+    schema: ({ image }) =>
+        z.object({
+            name: z.string(),
+            kelas: z.string(),
+            alamat: z.string(),
+            photo: image(),
+            quote: z.string().optional(),
+            instagram: z.string().optional(),
+            jenjang: z.string(),
+            gender: z.string(),
+            password: z.string().optional(),
+        }),
 });
 
-// 5. Export a single `collections` object to register your collection(s)
-export const collections = { students };
+const classes = defineCollection({
+    schema: ({ image }) =>
+        z.object({
+            name: z.string(),
+            heroPhoto: image().array(),
+            walas: z.string(),
+            walasPhoto: image(),
+            walasQuote: z.string(),
+            groupPhoto: image().array(),
+        }),
+});
+
+export const collections = {
+    students,
+    classes,
+};
