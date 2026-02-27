@@ -1,5 +1,6 @@
 ---
 // Floating Header with Advanced Animations
+// FIXED: Compatible dengan Astro View Transitions lifecycle events
 
 // Get current path untuk active state
 const currentPath = Astro.url.pathname;
@@ -139,238 +140,251 @@ function isActive(href: string, currentPath: string): boolean {
 </div>
 
 <script>
-  // Advanced Floating Header Behavior
-  document.addEventListener("DOMContentLoaded", () => {
+  // =================================================================
+  // PENTING: Fungsi initHeader membungkus SEMUA logika navigasi.
+  //
+  // Kenapa dibungkus dalam fungsi?
+  // - Dengan Astro View Transitions, halaman tidak di-reload sepenuhnya
+  //   saat navigasi. DOM di-swap sebagian oleh Astro.
+  // - Event 'DOMContentLoaded' hanya terpanggil SEKALI saat pertama load.
+  // - Kita perlu me-reinisialisasi event listeners setiap kali Astro
+  //   selesai mengganti konten halaman.
+  // - Solusi: bungkus dalam fungsi, lalu panggil via dua event:
+  //     1. 'astro:page-load'  → terpanggil setiap kali halaman selesai dimuat
+  //     2. 'DOMContentLoaded' → fallback jika View Transitions tidak aktif
+  // =================================================================
+
+  function initHeader() {
+    // --- Ambil elemen dari DOM ---
     const logoButton = document.getElementById("logo-button");
     const desktopNav = document.getElementById("desktop-nav");
     const mobileNav = document.getElementById("mobile-nav");
     const mobileOverlay = document.getElementById("mobile-overlay");
 
+    // Guard: jika elemen tidak ditemukan, hentikan eksekusi
+    // (bisa terjadi jika komponen ini tidak ada di halaman tertentu)
+    if (!logoButton || !desktopNav || !mobileNav || !mobileOverlay) return;
+
+    // --- State internal ---
     let isLogoVisible = false;
     let isDesktopNavVisible = false;
     let isDesktopNavHovered = false;
     let isMobileNavVisible = false;
 
-    // Scroll detection for logo visibility
+    // =================================================================
+    // PENTING: Bersihkan event listener lama sebelum menambahkan yang baru.
+    //
+    // Kenapa perlu dibersihkan?
+    // - Setiap kali 'astro:page-load' terpanggil, initHeader() dijalankan.
+    // - Tanpa cleanup, event listener akan menumpuk (double, triple, dst).
+    // - Cara termudah: kloning elemen untuk menghapus semua listener lama.
+    //   cloneNode(true) menyalin elemen beserta child-nya tapi TANPA listeners.
+    // =================================================================
+    const cleanLogoButton = logoButton.cloneNode(true) as HTMLButtonElement;
+    logoButton.parentNode?.replaceChild(cleanLogoButton, logoButton);
+
+    // Gunakan referensi baru setelah kloning
+    const btn = cleanLogoButton;
+
+    // =================================================================
+    // PENTING: Cleanup scroll listener dari sesi sebelumnya.
+    //
+    // Karena kita tidak bisa removeEventListener tanpa referensi fungsi aslinya,
+    // kita simpan referensi fungsi di properti elemen window menggunakan
+    // custom property. Sebelum menambahkan listener baru, hapus yang lama.
+    // =================================================================
+    if ((window as any)._headerScrollHandler) {
+      window.removeEventListener("scroll", (window as any)._headerScrollHandler);
+    }
+    if ((window as any)._headerKeydownHandler) {
+      document.removeEventListener("keydown", (window as any)._headerKeydownHandler);
+    }
+    if ((window as any)._headerClickHandler) {
+      document.removeEventListener("click", (window as any)._headerClickHandler);
+    }
+    if ((window as any)._headerResizeHandler) {
+      window.removeEventListener("resize", (window as any)._headerResizeHandler);
+    }
+
+    // ========================
+    // FUNGSI-FUNGSI HELPER
+    // ========================
+
+    // Tampilkan/sembunyikan logo saat scroll
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const shouldShowLogo = scrollTop > 100; // Show after 100px scroll
+      const shouldShowLogo = window.scrollY > 100;
 
       if (shouldShowLogo !== isLogoVisible) {
         isLogoVisible = shouldShowLogo;
-
-        if (logoButton) {
-          if (shouldShowLogo) {
-            // Show logo with scale animation
-            logoButton.classList.remove("opacity-0", "scale-0");
-            logoButton.classList.add("opacity-100", "scale-100");
-          } else {
-            // Hide logo
-            logoButton.classList.remove("opacity-100", "scale-100");
-            logoButton.classList.add("opacity-0", "scale-0");
-          }
-        }
-      }
-    };
-
-    // Desktop nav toggle (from logo click)
-    const toggleDesktopNav = () => {
-      if (window.innerWidth >= 768) {
-        // Desktop only
-        isDesktopNavVisible = !isDesktopNavVisible;
-
-        if (desktopNav) {
-          if (isDesktopNavVisible) {
-            // Show desktop nav
-            desktopNav.classList.remove(
-              "hidden",
-              "opacity-0",
-              "translate-x-[-20px]",
-              "pointer-events-none"
-            );
-            desktopNav.classList.add(
-              "opacity-100",
-              "translate-x-0",
-              "pointer-events-auto"
-            );
-          } else {
-            // Hide desktop nav
-            desktopNav.classList.remove(
-              "opacity-100",
-              "translate-x-0",
-              "pointer-events-auto"
-            );
-            desktopNav.classList.add(
-              "opacity-0",
-              "translate-x-[-20px]",
-              "pointer-events-none"
-            );
-
-            // Remove focus ring when nav closes
-            logoButton?.blur();
-          }
-        }
-      }
-    };
-
-    // Mobile nav toggle
-    const toggleMobileNav = () => {
-      if (window.innerWidth < 768) {
-        // Mobile only
-        isMobileNavVisible = !isMobileNavVisible;
-
-        if (mobileNav && mobileOverlay) {
-          if (isMobileNavVisible) {
-            // Show mobile nav
-            mobileNav.classList.remove(
-              "hidden",
-              "opacity-0",
-              "translate-y-[-20px]",
-              "pointer-events-none"
-            );
-            mobileNav.classList.add(
-              "opacity-100",
-              "translate-y-0",
-              "pointer-events-auto"
-            );
-            mobileOverlay.classList.remove("hidden");
-          } else {
-            // Hide mobile nav
-            mobileNav.classList.remove(
-              "opacity-100",
-              "translate-y-0",
-              "pointer-events-auto"
-            );
-            mobileNav.classList.add(
-              "opacity-0",
-              "translate-y-[-20px]",
-              "pointer-events-none"
-            );
-            mobileOverlay.classList.add("hidden");
-
-            logoButton?.blur(); 
-
-            // Restore body scroll
-            document.body.style.overflow = "";
-          }
-        }
-      }
-    };
-
-    // Separate hover logic for desktop
-    const showDesktopNavOnHover = () => {
-      if (window.innerWidth >= 768 && !isDesktopNavVisible) {
-        isDesktopNavHovered = true;
-        if (desktopNav) {
-          desktopNav.classList.remove(
-            "hidden",
-            "opacity-0",
-            "translate-x-[-20px]",
-            "pointer-events-none"
-          );
-          desktopNav.classList.add(
-            "opacity-100",
-            "translate-x-0",
-            "pointer-events-auto"
-          );
-        }
-      }
-    };
-
-    const hideDesktopNavOnLeave = () => {
-      if (window.innerWidth >= 768 && !isDesktopNavVisible) {
-        // Only hide if not clicked (persistent)
-        setTimeout(() => {
-          if (!desktopNav?.matches(":hover") && isDesktopNavHovered) {
-            isDesktopNavHovered = false;
-            if (desktopNav) {
-              desktopNav.classList.remove(
-                "opacity-100",
-                "translate-x-0",
-                "pointer-events-auto"
-              );
-              desktopNav.classList.add(
-                "opacity-0",
-                "translate-x-[-20px]",
-                "pointer-events-none"
-              );
-            }
-          }
-        }, 100);
-      }
-    };
-
-    // Event listeners
-    if (logoButton) {
-      // Desktop hover behavior (separate from click)
-      logoButton.addEventListener("mouseenter", showDesktopNavOnHover);
-      logoButton.addEventListener("mouseleave", hideDesktopNavOnLeave);
-
-      // Logo click for both desktop and mobile
-      logoButton.addEventListener("click", () => {
-        if (window.innerWidth >= 768) {
-          toggleDesktopNav();
+        if (shouldShowLogo) {
+          btn.classList.remove("opacity-0", "scale-0");
+          btn.classList.add("opacity-100", "scale-100");
         } else {
-          toggleMobileNav();
-        }
-      });
-    }
-
-    // Mobile overlay click to close
-    if (mobileOverlay) {
-      mobileOverlay.addEventListener("click", toggleMobileNav);
-    }
-
-    // Auto-close mobile nav when clicking outside
-    document.addEventListener("click", (event) => {
-      if (isDesktopNavVisible || isMobileNavVisible) {
-        const target = event.target as Element;
-        const isClickInsideLogo = logoButton?.contains(target);
-        const isClickInsideMobileNav = mobileNav?.contains(target);
-        const isClickOnOverlay = mobileOverlay?.contains(target);
-
-        // Close if click is outside logo and mobile nav area
-        if (!isClickInsideLogo) {
-          toggleMobileNav();
-          toggleDesktopNav();
+          btn.classList.remove("opacity-100", "scale-100");
+          btn.classList.add("opacity-0", "scale-0");
         }
       }
-    });
+    };
 
-    // Close on escape
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-        if (isDesktopNavVisible) toggleDesktopNav();
-        if (isMobileNavVisible) toggleMobileNav();
+    // Toggle desktop navigation (untuk klik)
+    const toggleDesktopNav = () => {
+      if (window.innerWidth < 768) return;
+
+      isDesktopNavVisible = !isDesktopNavVisible;
+
+      if (isDesktopNavVisible) {
+        desktopNav.classList.remove(
+          "hidden", "opacity-0", "translate-x-[-20px]", "pointer-events-none"
+        );
+        desktopNav.classList.add("opacity-100", "translate-x-0", "pointer-events-auto");
+      } else {
+        desktopNav.classList.remove("opacity-100", "translate-x-0", "pointer-events-auto");
+        desktopNav.classList.add(
+          "opacity-0", "translate-x-[-20px]", "pointer-events-none"
+        );
+        btn.blur();
       }
-    });
+    };
 
-    // Close mobile nav on resize to desktop
-    window.addEventListener("resize", () => {
-      if (window.innerWidth >= 768 && isMobileNavVisible) {
+    // Toggle mobile navigation
+    const toggleMobileNav = () => {
+      if (window.innerWidth >= 768) return;
+
+      isMobileNavVisible = !isMobileNavVisible;
+
+      if (isMobileNavVisible) {
+        mobileNav.classList.remove(
+          "hidden", "opacity-0", "translate-y-[-20px]", "pointer-events-none"
+        );
+        mobileNav.classList.add("opacity-100", "translate-y-0", "pointer-events-auto");
+        mobileOverlay.classList.remove("hidden");
+      } else {
+        mobileNav.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
+        mobileNav.classList.add(
+          "opacity-0", "translate-y-[-20px]", "pointer-events-none"
+        );
+        mobileOverlay.classList.add("hidden");
+        btn.blur();
+        document.body.style.overflow = "";
+      }
+    };
+
+    // Tampilkan desktop nav saat hover (sebelum diklik)
+    const showDesktopNavOnHover = () => {
+      if (window.innerWidth < 768 || isDesktopNavVisible) return;
+      isDesktopNavHovered = true;
+      desktopNav.classList.remove(
+        "hidden", "opacity-0", "translate-x-[-20px]", "pointer-events-none"
+      );
+      desktopNav.classList.add("opacity-100", "translate-x-0", "pointer-events-auto");
+    };
+
+    // Sembunyikan desktop nav saat mouse pergi (jika belum diklik/persistent)
+    const hideDesktopNavOnLeave = () => {
+      if (window.innerWidth < 768 || isDesktopNavVisible) return;
+      setTimeout(() => {
+        if (!desktopNav.matches(":hover") && isDesktopNavHovered) {
+          isDesktopNavHovered = false;
+          desktopNav.classList.remove("opacity-100", "translate-x-0", "pointer-events-auto");
+          desktopNav.classList.add(
+            "opacity-0", "translate-x-[-20px]", "pointer-events-none"
+          );
+        }
+      }, 100);
+    };
+
+    // ========================
+    // DAFTARKAN EVENT LISTENERS
+    // ========================
+
+    // Hover behavior pada logo (desktop only)
+    btn.addEventListener("mouseenter", showDesktopNavOnHover);
+    btn.addEventListener("mouseleave", hideDesktopNavOnLeave);
+
+    // Klik logo: buka/tutup nav sesuai viewport
+    btn.addEventListener("click", () => {
+      if (window.innerWidth >= 768) {
+        toggleDesktopNav();
+      } else {
         toggleMobileNav();
       }
     });
 
-    // Scroll listener
+    // Klik overlay untuk menutup mobile nav
+    mobileOverlay.addEventListener("click", toggleMobileNav);
+
+    // Tutup dengan tombol Escape
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        if (isDesktopNavVisible) toggleDesktopNav();
+        if (isMobileNavVisible) toggleMobileNav();
+      }
+    };
+
+    // Tutup mobile nav saat resize ke desktop
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isMobileNavVisible) {
+        toggleMobileNav();
+      }
+    };
+
+    // Tutup nav saat klik di luar area header
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!isDesktopNavVisible && !isMobileNavVisible) return;
+
+      const target = event.target as Element;
+      const isInsideBtn = btn.contains(target);
+      const isInsideMobileNav = mobileNav.contains(target);
+
+      if (!isInsideBtn && !isInsideMobileNav) {
+        if (isDesktopNavVisible) toggleDesktopNav();
+        if (isMobileNavVisible) toggleMobileNav();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+    document.addEventListener("click", handleClickOutside);
+    window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll, { passive: true });
-  });
+
+    // Simpan referensi agar bisa di-cleanup pada sesi berikutnya
+    (window as any)._headerScrollHandler = handleScroll;
+    (window as any)._headerKeydownHandler = handleKeydown;
+    (window as any)._headerClickHandler = handleClickOutside;
+    (window as any)._headerResizeHandler = handleResize;
+  }
+
+  // =================================================================
+  // TITIK MASUK UTAMA
+  //
+  // Kita mendengarkan DUA event:
+  //
+  // 1. 'astro:page-load'
+  //    → Event khusus Astro yang terpanggil setiap kali halaman selesai
+  //      dimuat, baik saat pertama kali maupun setelah navigasi
+  //      View Transitions. INI adalah cara yang benar untuk Astro.
+  //
+  // 2. 'DOMContentLoaded'
+  //    → Fallback standar browser. Terpanggil saat pertama load jika
+  //      View Transitions belum aktif atau script dimuat sebelum
+  //      'astro:page-load' sempat terdaftar.
+  //
+  // Dengan mendaftar keduanya, kode ini aman di semua kondisi.
+  // =================================================================
+  document.addEventListener("astro:page-load", initHeader);
+  document.addEventListener("DOMContentLoaded", initHeader);
 </script>
 
 <style>
-  /* Floating header custom styles */
   #floating-header {
-    /* Ensure proper stacking */
     will-change: transform;
   }
 
   #desktop-nav a {
-    /* Stagger animation */
     animation: slideInRight 0.3s ease-out both;
   }
 
   #mobile-nav a {
-    /* Stagger animation */
     animation: slideInUp 0.3s ease-out both;
   }
 
