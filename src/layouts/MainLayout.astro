@@ -9,8 +9,8 @@ import {
   fade,
   slide,
 } from 'astro:transitions';
+import Loading from '../components/Loading.astro';
 import Analytics from '@vercel/analytics/astro'
-import { initLenis } from "../scripts/lenis.js";
 
 interface Props {
   title: string;
@@ -126,6 +126,12 @@ const forceDesktopViewData = forceDesktopView;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://res.cloudinary.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Michroma&display=block"
+    />
     
     <!-- Theme color -->
     <meta name="theme-color" content="#3b82f6" />
@@ -157,6 +163,8 @@ const forceDesktopViewData = forceDesktopView;
     
     <!-- Header -->
     <Header />
+
+    <Loading />
     
     <!-- Main content -->
     <main id="main-content" class="">
@@ -431,14 +439,6 @@ localStorage.setItem('view-mode', 'mobile');
           }
         }
       });
-    </script>
-
-    <script type="module">
-      // import { initLenis } from "/src/scripts/lenis.js";
-
-      // window.addEventListener("DOMContentLoaded", () => {
-      //   initLenis();
-      // });
     </script>
 
     <style is:global>
