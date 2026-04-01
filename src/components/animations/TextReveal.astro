@@ -1,0 +1,124 @@
+---
+interface Props {
+  delay?: number;
+  duration?: number;
+  stagger?: number;
+  animateOnScroll?: boolean;
+}
+
+const { 
+  delay = 0, 
+  duration = 1.8, 
+  stagger = 0.15,
+  animateOnScroll = true 
+} = Astro.props;
+---
+
+<div 
+  class="line-reveal-wrapper opacity-0 pointer-events-none" 
+  data-line-reveal 
+  data-delay={delay} 
+  data-duration={duration} 
+  data-stagger={stagger} 
+  data-scroll={animateOnScroll ? 'true' : 'false'}
+>
+  <slot />
+</div>
+
+<style is:global>
+  /* Styling required for GSAP SplitText line reveal mechanics (Masking) */
+  .block-line-wrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden; /* This masks the sliding text */
+    vertical-align: top;
+  }
+  .split-line-inner {
+    display: inline-block;
+    will-change: transform;
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { SplitText } from "gsap/SplitText";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../../utils/loadingState";
+
+  const initLineReveal = async () => {
+    gsap.registerPlugin(SplitText, ScrollTrigger);
+
+    const wrappers = document.querySelectorAll('[data-line-reveal]:not(.is-initialized)');
+    if (wrappers.length === 0) return;
+
+    // Workflow 03: The Gatekeeper (waitForLoading)
+    // Ensures entrance animations wait for the Global Loading overlay to complete
+    await waitForLoading();
+
+    wrappers.forEach((wrapper) => {
+      wrapper.classList.add('is-initialized');
+      
+      // Make it visible and interactable as the animation is ready to take over
+      wrapper.classList.remove('opacity-0', 'pointer-events-none');
+
+      const delay = parseFloat(wrapper.getAttribute('data-delay') || "0");
+      const duration = parseFloat(wrapper.getAttribute('data-duration') || "1.2");
+      const stagger = parseFloat(wrapper.getAttribute('data-stagger') || "0.15");
+      const animateOnScroll = wrapper.getAttribute('data-scroll') === 'true';
+
+      // Split the text into lines
+      const split = new SplitText(wrapper, {
+        type: "lines",
+        linesClass: "split-line-inner" // Class assigned directly to the text chunks
+      });
+
+      const lineElements: Element[] = [];
+
+      split.lines.forEach((line) => {
+        // Create the masking wrapper for each line (overflow: hidden)
+        const lineWrapper = document.createElement("div");
+        lineWrapper.className = "block-line-wrapper";
+        if (line.parentNode) {
+          line.parentNode.insertBefore(lineWrapper, line);
+          lineWrapper.appendChild(line);
+        }
+        lineElements.push(line);
+      });
+
+      // Workflow 03: Preparation
+      // Set initial state: text pushed down 100% of its height, hidden by parent's overflow:hidden
+      gsap.set(lineElements, { y: "150%", autoAlpha: 0 });
+
+      const createAnimation = () => {
+        return gsap.to(lineElements, { 
+          y: "0%", 
+          autoAlpha: 1, // Opacity kicks in early while it slides up
+          duration: duration, 
+          stagger: stagger,
+          delay: delay,
+          ease: "power4.out",
+          paused: true // Return paused so ScrollTrigger can trigger it
+        });
+      };
+
+      if (animateOnScroll) {
+        // Workflow 02: Scroll Animations for Below-The-Fold Elements
+        const anim = createAnimation();
+        
+        ScrollTrigger.create({
+          trigger: wrapper,
+          start: "top 85%", // Start when top of element hits 85% viewport
+          once: true,
+          onEnter: () => anim.play()
+        });
+      } else {
+        // Immediate animation (often for Hero Sections that awaited the Global Loading)
+        const anim = createAnimation();
+        anim.play(); // Play immediately since waitforLoading was naturally satisfied
+      }
+    });
+  };
+
+  // Workflow 02: Initialization precisely bound to Astro view transitions
+  document.addEventListener("astro:page-load", initLineReveal);
+</script>
