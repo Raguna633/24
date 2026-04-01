@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { waitForLoading } from "../utils/loadingState";
 
 gsap.registerPlugin(SplitText, ScrollTrigger);
 
@@ -96,31 +97,38 @@ export default function Copy({
                 return tl;
             };
 
-            if (animateOnScroll) {
-                blocks.current.forEach((block, index) => {
-                    const tl = createBlockRevealAnimation(
-                        block,
-                        lines.current[index],
-                        index
-                    );
-                    tl.pause();
+            // Unified trigger logic that waits for loading
+            const runAnimations = async () => {
+                await waitForLoading();
 
-                    ScrollTrigger.create({
-                        trigger: containerRef.current,
-                        start: "top 90%",
-                        once: true,
-                        onEnter: () => tl.play(),
+                if (animateOnScroll) {
+                    blocks.current.forEach((block, index) => {
+                        const tl = createBlockRevealAnimation(
+                            block,
+                            lines.current[index],
+                            index
+                        );
+                        tl.pause();
+
+                        ScrollTrigger.create({
+                            trigger: containerRef.current,
+                            start: "top 90%",
+                            once: true,
+                            onEnter: () => tl.play(),
+                        });
                     });
-                });
-            } else {
-                blocks.current.forEach((block, index) => {
-                    createBlockRevealAnimation(
-                        block,
-                        lines.current[index],
-                        index,
-                    );
-                });
-            }
+                } else {
+                    blocks.current.forEach((block, index) => {
+                        createBlockRevealAnimation(
+                            block,
+                            lines.current[index],
+                            index,
+                        );
+                    });
+                }
+            };
+
+            runAnimations();
 
             return () => {
                 splitRefs.current.forEach((split) => split?.revert());
