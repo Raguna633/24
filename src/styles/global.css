@@ -250,13 +250,13 @@ html.lenis {
 
 .block-line-wrapper {
   position: relative;
-  display: inline-block;
+  display: block;
   /* Dihapus width max-content dan margin auto agar align teks (kiri, kanan, justify) bisa kembali natural sesuai settingan parent */
 }
 
 .block-line {
   position: relative;
-  display: inline-block; /* Inline-block agar siluet revealer menempel pas seukuran teks tanpa meluber */
+  display: block; /* Inline-block agar siluet revealer menempel pas seukuran teks tanpa meluber */
 }
 
 .block-revealer {

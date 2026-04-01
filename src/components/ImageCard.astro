@@ -1,11 +1,13 @@
 ---
-// ImageCard.astro - Reusable Image Grid Component
-// Supports configurable grid layouts with special alignment options
+// ImageCard.astro - Reusable Image Grid Component (Flexbox Version)
+// Supports flexible layouts with elegant centering for premium storytelling
 
-import Image from "astro/components/Image.astro";
+import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
+import Copy from "../components/Copy.jsx"
 
 interface ImageData {
+  id?: string;
   img: ImageMetadata;
   alt: string;
   title?: string;
@@ -13,9 +15,7 @@ interface ImageData {
 
 interface Props {
   images: ImageData[];
-  gridCols?: number;
-  gridRows?: number;
-  lastRowAlignment?: 'center' | 'space-between' | 'normal';
+  gridCols?: number; // Kept for API compatibility, used as basis
   imageWidth?: number;
   imageHeight?: number;
   gap?: string;
@@ -24,114 +24,91 @@ interface Props {
 
 const {
   images,
-  gridCols = 5,
-  gridRows, // Now optional - will be calculated automatically
-  lastRowAlignment = 'center',
+  gridCols = 4,
   imageWidth = 480,
   imageHeight = 480,
-  gap = 'gap-6',
-  className = '',
+  gap = "gap-y-12 gap-x-6",
+  className = "",
 } = Astro.props;
 
-// Calculate grid layout dynamically
-const calculatedGridRows = gridRows || Math.ceil(images.length / gridCols);
-const totalCells = gridCols * calculatedGridRows;
-const lastRowStartIndex = (calculatedGridRows - 1) * gridCols;
-const lastRowImages = images.slice(lastRowStartIndex).filter(Boolean); // Get all remaining images for last row
-const regularImages = images.slice(0, lastRowStartIndex);
+// Determine dynamic width classes based on gridCols
+// We use basis-[calc(...)] to account for the gaps so they don't cause wrapping prematurely
+// gridCols 4 (default): 2 per row on mobile (basis-[calc(50%-1rem)]), 4 per row on desktop (lg:basis-[calc(25%-1.5rem)])
+const itemWidthClass = gridCols === 5 
+  ? "basis-[calc(50%-1rem)] md:basis-[calc(33.333%-1rem)] lg:basis-[calc(20%-1.25rem)]" 
+  : "basis-[calc(50%-1rem)] md:basis-[calc(33.333%-1rem)] lg:basis-[calc(25%-1.25rem)]";
 ---
 
-<div class={`grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 ${className}`}>
-  <!-- Regular grid items (first 3 rows = 15 items) -->
-  {regularImages.map((image) => (
-    <div class="flex flex-col items-center justify-center">
-      <Image
-        src={image.img}
-        alt={image.alt}
-        width={imageWidth}
-        height={imageHeight}
-        class="rounded-lg object-cover w-full max-w-[200px] aspect-square"
-        loading="lazy"
-      />
-      {image.title && (
-        <p class="text-center mt-2 text-xs md:text-sm font-medium text-gray-700">
-          {image.title}
-        </p>
-      )}
-    </div>
-  ))}
-
-  <!-- Last row with special alignment -->
-  {lastRowAlignment === 'center' && lastRowImages.length > 0 && (
-    <div class={`col-span-2 md:col-span-4 flex justify-center gap-4 md:gap-6 ${lastRowImages.length === 1 ? 'md:justify-center' : lastRowImages.length === 2 ? 'md:justify-center' : 'md:justify-start'}`}>
-      {lastRowImages.map((image) => (
-        <div class="flex flex-col items-center justify-center">
-          <Image
-            src={image.img}
-            alt={image.alt}
-            width={imageWidth}
-            height={imageHeight}
-            class="rounded-lg object-cover w-full max-w-[200px] aspect-square"
-            loading="lazy"
-          />
-          {image.title && (
-            <p class="text-center mt-2 text-xs md:text-sm font-medium text-gray-700">
-              {image.title}
-            </p>
-          )}
-        </div>
-      ))}
-    </div>
-  )}
-
-  {lastRowAlignment === 'space-between' && lastRowImages.length > 0 && (
-    <div class="col-span-2 md:col-span-4 flex md:justify-between items-center justify-center gap-4 md:gap-6">
-      {lastRowImages.map((image, index) => (
-        <div class="flex flex-col items-center justify-center">
-          <Image
-            src={image.img}
-            alt={image.alt}
-            width={imageWidth}
-            height={imageHeight}
-            class="rounded-lg object-cover w-full max-w-[200px] aspect-square"
-            loading="lazy"
-          />
-          {image.title && (
-            <p class="text-center mt-2 text-xs md:text-sm font-medium text-gray-700">
-              {image.title}
-            </p>
-          )}
-        </div>
-      ))}
-    </div>
-  )}
-
-  {lastRowAlignment === 'normal' && lastRowImages.length > 0 && (
-    <div class="col-span-2 md:col-span-4 flex flex-wrap justify-start gap-4 md:gap-6">
-      {lastRowImages.map((image) => (
-        <div class="flex flex-col justify-center">
-          <Image
-            src={image.img}
-            alt={image.alt}
-            width={imageWidth}
-            height={imageHeight}
-            class="rounded-lg object-cover w-full max-w-[200px] aspect-square"
-            loading="lazy"
-          />
-          {image.title && (
-            <p class="text-center mt-2 text-xs md:text-sm font-medium text-gray-700">
-              {image.title}
-            </p>
-          )}
-        </div>
-      ))}
-    </div>
-  )}
+<div class={`flex flex-wrap justify-center items-start ${gap} ${className}`}>
+  {
+    images.map((image) => (
+      <div 
+        class={`flex flex-col items-center justify-center scroll-animate px-2 ${itemWidthClass}`} 
+        data-animate-scroll="true"
+      >
+        {image.id ? (
+          <button 
+            class="w-full text-center group appearance-none focus:outline-none cursor-pointer" 
+            data-gallery-id={image.id} 
+            aria-label={`View ${image.title || image.alt}`}
+          >
+            <div class="relative overflow-hidden rounded-lg mx-auto max-w-[240px]">
+              <Image
+                src={image.img}
+                alt={image.alt}
+                width={imageWidth}
+                height={imageHeight}
+                widths={[240, 480, 800]}
+                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
+                class="object-cover w-full aspect-photo transition-transform duration-700 ease-out group-hover:scale-110"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+            
+            {image.title && (
+              <div class="mt-4 text-xs md:text-sm font-medium text-gray-700 transition-colors duration-300 group-hover:text-primary">
+                <Copy client:visible blockColor="#3557A2">{image.title}</Copy>
+              </div>
+            )}
+          </button>
+        ) : (
+          <div class="w-full text-center">
+            <div class="relative overflow-hidden rounded-lg mx-auto max-w-[240px]">
+              <Image
+                src={image.img}
+                alt={image.alt}
+                width={imageWidth}
+                height={imageHeight}
+                widths={[240, 480, 800]}
+                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 20vw"
+                class="object-cover w-full aspect-photo"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            {image.title && (
+              <div class="mt-4 text-xs md:text-sm font-medium text-gray-700">
+                <Copy client:visible blockColor="#3557A2">{image.title}</Copy>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    ))
+  }
 </div>
 
 <style>
-  /* Ensure consistent aspect ratios */
-  .aspect-square {
-    aspect-ratio: 1 / 1.1;
+  /* Ensure consistent aspect ratios for premium look (3:4) */
+  .aspect-photo {
+    aspect-ratio: 3 / 4;
+  }
+  
+  /* Prevent layout jump when loading */
+  .scroll-animate {
+    opacity: 0;
+    will-change: transform, opacity;
   }
 </style>
