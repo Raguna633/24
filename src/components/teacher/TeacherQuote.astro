@@ -1,0 +1,188 @@
+---
+import TextReveal from "../animations/TextReveal.astro";
+
+interface Props {
+  quote: string;
+  label?: string;
+  isHero?: boolean;
+  isMid?: boolean;
+  isBottom?: boolean;
+}
+
+const {
+  quote,
+  label,
+  isHero = false,
+  isMid = false,
+  isBottom = false,
+} = Astro.props;
+---
+
+<section
+  class={`max-w-screen mx-auto px-8 text-center overflow-hidden min-h-screen flex flex-col justify-center ${isMid ? "bg-[#f2ede7]" : ""} ${isBottom ? "border-t border-[#c4c6d3]/20" : ""}`}
+  id={isHero
+    ? "hero-quote-section"
+    : isMid
+      ? "mid-quote-section"
+      : "bottom-quote-section"}
+>
+  {
+    label && (
+      <div class="text-sm font-sans uppercase tracking-[0.2em] text-[#495e8c] mb-8 relative inline-block mx-auto">
+        <TextReveal animateOnScroll={!isHero} duration={1}>
+          {label}
+        </TextReveal>
+        {/* Hand-drawn Underline SVG */}
+        <svg
+          class="absolute -bottom-2 left-0 w-full h-2 overflow-visible"
+          viewBox="0 0 100 10"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,5 Q25,0 50,5 T100,5"
+            fill="none"
+            stroke="#183f89"
+            stroke-width="2"
+            stroke-linecap="round"
+            class="quote-underline-path opacity-30"
+            style="stroke-dasharray: 100; stroke-dashoffset: 100;"
+          />
+        </svg>
+      </div>
+    )
+  }
+
+  {
+    isHero ? (
+      <h1
+        class="text-5xl md:text-7xl font-sans font-extrabold text-[#183f89] leading-tight max-w-5xl mx-auto italic"
+        data-quote-parallax="hero"
+      >
+        <TextReveal
+          animateOnScroll={false}
+          duration={1.5}
+          stagger={0.2}
+          delay={0.2}
+        >
+          {quote}
+        </TextReveal>
+      </h1>
+    ) : isMid ? (
+      <h2
+        class="text-4xl md:text-6xl font-sans font-light text-[#495e8c] leading-snug max-w-4xl mx-auto"
+        data-quote-parallax="mid"
+      >
+        <TextReveal animateOnScroll={true} duration={1.5} stagger={0.15}>
+          <Fragment
+            set:html={quote.replace(
+              "art of assisting discovery",
+              '<span class="font-bold text-[#183f89] italic">art of assisting discovery</span>',
+            )}
+          />
+        </TextReveal>
+      </h2>
+    ) : (
+      <h2
+        class="text-5xl md:text-7xl font-sans font-bold text-[#2A358F] leading-tight max-w-4xl mx-auto tracking-tight"
+        data-quote-parallax="bottom"
+      >
+        <TextReveal animateOnScroll={true} duration={1.5} stagger={0.2}>
+          <Fragment
+            set:html={quote.replace(
+              "lighting of a fire",
+              '<span class="italic text-[#3557a2]">lighting of a fire</span>',
+            )}
+          />
+        </TextReveal>
+      </h2>
+    )
+  }
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  const initQuoteParallax = () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Workflow 02: Editorial Quote Parallax
+    // Targeting the containers (h1/h2) which are independent of TextReveal's inner line animations
+
+    // 1. Hero Quote Parallax (Heavy/Delayed feel)
+    const heroQuote = document.querySelector('[data-quote-parallax="hero"]');
+    if (heroQuote) {
+      gsap.to(heroQuote, {
+        y: 80, // Moves down slowly as we scroll down
+        ease: "none",
+        scrollTrigger: {
+          trigger: heroQuote,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    }
+
+    // 2. Mid Quote Parallax (Counter-movement)
+    const midQuotes = document.querySelectorAll('[data-quote-parallax="mid"]');
+    midQuotes.forEach((quote) => {
+      gsap.to(quote, {
+        y: -100,
+        ease: "none",
+        scrollTrigger: {
+          trigger: quote,
+          start: "top 60%", // Start later to ensure user is focused on the section
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    });
+
+    // 3. Bottom Quote Parallax (Upward Drift)
+    const bottomQuotes = document.querySelectorAll(
+      '[data-quote-parallax="bottom"]',
+    );
+    bottomQuotes.forEach((quote) => {
+      gsap.to(quote, {
+        y: -60,
+        ease: "none",
+        scrollTrigger: {
+          trigger: quote,
+          start: "top 70%", // Late entry drift
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    });
+    // 4. SVG Underline Drawing
+    const underlines = document.querySelectorAll(".quote-underline-path");
+    underlines.forEach((path) => {
+      gsap.to(path, {
+        strokeDashoffset: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: path,
+          start: "top 90%", // Start drawing when label enters
+          end: "bottom 70%",
+          scrub: 1, // Smooth "drawing" feel
+        },
+      });
+    });
+  };
+
+  // Bind to Astro View Transitions
+  document.addEventListener("astro:page-load", initQuoteParallax);
+
+  // Cleanup
+  document.addEventListener("astro:before-swap", () => {
+    ScrollTrigger.getAll().forEach((t) => {
+      if (
+        t.trigger &&
+        (t.trigger as HTMLElement).hasAttribute("data-quote-parallax")
+      ) {
+        t.kill();
+      }
+    });
+  });
+</script>

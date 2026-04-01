@@ -1,0 +1,212 @@
+---
+import hero1 from "../../assets/teachers/hero-1.webp";
+import hero2 from "../../assets/teachers/hero-2.webp";
+---
+
+<div id="teacher-hero-container" transition:name="teacher-hero-section">
+  <!-- Dynamic Hero Images Section -->
+  <section
+    class="max-w-screen-2xl mx-auto px-8 min-h-screen flex items-center overflow-hidden"
+    id="hero-landscapes"
+  >
+    <div
+      class="relative flex flex-col md:flex-row items-center justify-center gap-8 md:gap-4 lg:gap-8"
+    >
+      <!-- Female Faculty Landscape -->
+      <div class="w-full md:w-1/2 group relative z-10" data-hero-img-1>
+        <div
+          data-hero-entrance-1
+          class="opacity-0 translate-y-12 [clip-path:inset(100%_0%_0%_0%)]"
+        >
+          <div
+            class="overflow-hidden rounded-xl shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)] bg-[#f2ede7] relative"
+          >
+            <img
+              class="w-full aspect-[16/10] object-cover grayscale hover:grayscale-0 transition-all duration-700 parallax-img-1"
+              alt="Women of the Faculty"
+              src={hero1.src}
+            />
+            <div
+              class="absolute bottom-4 left-4 bg-primary px-4 py-2 text-white"
+            >
+              <p
+                class="font-sans font-bold text-[10px] uppercase tracking-widest"
+              >
+                Women of the Faculty
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Male Faculty Landscape - Staggered slightly -->
+      <div
+        class="w-full md:w-1/2 group relative z-20 md:-ml-12 lg:-ml-16 md:mt-16"
+        data-hero-img-2
+      >
+        <div
+          data-hero-entrance-2
+          class="opacity-0 translate-y-12 [clip-path:inset(100%_0%_0%_0%)]"
+        >
+          <div
+            class="overflow-hidden rounded-xl shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)] bg-[#f2ede7] relative"
+          >
+            <img
+              class="w-full aspect-[16/10] object-cover grayscale hover:grayscale-0 transition-all duration-700 parallax-img-2"
+              alt="Men of the Faculty"
+              src={hero2.src}
+            />
+            <div
+              class="absolute bottom-4 left-4 bg-primary px-4 py-2 text-white"
+            >
+              <p
+                class="font-sans font-bold text-[10px] uppercase tracking-widest"
+              >
+                Men of the Faculty
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../../utils/loadingState";
+
+  const initHero = () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const mm = gsap.matchMedia();
+    const heroSection = document.querySelector("#hero-landscapes");
+    if (!heroSection) return;
+
+    const leftContainer = document.querySelector("[data-hero-img-1]");
+    const rightContainer = document.querySelector("[data-hero-img-2]");
+    const leftEntrance = document.querySelector("[data-hero-entrance-1]");
+    const rightEntrance = document.querySelector("[data-hero-entrance-2]");
+    const leftImg = document.querySelector(".parallax-img-1");
+    const rightImg = document.querySelector(".parallax-img-2");
+
+    // Workflow 02: Premium Entrance Animation (The "Gatekeeper" + Viewport Synchronization)
+    const initEntrance = async () => {
+      // 1. Ensure we wait for the Global Loading splash screen to finish
+      await waitForLoading();
+
+      // 2. Define the entrance timeline (paused initially)
+      const tl = gsap.timeline({
+        paused: true,
+        defaults: { duration: 3, ease: "power1.inOut" },
+      });
+
+      tl.to([leftEntrance, rightEntrance], {
+        clipPath: "inset(0% 0% 0% 0%)",
+        y: 0,
+        opacity: 1,
+        stagger: 0.3,
+        delay: 0.2,
+      });
+
+      // 3. Trigger the entrance only when the section enters viewport
+      ScrollTrigger.create({
+        trigger: heroSection,
+        start: "top 80%", // Animasi mulai saat bagian atas section sudah 20% masuk ke layar
+        once: true,
+        onEnter: () => tl.play(),
+      });
+    };
+
+    initEntrance();
+
+    // Workflow 02: Layered Kinetic Depth Parallax
+    mm.add("(min-width: 1024px)", () => {
+      const scrollConfig = {
+        trigger: heroSection,
+        start: "top 40%", // Start transition later for better focus
+        end: "bottom top",
+        scrub: 0.2, // Improved responsiveness
+      };
+
+      // --- LEFT PHOTO (Women of the Faculty) ---
+      // Container moves UP and LEFT
+      gsap.to(leftContainer, {
+        y: -120,
+        x: -40,
+        ease: "none",
+        scrollTrigger: scrollConfig,
+      });
+      // Image inside moves DOWN (Counter-momentum) and scales linearly
+      // Corrected scale range as per user's latest edit (1.15 -> 1.0)
+      gsap.fromTo(
+        leftImg,
+        { scale: 1.15, y: -50 },
+        {
+          scale: 1,
+          y: 50,
+          ease: "none",
+          scrollTrigger: scrollConfig,
+        },
+      );
+
+      // --- RIGHT PHOTO (Men of the Faculty) ---
+      // Container moves DOWN and RIGHT
+      gsap.to(rightContainer, {
+        y: 100,
+        x: 40,
+        ease: "none",
+        scrollTrigger: scrollConfig,
+      });
+      // Image inside moves UP (Counter-momentum) and scales linearly
+      gsap.fromTo(
+        rightImg,
+        { scale: 1.15, y: 50 },
+        {
+          scale: 1,
+          y: -50,
+          ease: "none",
+          scrollTrigger: scrollConfig,
+        },
+      );
+
+      return () => {
+        // Cleanup
+      };
+    });
+
+    // Workflow 02: Relative GSAP Hover Effects (Additive to current parallax scale)
+    [
+      { container: leftContainer, img: leftImg },
+      { container: rightContainer, img: rightImg },
+    ].forEach(({ container, img }) => {
+      container?.addEventListener("mouseenter", () => {
+        gsap.to(img, {
+          scale: "+=0.1",
+          duration: 0.8,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      });
+      container?.addEventListener("mouseleave", () => {
+        gsap.to(img, {
+          scale: "-=0.1",
+          duration: 0.8,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      });
+    });
+  };
+
+  document.addEventListener("astro:page-load", () => {
+    if (document.querySelector("#teacher-hero-container")) {
+      initHero();
+    }
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+  });
+</script>

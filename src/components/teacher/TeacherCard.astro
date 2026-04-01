@@ -1,0 +1,39 @@
+---
+import dummyImg from '../../assets/teachers/dummy.webp';
+import Copy from '../Copy';
+
+interface Props {
+  name: string;
+  subjects: string;
+  index: number;
+  offset?: boolean;
+}
+
+const { name, subjects, index, offset = false } = Astro.props;
+---
+
+<div 
+  class={`teacher-card flex-shrink-0 w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-2rem)] group cursor-pointer opacity-0 translate-y-12 ${offset ? 'is-offset sm:translate-y-8 lg:translate-y-8' : ''}`} 
+  data-animate-scroll 
+  data-index={index} 
+  data-name={name} 
+  data-subjects={subjects} 
+  data-img={dummyImg.src}
+>
+  <div class="relative mb-4 overflow-hidden rounded-xl bg-white shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)]">
+    <img 
+      src={dummyImg.src} 
+      alt={name} 
+      transition:name={`teacher-photo-${index}`} 
+      class="w-full aspect-[3/4] object-cover group-hover:scale-105 transition-transform duration-700 grayscale hover:grayscale-0" 
+      loading="lazy" 
+    />
+    <div class="absolute inset-0 bg-[#183f89]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"></div>
+  </div>
+  
+  <!-- Content Details -->
+  <div class="px-1 text-center">
+    <h4 class="text-[22px] md:text-2xl font-sans font-bold text-[#183f89] mb-1" transition:name={`teacher-name-${index}`}>{name}</h4>
+    <p class="text-sm md:text-[15px] font-sans text-[#3557a2] font-medium" transition:name={`teacher-subjects-${index}`}>{subjects}</p>
+  </div>
+</div>

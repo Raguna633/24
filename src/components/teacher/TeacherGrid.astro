@@ -1,0 +1,81 @@
+---
+import TeacherCard from './TeacherCard.astro';
+import TeacherModal from './TeacherModal.jsx';
+
+const dummyTeachers = Array.from({ length: 56 }).map((_, i) => ({
+  name: `Teacher Name ${i + 1}`,
+  subjects: ['Mathematics', 'Physics', 'History & Civics', 'Biology', 'English Literature', 'Arts & Culture', 'Physical Education'][i % 7],
+  index: i
+}));
+---
+
+<section class="max-w-screen-xl mx-auto px-8 pt-32 mb-48 text-secondary" id="teacher-grid" transition:name="teacher-grid-section">
+  <!-- Faculty Header -->
+  <div class="mb-16">
+    <h3 class="text-3xl font-sans font-bold text-[#183f89] mb-2 tracking-tight">Faculty of 2024</h3>
+    <div class="h-1 w-24 bg-[#183f89] rounded-full"></div>
+  </div>
+
+  <!-- Flexbox Layout -->
+  <div class="flex flex-wrap justify-center md:justify-start gap-x-8 gap-y-16 lg:gap-x-12 lg:gap-y-24">
+    {dummyTeachers.map((teacher, index) => (
+      <TeacherCard 
+        name={teacher.name} 
+        subjects={teacher.subjects} 
+        index={teacher.index} 
+        offset={index % 2 !== 0} 
+      />
+    ))}
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const initGrid = () => {
+    gsap.registerPlugin(ScrollTrigger);
+    const cards = document.querySelectorAll('[data-animate-scroll]');
+    if (cards.length === 0) return;
+    
+    cards.forEach(card => {
+      // Add click event listener to dispatch custom event for React Modal
+      card.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('openTeacherModal', {
+          detail: { 
+            name: card.getAttribute('data-name'), 
+            subjects: card.getAttribute('data-subjects'), 
+            image: card.getAttribute('data-img') 
+          }
+        }));
+      });
+
+      // Implementasi animasi scroll elemen di bawah lipatan
+      gsap.fromTo(card, 
+        { opacity: 0, y: 50 },
+        {
+          scrollTrigger: {
+            trigger: card,
+            start: "top 85%", // Animasi mulai ketika 85% layar
+            toggleActions: "play none none reverse" 
+          },
+          y: card.classList.contains('is-offset') ? 32 : 0, 
+          opacity: 1,
+          duration: 1.2,
+          ease: "power2.out",
+          overwrite: "auto"
+        }
+      );
+    });
+  };
+
+  document.addEventListener('astro:page-load', () => {
+    if(document.querySelector("#teacher-grid")) {
+      initGrid();
+    }
+  });
+
+  document.addEventListener('astro:before-swap', () => {
+    ScrollTrigger.getAll().forEach(t => t.kill());
+  });
+</script>
