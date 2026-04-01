@@ -94,6 +94,35 @@ const forceDesktopViewData = forceDesktopView;
         }
       })();
     </script>
+
+    <script is:inline>
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+
+      /*
+        pageshow berbeda dari load:
+        - load    → hanya terpanggil pada fresh load, TIDAK saat bfcache restore
+          - pageshow → terpanggil pada KEDUANYA, termasuk saat browser
+                      me-restore halaman dari bfcache
+          
+          event.persisted === true  → halaman di-restore dari bfcache
+          event.persisted === false → fresh load / reload biasa
+          
+          Kita scroll ke atas di kedua kasus.
+        */
+        window.addEventListener("pageshow", function (event) {
+          window.scrollTo({ top: 0, behavior: "instant" });
+        });
+
+        /*
+          Memaksa halaman untuk selalu mulai dari paling atas
+          meskipun pengguna menekan tombol Back / Forward di browser
+        */
+        document.addEventListener("astro:after-swap", function () {
+          window.scrollTo({ top: 0, behavior: "instant" });
+        });
+      </script>
     
     <!-- SEO -->
     <title>{fullTitle}</title>
@@ -151,6 +180,7 @@ const forceDesktopViewData = forceDesktopView;
   </head>
   
   <body class="min-h-screen">
+    <Loading />
     <Analytics/>
     <!-- Skip to main content (accessibility) -->
     <a 
@@ -164,7 +194,6 @@ const forceDesktopViewData = forceDesktopView;
     <!-- Header -->
     <Header />
 
-    <Loading />
     
     <!-- Main content -->
     <main id="main-content" class="">
@@ -203,12 +232,28 @@ const forceDesktopViewData = forceDesktopView;
     {/* View Mode Toggle Button */}
     <button 
       id="viewModeToggle"
-      class="view-mode-toggle"
+      class="view-mode-toggle group"
       aria-label="Toggle view mode"
     >
-      <span id="toggleIcon">📱</span>
-      <span id="toggleText">Mobile View</span>
+      <div id="toggleIcon" class="toggle-icon">📱</div>
+      <div id="toggleLabels" class="overflow-hidden flex items-center">
+        <span id="toggleText" class="toggle-text">Mobile View</span>
+        <span id="toastText" class="toast-text hidden">Gunakan Desktop View Untuk Pengalaman Terbaik 😊</span>
+      </div>
     </button>
+
+    <!-- Overlay Rotate Device -->
+    <div id="rotateOverlay" class="fixed inset-0 z-[100000] bg-black/95 text-white flex flex-col items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300">
+      <div id="rotateIconContainer" class="mb-8 transition-transform duration-500">
+        <svg id="rotateIcon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg>
+      </div>
+      <h2 id="rotateTitle" class="text-2xl font-bold mb-4 text-center">Putar Perangkat Anda</h2>
+      <p id="rotateMessage" class="text-gray-300 text-center max-w-sm mb-8 text-sm">Silakan putar perangkat Anda ke posisi landscape untuk beralih ke Desktop Mode.</p>
+      <button id="closeRotateOverlay" class="px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">Batal</button>
+    </div>
 
     <!-- ==================== DEBUGGING HELPER (Remove in production) ==================== -->
     <div 
@@ -237,209 +282,266 @@ const forceDesktopViewData = forceDesktopView;
     
     <!-- Scripts -->
     <script>
-      // ==================== VIEW MODE TOGGLE ====================
+      import { initLenis } from "../scripts/lenis";
+
+      // ==================== MAIN INITIALIZATION ====================
       
-      const viewport = document.querySelector('meta[name="viewport"]');
-      const toggleButton = document.getElementById('viewModeToggle');
-      const toggleIcon = document.getElementById('toggleIcon');
-      const toggleText = document.getElementById('toggleText');
-
-      // 🔒 Check if this page is forced to desktop view
-      const isForced = sessionStorage.getItem('forced-desktop-view') === 'true';
-
-      function getCurrentMode(): 'mobile' | 'desktop' {
-        // If forced, always return desktop
-        if (isForced) return 'desktop';
+      function initMainLayout() {
+        // DOM Elements - Query inside init to ensure we get elements from the NEW page DOM
+        const toggleButton = document.getElementById('viewModeToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const toggleText = document.getElementById('toggleText');
+        const toastText = document.getElementById('toastText');
         
-        const saved = localStorage.getItem('view-mode');
-        if (saved) return saved as 'mobile' | 'desktop';
+        const rotateOverlay = document.getElementById('rotateOverlay');
+        const rotateTitle = document.getElementById('rotateTitle');
+        const rotateMessage = document.getElementById('rotateMessage');
+        const rotateIconContainer = document.getElementById('rotateIconContainer');
+        const closeRotateOverlayBtn = document.getElementById('closeRotateOverlay');
         
-        // Auto-detect based on current viewport
-        const current = viewport?.getAttribute('content') || '';
-        return current.includes('1440') ? 'desktop' : 'mobile';
-      }
+        const backToTopButton = document.getElementById('back-to-top');
 
-      function updateToggleButton() {
-        const mode = getCurrentMode();
+        // Check if this page is forced to desktop view
+        const isForced = sessionStorage.getItem('forced-desktop-view') === 'true';
+
+        // --- Helper Functions ---
         
-        if (mode === 'desktop') {
-          toggleIcon!.textContent = '🖥️';
-          toggleText!.textContent = isForced ? 'Desktop (Locked)' : 'Desktop View';
-          toggleButton?.classList.add('active');
+        function getCurrentMode(): 'mobile' | 'desktop' {
+          if (isForced) return 'desktop';
+          const saved = localStorage.getItem('view-mode');
+          if (saved) return saved as 'mobile' | 'desktop';
           
-          // 🔒 If forced, disable the button
-          if (isForced) {
-            toggleButton?.classList.add('forced');
-            toggleButton?.setAttribute('disabled', 'true');
-            toggleButton?.setAttribute('title', 'This page requires desktop view');
-          }
-        } else {
-          toggleIcon!.textContent = '📱';
-          toggleText!.textContent = 'Mobile View';
-          toggleButton?.classList.remove('active', 'forced');
-          toggleButton?.removeAttribute('disabled');
-          toggleButton?.removeAttribute('title');
+          const viewport = document.querySelector('meta[name="viewport"]');
+          const current = viewport?.getAttribute('content') || '';
+          return current.includes('1440') ? 'desktop' : 'mobile';
         }
-      }
 
-      function toggleViewMode() {
-        // 🔒 Prevent toggle if forced
-        if (isForced) {
-          showNotification('⚠️ This page requires desktop view');
-          return;
-        }
-        
-        if (!viewport) return;
-
-        const currentMode = getCurrentMode();
-        const newMode = currentMode === 'mobile' ? 'desktop' : 'mobile';
-
-        if (newMode === 'desktop') {
-          // Switch to desktop view
-          const deviceWidth = window.screen.width;
-          const desktopWidth = 1440;
-          
-          // Calculate scale to fit exactly 100% width
-          const scale = deviceWidth / desktopWidth;
-          
-          console.log('Device width:', deviceWidth);
-          console.log('Desktop width:', desktopWidth);
-          console.log('Calculated scale:', scale);
-
-          viewport.setAttribute('content', 
-            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
-          );
-          
-localStorage.setItem('view-mode', 'desktop');
-          
-          // Dispatch custom event for ScrollTrigger refresh
-          window.dispatchEvent(new CustomEvent('viewModeChange'));
-          
-          // Update button immediately
-          toggleIcon!.textContent = '🖥️';
-          toggleText!.textContent = 'Desktop View';
-          toggleButton?.classList.add('active');
-          
-          // Optional: Show success message
-          showNotification('Desktop view activated! Pinch to zoom.');
-        } else {
-          // Switch to mobile view
-          viewport.setAttribute('content', 
-            'width=device-width, initial-scale=1.0, user-scalable=yes'
-          );
-          
-localStorage.setItem('view-mode', 'mobile');
-          
-          // Dispatch custom event for ScrollTrigger refresh
-          window.dispatchEvent(new CustomEvent('viewModeChange'));
-          
-          // Update button immediately
-          toggleIcon!.textContent = '📱';
-          toggleText!.textContent = 'Mobile View';
-          toggleButton?.classList.remove('active');
-          
-          // Optional: Show success message
-          showNotification('Mobile view activated!');
-        }
-      }
-
-      function showNotification(message: string) {
-        // Remove existing notification
-        const existing = document.getElementById('viewModeNotification');
-        if (existing) existing.remove();
-
-        // Create notification
-        const notification = document.createElement('div');
-        notification.id = 'viewModeNotification';
-        notification.className = 'view-mode-notification';
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        // Auto-remove after 3 seconds
-        setTimeout(() => {
-          notification.classList.add('fade-out');
-          setTimeout(() => notification.remove(), 300);
-        }, 3000);
-      }
-
-      // Initialize button state
-      updateToggleButton();
-
-      // Add click handler
-      toggleButton?.addEventListener('click', toggleViewMode);
-
-// Update button on orientation change
-      window.addEventListener('orientationchange', () => {
-        setTimeout(() => {
+        function updateToggleButton() {
           const mode = getCurrentMode();
+          if (!toggleButton) return;
+          
           if (mode === 'desktop') {
-            // Recalculate scale for new orientation
+            if (toggleIcon) toggleIcon.textContent = '🖥️';
+            if (toggleText) toggleText.textContent = isForced ? 'Desktop (Locked)' : 'Desktop View';
+            toggleButton.classList.add('active');
+            
+            if (isForced) {
+              toggleButton.classList.add('forced');
+              toggleButton.setAttribute('disabled', 'true');
+              toggleButton.setAttribute('title', 'This page requires desktop view');
+            }
+          } else {
+            if (toggleIcon) toggleIcon.textContent = '📱';
+            if (toggleText) toggleText.textContent = 'Mobile View';
+            toggleButton.classList.remove('active', 'forced');
+            toggleButton.removeAttribute('disabled');
+            toggleButton.removeAttribute('title');
+          }
+        }
+
+        function switchToMode(mode: 'mobile' | 'desktop') {
+          localStorage.setItem('view-mode', mode);
+          sessionStorage.setItem('pending-view-mode-toast', 
+            mode === 'desktop' ? 'Desktop view activated! Pinch to zoom.' : 'Mobile view activated!'
+          );
+          
+          // Use timeout to ensure we don't interrupt a pending Astro transition
+          setTimeout(() => {
+            window.location.reload();
+          }, 50);
+        }
+
+        function showRotateOverlay(targetMode: 'mobile' | 'desktop') {
+          if (!rotateOverlay) return;
+          rotateOverlay.setAttribute('data-requested-mode', targetMode);
+          
+          if (targetMode === 'desktop') {
+            if (rotateTitle) rotateTitle.textContent = 'Rotasi ke Landscape';
+            if (rotateMessage) rotateMessage.textContent = 'Untuk beralih ke Desktop Mode, mohon letakkan perangkat Anda ke posisi mendatar (landscape).';
+            if (rotateIconContainer) rotateIconContainer.style.transform = 'rotate(-90deg)';
+          } else {
+            if (rotateTitle) rotateTitle.textContent = 'Rotasi ke Portrait';
+            if (rotateMessage) rotateMessage.textContent = 'Untuk beralih ke Mobile Mode, mohon letakkan perangkat Anda ke posisi tegak (portrait).';
+            if (rotateIconContainer) rotateIconContainer.style.transform = 'rotate(0deg)';
+          }
+          
+          rotateOverlay.classList.remove('opacity-0', 'pointer-events-none');
+          rotateOverlay.classList.add('active-overlay', 'opacity-100', 'pointer-events-auto');
+        }
+
+        function hideRotateOverlay() {
+          if (!rotateOverlay) return;
+          rotateOverlay.classList.remove('active-overlay', 'opacity-100', 'pointer-events-auto');
+          rotateOverlay.classList.add('opacity-0', 'pointer-events-none');
+          rotateOverlay.removeAttribute('data-requested-mode');
+        }
+
+        function toggleViewMode() {
+          if (isForced) {
+            showNotification('⚠️ This page requires desktop view');
+            return;
+          }
+          
+          const currentMode = getCurrentMode();
+          const newMode = currentMode === 'mobile' ? 'desktop' : 'mobile';
+          const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+
+          if (newMode === 'desktop' && isPortrait) {
+            showRotateOverlay('desktop');
+            return;
+          }
+          if (newMode === 'mobile' && !isPortrait) {
+            showRotateOverlay('mobile');
+            return;
+          }
+
+          switchToMode(newMode);
+        }
+
+        function showNotification(message: string) {
+          const existing = document.getElementById('viewModeNotification');
+          if (existing) existing.remove();
+          
+          const notification = document.createElement('div');
+          notification.id = 'viewModeNotification';
+          notification.className = 'view-mode-notification';
+          notification.textContent = message;
+          document.body.appendChild(notification);
+
+          setTimeout(() => {
+            notification.classList.add('fade-out');
+            setTimeout(() => notification.remove(), 300);
+          }, 3000);
+        }
+
+        function handleResize() {
+          const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+          const currentMode = getCurrentMode();
+          
+          // Handle active rotation overlay
+          if (rotateOverlay?.classList.contains('active-overlay')) {
+            const requestedMode = rotateOverlay.getAttribute('data-requested-mode') as 'mobile' | 'desktop' | null;
+            if ((requestedMode === 'desktop' && !isPortrait) || (requestedMode === 'mobile' && isPortrait)) {
+              hideRotateOverlay();
+              switchToMode(requestedMode as 'mobile' | 'desktop');
+              return;
+            }
+          }
+
+          // Automatic mode switching based on rotation
+          if (!isPortrait && currentMode !== 'desktop') {
+            switchToMode('desktop');
+          } else if (isPortrait && currentMode !== 'mobile' && !isForced) {
+            switchToMode('mobile');
+          } else if (currentMode === 'desktop') {
+            // Recalculate scale if already in desktop mode
+            const viewport = document.querySelector('meta[name="viewport"]');
             const deviceWidth = window.screen.width;
             const desktopWidth = 1440;
             const scale = deviceWidth / desktopWidth;
-            
             viewport?.setAttribute('content', 
               `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
             );
-            
-            // Dispatch custom event for ScrollTrigger refresh
             window.dispatchEvent(new CustomEvent('viewModeChange'));
           }
-          updateToggleButton();
-        }, 300);
-      });
-
-      // Back to top button functionality
-      const backToTopButton = document.getElementById('back-to-top');
-
-      if (backToTopButton) {
-        // Show/hide button based on scroll position
-        window.addEventListener('scroll', () => {
-          if (window.scrollY > 300) {
-            backToTopButton.classList.remove('opacity-0', 'pointer-events-none');
-          } else {
-            backToTopButton.classList.add('opacity-0', 'pointer-events-none');
-          }
-        });
-
-        // Scroll to top on click
-        backToTopButton.addEventListener('click', () => {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        });
-      }
-    </script>
-
-    <script>
-      // Show debug info (press 'd' key)
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'd' || e.key === 'D') {
-          const debugInfo = document.getElementById('debugInfo');
-          const debugContent = document.getElementById('debugContent');
           
-          if (debugInfo && debugContent) {
-            const viewport = document.querySelector('meta[name="viewport"]');
-            const viewportContent = viewport?.getAttribute('content') || 'not found';
-            const isForced = sessionStorage.getItem('forced-desktop-view') === 'true';
-            
-            debugContent.innerHTML = `
-              <strong>Debug Info:</strong><br>
-              Screen Width: ${window.screen.width}px<br>
-              Window Width: ${window.innerWidth}px<br>
-              Device Pixel Ratio: ${window.devicePixelRatio}<br>
-              View Mode: ${localStorage.getItem('view-mode') || 'not set'}<br>
-              Forced Desktop: ${isForced ? 'YES' : 'NO'}<br>
-              Viewport: ${viewportContent}<br>
-              Calculated Scale: ${(window.screen.width / 1440).toFixed(3)}
-            `;
-            
-            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+          updateToggleButton();
+        }
+
+        function initDesktopViewToast() {
+          if (!toggleButton || toggleButton.classList.contains('forced')) return;
+          const isMobileDevice = window.innerWidth < 1024;
+          if (isMobileDevice && getCurrentMode() === 'mobile') {
+            setTimeout(() => {
+              if (getCurrentMode() === 'mobile' && !toggleButton.classList.contains('active')) {
+                if (toastText) toastText.classList.remove('hidden');
+                toggleButton.classList.add('is-toast');
+                setTimeout(() => {
+                  if (toastText) toastText.classList.add('hidden');
+                  toggleButton.classList.remove('is-toast');
+                }, 5000);
+              }
+            }, 4000); 
           }
         }
+
+        // --- Event Listeners ---
+        
+        if (toggleButton) {
+          toggleButton.addEventListener('click', toggleViewMode);
+        }
+
+        if (closeRotateOverlayBtn) {
+          closeRotateOverlayBtn.addEventListener('click', hideRotateOverlay);
+        }
+
+        if (backToTopButton) {
+          const scrollHandler = () => {
+            if (window.scrollY > 300) {
+              backToTopButton.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+              backToTopButton.classList.add('opacity-0', 'pointer-events-none');
+            }
+          };
+          window.addEventListener('scroll', scrollHandler);
+          
+          backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+        }
+
+        // --- Post-Navigation Re-Sync ---
+        
+        updateToggleButton();
+        initDesktopViewToast();
+
+        const pendingToast = sessionStorage.getItem('pending-view-mode-toast');
+        if (pendingToast) {
+          showNotification(pendingToast);
+          sessionStorage.removeItem('pending-view-mode-toast');
+        }
+
+        // Global Window Listeners (Only add once)
+        if (!(window as any).mainLayoutInitialized) {
+          let resizeTimeout: any;
+          window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(handleResize, 300);
+          });
+
+          // Key listener for debug info
+          window.addEventListener('keydown', (e) => {
+            if (e.key === 'd' || e.key === 'D') {
+              const debugInfo = document.getElementById('debugInfo');
+              const debugContent = document.getElementById('debugContent');
+              if (debugInfo && debugContent) {
+                const viewport = document.querySelector('meta[name="viewport"]');
+                const viewportContent = viewport?.getAttribute('content') || 'not found';
+                const forcedActive = sessionStorage.getItem('forced-desktop-view') === 'true';
+                debugContent.innerHTML = `
+                  <strong>Debug Info:</strong><br>
+                  Screen Width: ${window.screen.width}px<br>
+                  Window Width: ${window.innerWidth}px<br>
+                  View Mode: ${localStorage.getItem('view-mode') || 'not set'}<br>
+                  Forced Desktop: ${forcedActive ? 'YES' : 'NO'}<br>
+                  Viewport: ${viewportContent}
+                `;
+                debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+              }
+            }
+          });
+
+          (window as any).mainLayoutInitialized = true;
+        }
+      }
+
+      // Initialize on every page load (handles initial load and view transitions)
+      document.addEventListener('astro:page-load', () => {
+        initMainLayout();
+        initLenis();
       });
     </script>
+
 
     <style is:global>
       /* ==================== VIEW MODE TOGGLE BUTTON ==================== */
@@ -459,7 +561,7 @@ localStorage.setItem('view-mode', 'mobile');
         border-radius: 50px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
         
-        font-size: 14px;
+        font-size: 1rem;
         font-weight: 600;
         color: #374151;
         
@@ -487,6 +589,57 @@ localStorage.setItem('view-mode', 'mobile');
         background: linear-gradient(135deg, #3557A2 0%, #2A358F 100%);
         color: white;
         border-color: #2A358F;
+      }
+
+      /* ==================== TOAST (MORPHING) STATE ==================== */
+      .view-mode-toggle.is-toast {
+        max-width: 45%;
+        background: #1e293b;
+        color: white;
+        border-color: #334155;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        padding: 8px 20px;
+        height: auto;
+      }
+
+      .toggle-icon {
+        font-size: 20px;
+        transition: transform 0.3s ease;
+        flex-shrink: 0;
+      }
+
+      .toggle-text {
+        white-space: nowrap;
+        opacity: 1;
+        transition: all 0.3s ease;
+      }
+
+      .toast-text {
+        white-space: normal;
+        max-width: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 12px;
+        color: #94a3b8;
+        line-height: 1.4;
+      }
+
+      .view-mode-toggle.is-toast .toggle-text {
+        max-width: 0;
+        opacity: 0;
+        margin-right: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .view-mode-toggle.is-toast .toast-text {
+        max-width: 100%;
+        opacity: 1;
+        margin-left: 8px;
+        color: #f1f5f9;
+        font-weight: 500;
       }
 
       /* 🔒 FORCED STATE - Button is disabled */
@@ -579,8 +732,8 @@ localStorage.setItem('view-mode', 'mobile');
         .view-mode-toggle {
           bottom: 16px;
           right: 16px;
-          padding: 10px 16px;
-          font-size: 13px;
+          padding: 0px 16px;
+          font-size: 0.8rem;
         }
 
         .view-mode-toggle #toggleIcon {
