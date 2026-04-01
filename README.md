@@ -72,15 +72,17 @@ Week 10: Content review selesai
 
 # Design Direction
 
-Style: Tailwind
+Style: Tailwind & GSAP
 
-Modern & Clean (minimalist)
-Nostalgic & Warm (vintage)
-Bold & Energetic (colorful)
+- **Storytelling & "Reminiscence"**: Menggunakan pendekatan alur cerita emosional untuk memikat user pada *first look* dan memunculkan memori nostalgia yang kuat.
+- **Premium Awwwards Animation**: Seluruh animasi berjalan dengan mulus, lambat, dan elegan layaknya website pemenang penghargaan.
+- **Modern & Clean** (minimalist)
+- **Nostalgic & Warm** (vintage)
+- **Bold & Energetic** (colorful)
 
-Color Palette: 
+Color Palette:
 
-Primary: #f5f0ea 
+Primary: #f5f0ea
 Secondary: #3557A2, #3B507D
 Accent: #2A358F, #251E54
 
@@ -88,8 +90,6 @@ Typography:
 
 Heading: [Nirmala UI]
 Body: [Poppins]
-
-
 
 # Technical Specifications
 
@@ -234,7 +234,7 @@ Post-Launch (1 month):
 > 90% positive feedback
 > Zero privacy complaints
 
-# Tech Stack (All Free!):
+# Tech Stack (All Free!)
 
 - Framework : Astro 4.x
 - Styling : Tailwind CSS
@@ -357,11 +357,8 @@ src/
 [ ]     │   ├─ /about/mars                     → Mars sekolah
 [ ]     │   └─ /about/fasilitas                → Fasilitas
 [ ]     /classes                                → Kelas & Siswa
-[ ]     │   ├─ /classes/smk                    → Daftar Kelas SMK
-[ ]     │   │   └─ /classes/smk/[slug]         → Profil Kelas SMK
-[ ]     │   │       └─ /classes/smk/[slug]/[student] → Profil Siswa
-[ ]     │   └─ /classes/sma                    → Daftar Kelas SMA
-[ ]     │       └─ /classes/sma/[slug]         → Profil Kelas SMA
+[ ]     │   └─ /classes/[slug]                 → Daftar Kelas SMA/SMK
+[ ]     │       └─ /classes/[slug]/[student]   → Profil Siswa
 [ ]     /students                                → Daftar semua siswa dari SMA & SMK 
 [ ]     │   └─ /students/[slug]                  → Profil siswa
 [ ]     /uniforms                               → Koleksi Seragam
@@ -382,4 +379,4 @@ src/
 
 # Checklist
 
-[ ] 
+[ ]
