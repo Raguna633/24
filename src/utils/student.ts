@@ -42,7 +42,7 @@ export function mapStudentCollection(
   return students.map(s => ({
     slug: s.id,
     name: s.data.name,
-    class: s.data.class,
+    class: s.data.kelas || s.data.class,
     gender: s.data.gender as Gender,
     jenjang: s.data.jenjang as Jenjang,
     quote: s.data.quote,
@@ -52,4 +52,22 @@ export function mapStudentCollection(
     photo: normalizePhotoPath(s.data.photo),
     downloadPassword: generateStudentPassword(s.data.name, s.id),
   }));
+}
+
+export function classToSlug(className?: string): string {
+  if (!className) return 'unknown-class';
+  const name = className.toUpperCase();
+  if (name.includes('A PPLG')) return 'xii-a-pplg'; // Adjust if there are more PPLG classes
+  if (name.includes('B APL')) return 'xii-b-apl';
+  if (name.includes('C APL')) return 'xii-c-apl';
+  if (name.includes('D MPLB')) return 'xii-d-mplb';
+  
+  const num = name.match(/\d+/);
+  if (num) {
+    if (name.includes('IPA')) return `xii-ipa-${num[0]}`;
+    if (name.includes('IPS')) return `xii-ips-${num[0]}`;
+  }
+
+  // Fallback normalization
+  return name.toLowerCase().replace(/\s+/g, '-');
 }
