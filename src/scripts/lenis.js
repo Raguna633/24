@@ -3,49 +3,67 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function initLenis() {
+    // 1. Clean up previous instance properly
+    if (window.lenis && typeof window.lenis.destroy === 'function') {
+        window.lenis.destroy();
+        // Clear ticker if we saved it previously
+        if (window.lenisRaf) {
+            gsap.ticker.remove(window.lenisRaf);
+        }
+    }
+
+    // 2. Create new instance
     const lenis = new Lenis({
         duration: 1.2,
         smoothWheel: true,
         wheelMultiplier: 1,
+        touchMultiplier: 2,
+        infinite: false,
     });
 
-    // Sync Lenis scroll with GSAP
-    lenis.on('scroll', gsap.updateRoot);
+    // 3. Make it globally accessible for cleanup and other scripts
+    window.lenis = lenis;
 
-    // Add Lenis RAF to GSAP ticker
-    gsap.ticker.add((time) => {
+    // 4. Define and save RAF handler for GSAP
+    window.lenisRaf = (time) => {
         lenis.raf(time * 1000);
-    });
-
-    // Disable GSAP lag smoothing for smoother animation
-    gsap.ticker.lagSmoothing(0);
-
-    // Refresh ScrollTrigger after Lenis is initialized
-    // This ensures correct calculation when viewport changes (desktop/mobile mode)
-    ScrollTrigger.refresh();
-
-    // Refresh ScrollTrigger when viewport changes (orientation change, resize, view mode toggle)
-    const refreshScrollTrigger = () => {
-        // Small delay to ensure viewport is fully updated
-        requestAnimationFrame(() => {
-            ScrollTrigger.refresh();
-        });
     };
 
-    // Listen for viewport changes
-    window.addEventListener('orientationchange', () => {
-        setTimeout(refreshScrollTrigger, 300);
-    });
+    // 5. Sync Lenis scroll with GSAP
+    lenis.on('scroll', ScrollTrigger.update);
 
-    // Debounced resize listener
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(refreshScrollTrigger, 200);
-    });
+    // 6. Add Lenis RAF to GSAP ticker
+    gsap.ticker.add(window.lenisRaf);
 
-    // Listen for view mode toggle changes (custom event)
-    window.addEventListener('viewModeChange', refreshScrollTrigger);
+    // 7. Disable GSAP lag smoothing for smoother animation
+    gsap.ticker.lagSmoothing(0);
+
+    // 8. Listen for viewport changes (ONLY ONCE using a global flag)
+    if (!window.lenisEventsInitialized) {
+        const refreshScrollTrigger = () => {
+            requestAnimationFrame(() => {
+                ScrollTrigger.refresh();
+            });
+        };
+
+        window.addEventListener('orientationchange', () => {
+            setTimeout(refreshScrollTrigger, 300);
+        });
+
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(refreshScrollTrigger, 200);
+        });
+
+        window.addEventListener('viewModeChange', refreshScrollTrigger);
+        window.lenisEventsInitialized = true;
+    }
+
+    // 9. Initial refresh to ensure ScrollTrigger knows current positions
+    setTimeout(() => {
+        ScrollTrigger.refresh();
+    }, 100);
 
     return lenis;
 }

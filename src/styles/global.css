@@ -38,6 +38,22 @@ html {
   scroll-behavior: auto;
 }
 
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: none;
+}
+
+/* IE dan Edge lama */
+body {
+  background-color: var(--color-primary);
+  -ms-overflow-style: none;
+  user-select: none;
+}
 
 html.lenis {
   height: auto;
@@ -234,14 +250,13 @@ html.lenis {
 
 .block-line-wrapper {
   position: relative;
-  width: max-content;
-  display: block;
-  margin: 0 auto;
+  display: inline-block;
+  /* Dihapus width max-content dan margin auto agar align teks (kiri, kanan, justify) bisa kembali natural sesuai settingan parent */
 }
 
 .block-line {
   position: relative;
-  display: block;
+  display: inline-block; /* Inline-block agar siluet revealer menempel pas seukuran teks tanpa meluber */
 }
 
 .block-revealer {
