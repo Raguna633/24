@@ -1,0 +1,262 @@
+---
+// src/components/ParallaxStack.astro
+//
+// Komponen ini membungkus beberapa section dan menerapkan
+// efek parallax GSAP ScrollTrigger — setiap section keluar
+// ke arah yang ditentukan saat user scroll, lalu section
+// berikutnya terungkap di bawahnya.
+//
+// CARA PAKAI:
+// Beri setiap section child sebuah attribute data-exit
+// untuk menentukan arah keluarnya:
+//
+//   data-exit="down"    → section bergerak ke bawah
+//   data-exit="up"      → section bergerak ke atas
+//   data-exit="left"    → section bergerak ke kiri
+//   data-exit="right"   → section bergerak ke kanan
+//   data-exit="fade"    → section hanya fade out (tidak bergerak)
+//   data-exit="scale"   → section mengecil sambil fade out
+//
+// CONTOH:
+//   <ParallaxStack>
+//     <div data-exit="down">   <HeroSection />    </div>
+//     <div data-exit="left">   <AboutSection />   </div>
+//     <div data-exit="up">     <GreetingSection /> </div>
+//   </ParallaxStack>
+//
+// PENTING: Section terakhir TIDAK perlu data-exit karena
+// ia adalah section final yang akan tetap terlihat.
+---
+
+<!--
+  data-parallax-stack → selector yang digunakan oleh script
+  untuk menemukan wrapper ini di DOM.
+
+  Style inline height dan position diperlukan agar GSAP
+  bisa melakukan pin dengan benar. Tinggi wrapper akan
+  di-set otomatis oleh script berdasarkan jumlah section.
+-->
+<div data-parallax-stack>
+  <slot />
+</div>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // =================================================================
+  // KONFIGURASI ANIMASI PER ARAH EXIT
+  //
+  // Setiap entry mendefinisikan:
+  //   to   → state akhir saat section keluar (ke mana section pergi)
+  //   from → state awal jika section masuk (opsional, untuk efek enter)
+  //
+  // Nilai y/x menggunakan innerHeight/innerWidth agar responsif
+  // terhadap ukuran layar apapun.
+  // =================================================================
+  const EXIT_PRESETS: Record<string, gsap.TweenVars> = {
+    // Turun ke bawah — cocok untuk hero section (kesan "tenggelam")
+    down: {
+      y: () => window.innerHeight * 1.1,
+      autoAlpha: 0,
+      ease: "power2.inOut",
+    },
+    // Naik ke atas — cocok untuk section menengah
+    up: {
+      y: () => window.innerHeight * -1.1,
+      autoAlpha: 0,
+      ease: "power2.inOut",
+    },
+    // Keluar ke kiri
+    left: {
+      x: () => window.innerWidth * -1.1,
+      autoAlpha: 0,
+      ease: "power2.inOut",
+    },
+    // Keluar ke kanan
+    right: {
+      x: () => window.innerWidth * 1.1,
+      autoAlpha: 0,
+      ease: "power2.inOut",
+    },
+    // Fade saja — cocok untuk section dengan background penuh
+    fade: {
+      autoAlpha: 0,
+      ease: "power1.inOut",
+    },
+    // Mengecil ke tengah sambil fade — efek "zoom out"
+    scale: {
+      scale: 0.8,
+      autoAlpha: 0,
+      ease: "power2.inOut",
+    },
+    // Keluar ke kiri-atas diagonal — mirip img1 di repo asli
+    "diagonal-up-left": {
+      x: () => window.innerWidth * -0.4,
+      y: () => window.innerHeight * -0.5,
+      scale: 1.3,
+      autoAlpha: 0,
+      ease: "power2.inOut",
+    },
+    // Keluar ke kanan-bawah diagonal
+    "diagonal-down-right": {
+      x: () => window.innerWidth * 0.4,
+      y: () => window.innerHeight * 0.5,
+      scale: 1.3,
+      autoAlpha: 0,
+      ease: "power2.inOut",
+    },
+  };
+
+  // =================================================================
+  // DURASI TIAP SECTION dalam unit "scroll pixel"
+  //
+  // Seberapa jauh user harus scroll untuk melewati satu section.
+  // Nilai lebih besar = animasi lebih lambat/dramatis.
+  // Default: 1.5x tinggi viewport (150vh per section).
+  // =================================================================
+  const SCROLL_DURATION_PER_SECTION = window.innerHeight * 1.5;
+
+  // =================================================================
+  // FUNGSI UTAMA: initParallaxStack
+  //
+  // Dipanggil setelah loading selesai (menunggu loadingState).
+  // Membaca semua wrapper di dalam data-parallax-stack,
+  // lalu membangun GSAP timeline untuk tiap stack.
+  // =================================================================
+  async function initParallaxStack() {
+    // Tunggu loading overlay selesai sebelum inisialisasi scroll
+    await waitForLoading();
+
+    // Cari semua elemen parallax stack di halaman
+    const stacks = document.querySelectorAll("[data-parallax-stack]");
+
+    stacks.forEach((stack) => {
+      const stackEl = stack as HTMLElement;
+
+      // Ambil semua section langsung (direct children) dari stack
+      // Kita cast ke array agar bisa pakai .forEach dengan index
+      const sections = Array.from(stackEl.children) as HTMLElement[];
+
+      if (sections.length < 2) {
+        // Butuh minimal 2 section untuk efek parallax bermakna
+        console.warn("ParallaxStack: butuh minimal 2 section child.");
+        return;
+      }
+
+      // =============================================================
+      // SETUP LAYOUT: Stack semua section di atas satu sama lain
+      //
+      // Kenapa position: absolute?
+      // Semua section harus menempati area yang sama (ditumpuk).
+      // Hanya satu yang terlihat pada satu waktu, yang lain
+      // di-animate keluar secara berurutan.
+      //
+      // Kenapa z-index descending?
+      // Section pertama harus berada paling atas (z-index tertinggi)
+      // karena ia yang pertama terlihat dan pertama keluar.
+      // Section terakhir di paling bawah (akan terungkap terakhir).
+      // =============================================================
+      stackEl.style.position = "relative";
+      stackEl.style.overflow = "hidden";
+
+      // Set container height to 100vh, ScrollTrigger will automatically
+      // add the necessary scrolling height via pin-spacer.
+      stackEl.style.height = "100vh";
+
+      sections.forEach((section, index) => {
+        section.style.position = "absolute";
+        section.style.top = "0";
+        section.style.left = "0";
+        section.style.width = "100%";
+        section.style.height = "100vh";
+        section.style.overflow = "hidden";
+
+        // Section pertama di depan (z-index tertinggi),
+        // section terakhir di belakang
+        section.style.zIndex = String(sections.length - index);
+      });
+
+      // =============================================================
+      // BUAT GSAP TIMELINE dengan ScrollTrigger
+      //
+      // scrub: 1 → animasi "mengikuti" scroll dengan sedikit lag (1 detik),
+      //           memberi kesan smooth dan tidak robotik.
+      //           Gunakan scrub: true untuk mengikuti scroll persis.
+      //
+      // pin: true → wrapper di-pin di viewport selama total scroll,
+      //             sehingga user "scroll di tempat" sementara
+      //             animasi berjalan.
+      //
+      // anticipatePin: 1 → mencegah jitter saat pin pertama kali aktif
+      // =============================================================
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: stackEl,
+          scrub: 1,
+          start: "top top",
+          end: `+=${sections.length * SCROLL_DURATION_PER_SECTION}`,
+          pin: true,
+          anticipatePin: 1,
+        },
+      });
+
+      // =============================================================
+      // TAMBAHKAN ANIMASI untuk tiap section (kecuali yang terakhir)
+      //
+      // Section terakhir tidak di-animate keluar karena ia adalah
+      // "destination" — konten yang ingin dituju user.
+      // =============================================================
+      sections.forEach((section, index) => {
+        // Section terakhir: skip, tidak perlu keluar
+        if (index === sections.length - 1) return;
+
+        // Baca arah exit dari data attribute
+        const exitDirection = section.dataset.exit ?? "fade";
+        const exitVars = EXIT_PRESETS[exitDirection] ?? EXIT_PRESETS.fade;
+
+        // Setiap section mengambil porsi waktu yang sama di timeline.
+        // ">" = mulai setelah animasi sebelumnya selesai (berurutan)
+        tl.to(
+          section,
+          {
+            ...exitVars,
+            duration: 1, // dalam unit timeline (bukan detik riil)
+            onStart: () => {
+              gsap.set(section, { willChange: "transform, opacity" });
+            },
+            onComplete: () => {
+              gsap.set(section, { willChange: "auto" });
+            },
+          },
+          ">", // sequential: satu per satu, bukan bersamaan
+        );
+      });
+
+      // Add empty space at the end of the timeline so the final section gets its own pinned scroll duration
+      tl.set({}, {}, "+=1");
+    });
+  }
+
+  // =================================================================
+  // RE-INISIALISASI saat Astro View Transitions navigasi
+  //
+  // ScrollTrigger perlu di-refresh setelah konten baru di-swap
+  // karena posisi elemen di DOM berubah.
+  // =================================================================
+  document.addEventListener("astro:page-load", () => {
+    // Kill semua ScrollTrigger lama untuk mencegah duplikasi
+    ScrollTrigger.getAll().forEach((st) => st.kill());
+    initParallaxStack();
+  });
+</script>
+
+<style>
+  /*
+    Optimized: Removed static will-change CSS to prevent Android WebView GPU Memory Bloat.
+    will-change is now selectively applied via GSAP onStart/onComplete.
+  */
+</style>

@@ -8,9 +8,11 @@ import AboutSection from "../components/sections/AboutSection.astro";
 import GreetingSection from "../components/sections/GreetingSection.astro";
 import JourneySection from "../components/sections/JourneySection.astro";
 import ConnectedSections from "../components/ConnectedSections.astro";
-import SectionsCarousel from "../components/SectionsCarousel.astro";
+import HorizontalScrollCarousel from "../components/HorizontalScrollCarousel.astro";
+import ParallaxStack from "../components/ParallaxStack.astro";
+import FadeOverlay from "../components/FadeOverlay.astro";
 
-import type { ImageMetadata } from 'astro';
+import type { ImageMetadata } from "astro";
 
 import "swiper/css";
 import "swiper/css/autoplay";
@@ -18,22 +20,28 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-import pimpinanPhoto from '/src/assets/pimpinan.webp';
-import kepsekPhoto from '/src/assets/dummy_kepsek.webp';
-import bg1 from '/src/assets/vlcsnap-2025-12-16-19h50m31s981.webp';
-import bg2 from '/src/assets/masjid.webp';
-import bg3 from '/src/assets/kantor.webp';
-import bg4 from '/src/assets/rps_apl0.webp';
-import bg5 from '/src/assets/maryamah.webp';
-import bg6 from '/src/assets/qoah0.webp';
-import bg7 from '/src/assets/arruqoyah.webp';
-import altieLogo from '/src/assets/altie.webp';
-import smaLogo from '/src/assets/sma.webp';
-import smkLogo from '/src/assets/smk.webp';
-import ip3aBg from '/src/assets/ip3a.webp';
-import aboutBg from '/src/assets/l-banyakan.webp';
-import heroBg from '/src/assets/27250374_1290.webp';
-
+import pimpinanPhoto from "/src/assets/pimpinan/pak_kyai.webp";
+import kepsekPhoto from "/src/assets/dummy_kepsek.webp";
+import aktPutra from "/src/assets/panitia/ket_akt_putra.png";
+import aktPutri from "/src/assets/panitia/ket_akt_putri.png";
+import hafPutra from "/src/assets/panitia/ket_haf_putra.png";
+import hafPutri from "/src/assets/panitia/ket_haf_putri.png";
+import rihPutra from "/src/assets/panitia/ket_rih_putra.png";
+import rihPutri from "/src/assets/panitia/ket_rih_putri.png";
+import bg1 from "/src/assets/vlcsnap-2025-12-16-19h50m31s981.webp";
+import bg2 from "/src/assets/altie_corner/masjid.webp";
+import bg3 from "/src/assets/altie_corner/kantor.webp";
+import bg4 from "/src/assets/altie_corner/rps-apl-belakang.webp";
+import bg5 from "/src/assets/altie_corner/maryamah.webp";
+import bg6 from "/src/assets/altie_corner/lap-albadar.webp";
+import bg7 from "/src/assets/altie_corner/lorong-putra.webp";
+import bg8 from "/src/assets/altie_corner/cafe-lama.webp";
+import bg9 from "/src/assets/altie_corner/ghoniah.webp";
+import bg10 from "/src/assets/altie_corner/pendopo.webp";
+import altieLogo from "/src/assets/altie.webp";
+import smaLogo from "/src/assets/sma.webp";
+import smkLogo from "/src/assets/smk.webp";
+import ip3aBg from "/src/assets/ip3a.webp";
 
 interface GreetingData {
   layout: "teacher" | "generation";
@@ -46,34 +54,32 @@ interface GreetingData {
   schoolLogo: ImageMetadata;
 }
 
-const pimpinanGreeting: GreetingData[] = [
-  {
-    layout: "teacher",
-    name: "KH. Kamali Abdul Ghani",
-    title: "Pimpinan Ponpes Al Ittihad",
-    excerptLength: 300,
-    greeting: `Assalamu'alaikum Wr. Wb.
+const pimpinanGreeting = {
+  layout: "teacher",
+  name: "KH. Kamali Abdul Ghani",
+  title: "Pimpinan Ponpes Al Ittihad",
+  excerptLength: 300,
+  greeting: `Assalamu’alaikum Wr. Wb.
 Puji Syukur bagi Allah SWT, yang dengan nikmat dan karunia-Nya kita telah sampai pada suasana yang sangat berbahagia dimana kita telah dapat menyelesaikan tahapan-tahapan di Pondok Pesantren Al-Ittihad dengan baik.
 Anak-anakku, berbahagialah kalian karena telah mampu menghadapi berbagai ujian dan tantangan dengan penuh suka, duka, tawa, tangis, terpaan dan cobaan. Semoga Allah SWT melimpahkan karunia-Nya akan usaha dan jerih payah kalian.
-Anak-anakku, hanya sampai disinilah setetes ilmu yang dapat kalian peroleh dari Pondok Pesantren Al-Ittihad, masih jauh dari harapan kita semua, namun mudah-mudahan kalian dapat memanfaatkannya untuk mengarungi bahtera kehidupan yang penuh godaan dan tantangan. Semoga kalian menjadi makhluk yang berguna bagi agama, nusa, dan bangsa. Anak-anakku, saya mohon maaf yang sangat dalam apabila masih banyak kekurangan dan kesalahan dalam membina, membimbing, mendidik, dan mengasuh kalian karena keterbatasan dan kemampuan  dalam, semoga kalian menjadi orang yang sholeh yang ada. Namun demikian, saya tidak bosan bosan  dan sholehah yang senantiasa berjuang di jalan Al-selalu memberikan arahan dan nasihat kapanpun dan dimanapun, untuk itu camkanlah dengan baik-baik:
+Anak-anakku, hanya sampai disinilah setetes ilmu yang dapat kalian peroleh dari Pondok Pesantren Al-Ittihad, masih jauh dari harapan kita semua, namun mudah-mudahan kalian dapat memanfaatkannya untuk mengarungi bahtera kehidupan yang penuh godaan dan tantangan. Semoga kalian menjadi makhluk yang berguna bagi agama, nusa, dan bangsa.
+Anak-anakku, saya mohon maaf yang sangat dalam apabila masih banyak kekurangan dan kesalahan dalam membina, membimbing, mendidik, dan mengasuh kalian karena keterbatasan dan kemampuan yang ada. Namun demikian, saya tidak bosan bosan selalu memberikan arahan dan nasihat kapanpun dan dimanapun, untuk itu camkanlah dengan baik-baik:
+
 1. Jangan sekali kalian merasa puas dengan ilmu yang telah kalian peroleh, karena itu adalah awal daripada bencana. Tapi harus terus belajar tanpa mengenal batas waktu dan kesempatan.
 2. Janganlah bersifat sombong dengan ilmu yang kalian dapat. Karena tidak pantas berlaku sombong, tapi rendah hatilah.
-3. Janganlah berburuk sangka pada Allah SWT dan merasa putus asa dari rahmat-Nya karena rah
-mat Allah sangat luas dan tidak ada batasann-
-ya. Tetapi harus senantiasa mengharap rahmat 
-dan ridho Allah SWT.
+3. Janganlah berburuk sangka pada Allah SWT dan merasa putus asa dari rahmat-Nya karena rahmat Allah sangat luas dan tidak ada batasannya. Tetapi harus senantiasa mengharap rahmat dan ridho Allah SWT.
 4. Jujurlah dalam setiap tindakan dan perkataan.
 5. Berjuanglah sesuai dengan kemampuan untuk menegakkan agama Allah.
 6. Bantulah orang yang memerlukan bantuan.
 7. Bergaulah dengan orang-orang yang sholeh.
 8. Istiqomahlah dalam setiap keadaan.
-Anak-anakku, itulah yang dapat saya sampaikan pada kesempatan ini mudah-mudahan ada manfaat serta hikmahnya. Sebagaimana harapan yang amat dalam, semoga kalian menjadi orang yang sholeh dan sholehah yang senantiasa berjuang di jalan Allah dan berguna bagi bangsa dan negara.
-Wassalamu'alaikum Wr. Wb.`,
-    photo: pimpinanPhoto,
-    backgroundImage: bg1,
-    schoolLogo: altieLogo,
-  },
-];
+Anak-anakku, itulah yang dapat saya sampaikan pada kesempatan ini mudah-mudahan ada manfaat serta hikmahnya. Sebagaimana harapan yang amat 
+dalam, semoga kalian menjadi orang yang sholeh dan sholehah yang senantiasa berjuang di jalan Allah dan berguna bagi bangsa dan negara.
+Wassalamu’alaikum Wr. Wb.`,
+  photo: pimpinanPhoto,
+  backgroundImage: bg1,
+  schoolLogo: altieLogo,
+};
 
 const kepsekGreetings: GreetingData[] = [
   {
@@ -147,7 +153,7 @@ const kepsekGreetings: GreetingData[] = [
 const angkatanGreetings: GreetingData[] = [
   {
     layout: "generation",
-    name: "Manusia A",
+    name: "Nizar Rayzabi",
     title: "Ketua Angkatan Putra",
     excerptLength: 300,
     greeting: `Assalamu'alaikum Wr. Wb.
@@ -163,35 +169,29 @@ const angkatanGreetings: GreetingData[] = [
   •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
   bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: kepsekPhoto,
+    photo: aktPutra,
     backgroundImage: bg5,
     schoolLogo: altieLogo,
   },
   {
     layout: "generation",
-    name: "Manusia B",
+    name: "Syaira Amanda",
     title: "Ketua Angkatan Putri",
     excerptLength: 300,
-    greeting: `Assalamu'alaikum Wr. Wb.
-  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
-  Ya Abnaaiy wa banaaty….
-  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
-  
-  خري الناس أنفعهم للناس
-  
-  Camkan kata-kata ini :
-  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
-  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
-  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang"
-  Wassalamu'alaikum Wr. Wb.`,
-    photo: kepsekPhoto,
+    greeting: `Assalamu’alaikum warahmatullahi wabarakatuh,
+Puji syukur kita panjatkan ke hadirat Allah SWT karena atas rahmat dan karunia-Nya, kita dapat menyelesaikan perjalanan ini bersama.
+Angkatan kita adalah kumpulan pribadi yang beragam dengan karakter yang kuat, pemikiran yang berbeda, dan dinamika yang tidak selalu mudah. Kita pernah berdebat, berbeda pandangan, bahkan terasa sulit untuk disatukan. Namun justru dari situlah kita belajar tentang kedewasaan dan arti menghargai.
+Di balik segala perbedaan, selalu ada tawa yang menyatukan. Candaan sederhana yang menjadi penguat di tengah tekanan, dan kebersamaan yang tumbuh bukan karena kita selalu sepakat, tetapi karena kita memilih untuk tetap bersama.
+Hari ini, kita melangkah ke arah masing-masing dengan membawa cerita yang sama. Semoga setiap dari kita melangkah dengan keyakinan, membawa nilai yang telah kita pelajari, dan tetap bangga pernah menjadi bagian dari angkatan ini.
+Terima kasih atas setiap dinamika dan kenangan yang tak tergantikan.
+Wassalamu’alaikum warahmatullahi wabarakatuh.`,
+    photo: aktPutri,
     backgroundImage: bg6,
     schoolLogo: altieLogo,
   },
   {
     layout: "generation",
-    name: "Manusia C",
+    name: "Reza Fahlefi",
     title: "Ketua Haflah Putra",
     excerptLength: 300,
     greeting: `Assalamu'alaikum Wr. Wb.
@@ -207,30 +207,62 @@ const angkatanGreetings: GreetingData[] = [
   •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
   bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: kepsekPhoto,
+    photo: hafPutra,
     backgroundImage: bg7,
     schoolLogo: altieLogo,
   },
   {
     layout: "generation",
-    name: "Manusia D",
+    name: "Ailla Padha",
     title: "Ketua Haflah Putri",
     excerptLength: 300,
-    greeting: `Assalamu'alaikum Wr. Wb.
-  Tiada kata yang pantas diucapkan, kecuali kalimat syukur yang sangat dalam kepada Dzat Yang Maha Ghafur yaitu Allah SWT. Teriring Sholawat dan Salam kita sanjungkan kepada baginda alam Nabi Muhammad SAW. 
-  Ya Abnaaiy wa banaaty….
-  Bertemanlah dengan orang yang suka membela kebenaran. Dialah hiasan dikala kita senang dan perisai di waktu kita susah. Namun kita tidak akan pernah memiliki seorang teman, jika kita mengharapkan seseorang tanpa kesalahan. Karena semua manusia itu baik kalau kita bisa melihat kebaikannya dan menyenangkan kalau kita bisa melihat keunikannya tapi semua manusia itu akan buruk dan membosankan kalau kita tidak bisa melihat keduanya. Jadilah orang yang baik dan bermanfaat bagi orang lain.
-  
-  خري الناس أنفعهم للناس
-  
-  Camkan kata-kata ini :
-  •	"Ilmu tentang suatu kehidupan hanya akan bisa didapat dengan menjalaninya"
-  •	"Tidak seorang pun akan dapat membuatmu kecewa kecuali kamu sendiri yang mengizinkannya"
-  •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
-  bisa menang"
-  Wassalamu'alaikum Wr. Wb.`,
-    photo: kepsekPhoto,
-    backgroundImage: bg7,
+    greeting: `Assalamualaikum wr.wb
+Pertama-tama, marilah kita  memanjatkan puji syukur ke hadirat Allah SWT atas segala nikmat dan karunia-Nya yang telah diberikan kepada kita semua.
+Alhamdulillah akhirnya kita telah sampai diujung perjalanan ini, tapi sebenarnya ini hanya awal dari perjalanan hidup yang sebenarnya. Kita telah belajar banyak hal, telah berteman dengan banyak orang, dan telah mengalami banyak hal yang tidak akan pernah kita lupakan.
+Tapi, seperti kata pepatah, 'semua yang baik akan berakhir'. Kita harus berpisah dengan tempat ini, dengan teman teman kita, dan dengan kenangan-kenangan yang telah kita buat bersama.
+Janganlah kita sedih, karena kita telah menjadi lebih kuat, lebih bijak, dan lebih siap untuk menghadapi masa depan. Kita telah dipersiapkan untuk menghadapi tantangan hidup yang akan datang, dan kita akan menjadi orang yang lebih baik dari hari ke hari.
+Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut masa depan dengan hati yang terbuka dan semangat yang tinggi. Semoga kita semua sukses, dan semoga kita semua tetap terhubung dalam doa dan kenangan.
+
+“Selamat dan sukses untuk ganti nama angkatan!"
+`,
+    photo: hafPutri,
+    backgroundImage: bg8,
+    schoolLogo: altieLogo,
+  },
+  {
+    layout: "generation",
+    name: "Saepul Mushak",
+    title: "Ketua Rihlah Putra",
+    excerptLength: 300,
+    greeting: `Assalamualaikum wr.wb
+Pertama-tama, marilah kita  memanjatkan puji syukur ke hadirat Allah SWT atas segala nikmat dan karunia-Nya yang telah diberikan kepada kita semua.
+Alhamdulillah akhirnya kita telah sampai diujung perjalanan ini, tapi sebenarnya ini hanya awal dari perjalanan hidup yang sebenarnya. Kita telah belajar banyak hal, telah berteman dengan banyak orang, dan telah mengalami banyak hal yang tidak akan pernah kita lupakan.
+Tapi, seperti kata pepatah, 'semua yang baik akan berakhir'. Kita harus berpisah dengan tempat ini, dengan teman teman kita, dan dengan kenangan-kenangan yang telah kita buat bersama.
+Janganlah kita sedih, karena kita telah menjadi lebih kuat, lebih bijak, dan lebih siap untuk menghadapi masa depan. Kita telah dipersiapkan untuk menghadapi tantangan hidup yang akan datang, dan kita akan menjadi orang yang lebih baik dari hari ke hari.
+Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut masa depan dengan hati yang terbuka dan semangat yang tinggi. Semoga kita semua sukses, dan semoga kita semua tetap terhubung dalam doa dan kenangan.
+
+“Selamat dan sukses untuk ganti nama angkatan!"
+`,
+    photo: rihPutra,
+    backgroundImage: bg9,
+    schoolLogo: altieLogo,
+  },
+  {
+    layout: "generation",
+    name: "Neng Dwi Nurhayati Karomah",
+    title: "Ketua Rihlah Putri",
+    excerptLength: 300,
+    greeting: `Assalamualaikum wr.wb
+Pertama-tama, marilah kita  memanjatkan puji syukur ke hadirat Allah SWT atas segala nikmat dan karunia-Nya yang telah diberikan kepada kita semua.
+Alhamdulillah akhirnya kita telah sampai diujung perjalanan ini, tapi sebenarnya ini hanya awal dari perjalanan hidup yang sebenarnya. Kita telah belajar banyak hal, telah berteman dengan banyak orang, dan telah mengalami banyak hal yang tidak akan pernah kita lupakan.
+Tapi, seperti kata pepatah, 'semua yang baik akan berakhir'. Kita harus berpisah dengan tempat ini, dengan teman teman kita, dan dengan kenangan-kenangan yang telah kita buat bersama.
+Janganlah kita sedih, karena kita telah menjadi lebih kuat, lebih bijak, dan lebih siap untuk menghadapi masa depan. Kita telah dipersiapkan untuk menghadapi tantangan hidup yang akan datang, dan kita akan menjadi orang yang lebih baik dari hari ke hari.
+Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut masa depan dengan hati yang terbuka dan semangat yang tinggi. Semoga kita semua sukses, dan semoga kita semua tetap terhubung dalam doa dan kenangan.
+
+“Selamat dan sukses untuk ganti nama angkatan!"
+`,
+    photo: rihPutri,
+    backgroundImage: bg10,
     schoolLogo: altieLogo,
   },
 ];
@@ -240,73 +272,140 @@ const angkatanGreetings: GreetingData[] = [
   title="Azzarqo Annual Website"
   description="Kenangan indah pperjalanan kami selama 3 tahun bersama"
 >
-  <!-- Connected Hero & About Sections -->
-  <ConnectedSections
-    topImage={heroBg}
-    bottomImage={aboutBg}
-    fadeColor="primary"
-    enableOverlay={true}
-  >
-    <HeroSection slot="top-section" />
-    <AboutSection slot="bottom-section" />
-  </ConnectedSections>
+  <ParallaxStack>
+    <div data-exit="fade">
+      <HeroSection />
+    </div>
+    <div>
+      <AboutSection />
+    </div>
+  </ParallaxStack>
 
-  {
-    pimpinanGreeting.map((greeting) => (
-      <GreetingSection
-        layout={greeting.layout}
-        name={greeting.name}
-        title={greeting.title}
-        excerptLength={greeting.excerptLength}
-        greeting={greeting.greeting}
-        photo={greeting.photo}
-        backgroundImage={greeting.backgroundImage}
-        schoolLogo={greeting.schoolLogo}
-      />
-    ))
-  }
+  <GreetingSection
+    layout={pimpinanGreeting.layout}
+    name={pimpinanGreeting.name}
+    title={pimpinanGreeting.title}
+    excerptLength={pimpinanGreeting.excerptLength}
+    greeting={pimpinanGreeting.greeting}
+    photo={pimpinanGreeting.photo}
+    backgroundImage={pimpinanGreeting.backgroundImage}
+    schoolLogo={pimpinanGreeting.schoolLogo}
+  />
 
-  <SectionsCarousel>
+  <HorizontalScrollCarousel id="kepsek-carousel">
     {
       kepsekGreetings.map((greeting) => (
-        <div class="swiper-slide">
-          <GreetingSection
-            layout={greeting.layout}
-            name={greeting.name}
-            title={greeting.title}
-            excerptLength={greeting.excerptLength}
-            greeting={greeting.greeting}
-            photo={greeting.photo}
-            backgroundImage={greeting.backgroundImage}
-            schoolLogo={greeting.schoolLogo}
-          />
-        </div>
+        <GreetingSection
+          layout={greeting.layout}
+          name={greeting.name}
+          title={greeting.title}
+          excerptLength={greeting.excerptLength}
+          greeting={greeting.greeting}
+          photo={greeting.photo}
+          backgroundImage={greeting.backgroundImage}
+          schoolLogo={greeting.schoolLogo}
+        />
       ))
     }
-  </SectionsCarousel>
+  </HorizontalScrollCarousel>
 
   <!-- Generation Council Greeting -->
-  <SectionsCarousel>
+  <HorizontalScrollCarousel id="angkatan-carousel">
     {
       angkatanGreetings.map((greeting) => (
-        <div class="swiper-slide">
-          <GreetingSection
-            layout={greeting.layout}
-            name={greeting.name}
-            title={greeting.title}
-            excerptLength={greeting.excerptLength}
-            greeting={greeting.greeting}
-            photo={greeting.photo}
-            backgroundImage={greeting.backgroundImage}
-            schoolLogo={greeting.schoolLogo}
-          />
-        </div>
+        <GreetingSection
+          layout={greeting.layout}
+          name={greeting.name}
+          title={greeting.title}
+          excerptLength={greeting.excerptLength}
+          greeting={greeting.greeting}
+          photo={greeting.photo}
+          backgroundImage={greeting.backgroundImage}
+          schoolLogo={greeting.schoolLogo}
+        />
       ))
     }
-  </SectionsCarousel>
+  </HorizontalScrollCarousel>
 
   <!-- Journey Section -->
-  <JourneySection backgroundImage={ip3aBg} />
+  <JourneySection />
+  <FadeOverlay showBottom={false} />
 
   <!-- Teacher Council Greeting -->
 </MainLayout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  async function initIndexAnimations() {
+    await waitForLoading();
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (prefersReducedMotion) return;
+
+    // 1. Subtle Parallax for Background Images
+    const parallaxWrappers = document.querySelectorAll(".parallax-bg-wrapper");
+
+    parallaxWrappers.forEach((wrapper) => {
+      const img = wrapper.querySelector(".parallax-bg-image");
+      if (!img) return;
+
+      gsap.fromTo(
+        img,
+        { yPercent: -15 },
+        {
+          yPercent: 15,
+          ease: "none",
+          force3D: true, // offloads to GPU
+          scrollTrigger: {
+            trigger: wrapper,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+    });
+
+    // 2. Section Entrance (Fade in only to prevent layout shift that breaks child triggers)
+    const revealSections = document.querySelectorAll(".section-reveal");
+
+    revealSections.forEach((section) => {
+      // ✨ FIX BUG: Abaikan animasi fade-in jika elemen ini berada di dalam Horizontal Carousel.
+      // Jika tidak diabaikan, animasi time-based ini (1.5 detik) akan menimpa 
+      // animasi scrub timeline dari Carousel saat di-scroll ekstra cepat.
+      if (section.parentElement?.closest(".horizontal-scroll-container")) return;
+
+      gsap.fromTo(
+        section,
+        {
+          opacity: 0,
+        },
+        {
+          opacity: 1,
+          duration: 1.5,
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%", // starts when section's top is 85% down viewport
+            toggleActions: "play none none reverse",
+          },
+        },
+      );
+    });
+  }
+
+  // Initialize once
+  document.addEventListener("DOMContentLoaded", initIndexAnimations);
+  // Re-initialize for Astro view transitions
+  document.addEventListener("astro:page-load", initIndexAnimations);
+</script>

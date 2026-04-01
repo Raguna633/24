@@ -1,100 +1,111 @@
 ---
-// Short About Us Section Component
-// Who Us? Text, Paragraph Text, Background Image dengan fade opacity
+import { Image } from "astro:assets";
 
-import Image from 'astro/components/Image.astro';
-import type { ImageMetadata } from 'astro';
-
+import aboutBg from "/src/assets/l-banyakan.webp";
 ---
 
 <section
   id="about-section"
-  class="relative py-20 sm:py-28 md:py-36 lg:py-44
+  class="relative min-h-screen h-full
           overflow-hidden"
 >
-
-  <!-- Background Image -->
-  <!-- <Image
-    src={bgImage}
+  <!-- Background Image & Overlay -->
+  <Image
+    src={aboutBg}
     alt="About section background"
     class="absolute inset-0 w-full h-full object-cover z-0"
     loading="eager"
     width={1920}
     height={1080}
     format="webp"
-  /> -->
+  />
+  <div class="absolute inset-0 z-[2] bg-black/40 backdrop-blur-[2px]"></div>
 
   <!-- Decorative background elements -->
   <div class="absolute top-0 left-0 w-full h-full z-5">
-    <div class="absolute top-10 left-10 w-32 h-32 bg-primary-100 rounded-full opacity-20 animate-pulse"></div>
-    <div class="absolute bottom-20 right-20 w-24 h-24 bg-accent-100 rounded-full opacity-30 animate-pulse" style="animation-delay: 1s;"></div>
-    <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-secondary-200 rounded-full opacity-25 animate-pulse" style="animation-delay: 2s;"></div>
+    <div
+      class="absolute top-10 left-10 w-32 h-32 bg-(--var-primary) rounded-full opacity-20 animate-pulse"
+    >
+    </div>
+    <div
+      class="absolute bottom-20 right-20 w-24 h-24 bg-accent-100 rounded-full opacity-30 animate-pulse"
+      style="animation-delay: 1s;"
+    >
+    </div>
+    <div
+      class="absolute top-1/2 left-1/4 w-16 h-16 bg-secondary-200 rounded-full opacity-25 animate-pulse"
+      style="animation-delay: 2s;"
+    >
+    </div>
   </div>
 
   <!-- Content Container -->
-  <div class="relative z-10 container-custom px-4 sm:px-6 lg:px-8">
-    <div class="max-w-4xl mx-auto text-center">
+  <div
+    class="relative z-10 container-custom px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center"
+  >
+    <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
       <!-- Who Us? Heading -->
       <h2
-        class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl
-               font-heading font-bold text-white mb-6 sm:mb-8 md:mb-10
-               leading-tight animate-fade-in"
+        class="font-heading font-bold text-white mb-0
+               leading-tight"
+        style="font-size: clamp(1rem, 4vw, 4rem);"
+        data-about-animate
       >
         Who Us?
       </h2>
 
       <!-- Decorative line -->
-      <div class="flex items-center justify-center gap-4 mb-8 sm:mb-12">
-        <div class="w-16 sm:w-24 h-px bg-primary-300"></div>
-        <div class="w-3 h-3 bg-primary-500 rounded-full"></div>
-        <div class="w-16 sm:w-24 h-px bg-primary-300"></div>
+      <div
+        class="flex items-center justify-center gap-4 mb-6 sm:mb-10"
+        data-about-animate
+      >
+        <div class="w-16 sm:w-24 h-px bg-[rgb(var(--color-primary))]"></div>
+        <div class="w-3 h-3 bg-[rgb(var(--color-primary))] rounded-full"></div>
+        <div class="w-16 sm:w-24 h-px bg-[rgb(var(--color-primary))]"></div>
       </div>
 
       <!-- About Paragraph -->
-      <div class="space-y-6 sm:space-y-8">
+      <div class="space-y-4 sm:space-y-8 w-full max-w-4xl px-2">
         <p
-          class="text-lg sm:text-xl md:text-2xl lg:text-3xl
-                 text-white leading-relaxed font-light
-                 animate-slide-up max-w-3xl mx-auto"
+          class="text-white leading-relaxed font-light mx-auto"
+          style="font-size: clamp(0.8rem, 2vw, 1.8rem);"
+          data-about-animate
         >
-          Kami adalah Angkatan 2025, generasi yang penuh semangat dan kreativitas.
-          Dalam tiga tahun perjalanan bersama di bangku sekolah, kami telah menorehkan
-          berbagai kenangan indah yang tak terlupakan.
+          Kami adalah Angkatan AZZARQO, generasi yang penuh semangat dan
+          kreativitas. Dalam tiga tahun perjalanan bersama di bangku sekolah,
+          kami telah menorehkan berbagai kenangan indah yang tak terlupakan.
         </p>
 
         <p
-          class="text-base sm:text-lg md:text-xl lg:text-2xl
-                 text-white leading-relaxed
-                 animate-slide-up max-w-2xl mx-auto"
-          style="animation-delay: 0.2s;"
+          class="text-white leading-relaxed mx-auto"
+          style="font-size: clamp(0.7rem, 1.5vw, 1.5rem);"
+          data-about-animate
         >
-          Dari momen orientasi yang penuh kegembiraan, hingga acara wisuda yang membanggakan,
-          setiap langkah kami diisi dengan persahabatan sejati dan pengalaman berharga
-          yang membentuk karakter kami menjadi lebih kuat dan bijak.
+          Dari momen orientasi yang penuh kegembiraan, hingga acara pelepasan
+          yang membanggakan, setiap langkah kami diisi dengan persahabatan
+          sejati dan pengalaman berharga yang membentuk karakter kami menjadi
+          lebih kuat dan bijak.
         </p>
 
         <p
-          class="text-sm sm:text-base md:text-lg lg:text-xl
-                 text-white italic leading-relaxed
-                 animate-slide-up max-w-xl mx-auto"
-          style="animation-delay: 0.4s;"
+          class="text-white italic leading-relaxed mx-auto"
+          style="font-size: clamp(0.7rem, 1.5vw, 1.25rem);"
+          data-about-animate
         >
-          Yearbook ini adalah bentuk apresiasi kami terhadap masa-masa berharga ini,
-          dan sebagai wadah untuk selalu terhubung meskipun waktu terus berjalan.
+          Yearbook ini adalah bentuk apresiasi kami terhadap masa-masa berharga
+          ini, dan sebagai wadah untuk selalu terhubung meskipun waktu terus
+          berjalan.
         </p>
       </div>
 
       <!-- Call to action hint -->
-      <div
-        class="mt-12 sm:mt-16 animate-fade-in"
-        style="animation-delay: 0.6s;"
-      >
-        <p class="text-primary-600 font-medium text-sm sm:text-base">
-          Scroll ke bawah untuk melihat pesan dari guru dan panitia kami
+      <div class="mt-8 sm:mt-16" data-about-animate>
+        <p class="text-[rgb(var(--color-primary))] font-medium text-xs sm:text-base">
+          Scroll ke bawah untuk melihat pesan dari guru-guru dan panitia kami
         </p>
         <div class="mt-4 animate-bounce">
           <svg
-            class="w-6 h-6 mx-auto text-primary-500"
+            class="w-6 h-6 mx-auto text-[rgb(var(--color-primary))]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -103,8 +114,7 @@ import type { ImageMetadata } from 'astro';
               stroke-linecap="round"
               stroke-linejoin="round"
               stroke-width="2"
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
           </svg>
         </div>
       </div>
@@ -112,25 +122,126 @@ import type { ImageMetadata } from 'astro';
   </div>
 </section>
 
-<style>
-  /* Custom animations untuk about section */
-  @keyframes fade-in {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initAboutAnimations() {
+    const section = document.getElementById("about-section");
+    if (!section) return;
+
+    // Helper: Split text into lines natively based on offsetTop
+    const splitIntoLines = (container: HTMLElement) => {
+      // Prevent double splitting
+      if (container.getAttribute("data-split") === "true") {
+        return Array.from(container.querySelectorAll(".gsap-line-inner"));
+      }
+      container.setAttribute("data-split", "true");
+
+      const text = container.innerText.trim();
+      if (!text) return [];
+      const words = text.split(/\s+/);
+      container.innerHTML = "";
+
+      const wordSpans = words.map((word) => {
+        const span = document.createElement("span");
+        span.style.display = "inline-block";
+        span.innerHTML = word + "&nbsp;"; // Force actual space rendering
+        container.appendChild(span);
+        return span;
+      });
+
+      let currentTop: number | null = null;
+      let lines: HTMLSpanElement[][] = [];
+      let currentLine: HTMLSpanElement[] = [];
+
+      wordSpans.forEach((span) => {
+        if (currentTop === null || span.offsetTop > currentTop + 5) {
+          currentTop = span.offsetTop;
+          if (currentLine.length > 0) lines.push(currentLine);
+          currentLine = [];
+        }
+        currentLine.push(span);
+      });
+      if (currentLine.length > 0) lines.push(currentLine);
+
+      container.innerHTML = "";
+      const lineElements: HTMLElement[] = [];
+
+      lines.forEach((line) => {
+        const wrapper = document.createElement("div");
+        wrapper.style.overflow = "hidden";
+        wrapper.style.display = "block"; // Stack like natural lines
+
+        const inner = document.createElement("div");
+        inner.className = "gsap-line-inner";
+        inner.style.display = "block";
+        inner.style.willChange = "transform, opacity";
+
+        line.forEach((span) => inner.appendChild(span));
+        wrapper.appendChild(inner);
+        container.appendChild(wrapper);
+        lineElements.push(inner);
+      });
+
+      return lineElements;
+    };
+
+    // Detect if we are inside a Pinned Parallax Stack
+    const parentStack = section.closest("[data-parallax-stack]");
+    const isPinned = !!parentStack;
+
+    // 1. Gather ALL elements in true top-to-bottom DOM order
+    const animateRoots = section.querySelectorAll("[data-about-animate]");
+    let allElements: HTMLElement[] = [];
+
+    animateRoots.forEach((el) => {
+      // If it's a paragraph, split it into lines so each line animates sequentially
+      if (el.tagName.toLowerCase() === "p") {
+        gsap.set(el, { opacity: 1, y: 0 });
+        const lines = splitIntoLines(el as HTMLElement);
+        allElements.push(...lines);
+      } else {
+        // Otherwise, animate the block as a whole (Heading, Deco Line, CTA)
+        allElements.push(el as HTMLElement);
+      }
+    });
+
+    // 2. Create a unified Scrub timeline for everything
+    if (allElements.length > 0) {
+      gsap.fromTo(
+        allElements,
+        { y: 40, opacity: 0, rotationX: 10, filter: "blur(8px)" },
+        {
+          y: 0,
+          opacity: 1,
+          rotationX: 0,
+          filter: "blur(0px)",
+          stagger: 0.1, // Stagger uniformly from top element to bottom element
+          ease: "power2.out",
+          scrollTrigger: {
+            // ParallaxStack creates a .pin-spacer wrap around the stack, use it if it exists
+            trigger: isPinned
+              ? parentStack?.closest(".pin-spacer") || parentStack
+              : section,
+            // If pinned, start revealing exactly after Hero finishes its 1.5vh exit duration
+            start: isPinned
+              ? `top+=${window.innerHeight * 1.5} top`
+              : "top 80%",
+            // End before the next section arrives
+            end: isPinned ? `+=${window.innerHeight * 1.0}` : "bottom 60%",
+            scrub: 1, // Smooth floaty scrub
+          },
+        },
+      );
+    }
   }
 
-  @keyframes slide-up {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-
-  .animate-fade-in {
-    animation: fade-in 1s ease-out;
-    animation-fill-mode: both;
-  }
-
-  .animate-slide-up {
-    animation: slide-up 1s ease-out;
-    animation-fill-mode: both;
-  }
-</style>
+  // Wait for ParallaxStack to setup its pins first before calculating line offsets
+  document.addEventListener("astro:page-load", () => {
+    setTimeout(() => {
+      requestAnimationFrame(initAboutAnimations);
+    }, 150);
+  });
+</script>

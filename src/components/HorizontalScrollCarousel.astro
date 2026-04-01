@@ -1,0 +1,232 @@
+---
+// src/components/HorizontalScrollCarousel.astro
+//
+// Komponen pengganti Swiper Carousel berbasis GSAP ScrollTrigger.
+// Memungkinkan navigasi horizontal antar section HANYA lewat scroll vertikal.
+//
+
+interface Props {
+    // Opsional: judul atau label carousel
+    id?: string;
+}
+
+const { id = "horizontal-carousel" } = Astro.props;
+---
+
+<div
+    class="horizontal-scroll-container bg-[rgb(var(--color-primary))] overflow-hidden section-reveal"
+    id={id}
+>
+    <div
+        class="horizontal-scroll-wrapper relative h-screen w-screen overflow-hidden"
+    >
+        <slot />
+    </div>
+</div>
+
+<script>
+    import gsap from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import { waitForLoading } from "../utils/loadingState";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    async function initHorizontalCarousels() {
+        await waitForLoading();
+
+        const carousels = document.querySelectorAll(
+            ".horizontal-scroll-container",
+        );
+
+        carousels.forEach((container) => {
+            const wrapper = container.querySelector(
+                ".horizontal-scroll-wrapper",
+            ) as HTMLElement;
+            if (!wrapper) return;
+
+            const slides = Array.from(wrapper.children) as HTMLElement[];
+            if (slides.length <= 1) return;
+
+            // Set each slide to exactly viewport width/height and stack them
+            slides.forEach((slide, i) => {
+                slide.style.position = "absolute";
+                slide.style.top = "0";
+                slide.style.left = "0";
+                slide.style.width = "100vw";
+                slide.style.height = "100vh";
+                slide.style.zIndex = String(slides.length - i);
+
+                // Start second slide onwards offscreen to the right
+                if (i > 0) {
+                    gsap.set(slide, { xPercent: 100 });
+                }
+            });
+
+            // Prepare text elements: disable native scroll so GSAP can take over
+            slides.forEach((slide) => {
+                const textContents = slide.querySelectorAll(
+                    ".greeting-text-content",
+                );
+                textContents.forEach((txt) => {
+                    (txt as HTMLElement).style.overflowY = "hidden";
+                    // Start exactly at top
+                    (txt as HTMLElement).scrollTop = 0;
+                });
+
+                // Ensure hint is visible initially if overflow exists
+                const hints = slide.querySelectorAll(".scroll-hint");
+                hints.forEach((hint) => {
+                    const txt = slide.querySelector(
+                        ".greeting-text-content",
+                    ) as HTMLElement;
+                    if (txt && txt.scrollHeight > txt.clientHeight) {
+                        (hint as HTMLElement).style.display = "flex";
+                        (hint as HTMLElement).style.opacity = "1";
+                    } else {
+                        (hint as HTMLElement).style.display = "none";
+                    }
+                });
+            });
+
+            // Calculate dynamic scroll distance
+            const getScrollDist = () => {
+                let dist = (slides.length - 1) * window.innerWidth;
+
+                slides.forEach((slide) => {
+                    const txt = slide.querySelector(
+                        ".greeting-text-content",
+                    ) as HTMLElement;
+                    if (txt) {
+                        const overflow = Math.max(
+                            0,
+                            txt.scrollHeight - txt.clientHeight,
+                        );
+                        // Multiply by 3 to make text scrolling slower and easier to read
+                        dist += overflow * 3;
+                    }
+                });
+
+                return dist;
+            };
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: container,
+                    start: "top top", // When top of container hits top of viewport
+                    end: () => `+=${getScrollDist()}`,
+                    pin: true,
+                    scrub: 1, // Smooth scrubbing
+                    anticipatePin: 1,
+                    fastScrollEnd: true, // Prevents lag on fast flick scrolls
+                    invalidateOnRefresh: true, // Recalculate on resize
+                },
+            });
+
+            slides.forEach((slide, i) => {
+                // 1. Enter the new slide and push back the previous one
+                if (i > 0) {
+                    const slideLabel = `slideEnter-${i}`;
+                    tl.addLabel(slideLabel);
+
+                    // Bring current slide in from right
+                    tl.to(
+                        slide,
+                        {
+                            xPercent: 0,
+                            ease: "none",
+                            duration: () => window.innerWidth,
+                            force3D: true,
+                        },
+                        slideLabel,
+                    );
+
+                    // Push the immediately preceding slide back (scale down and fade out completely)
+                    tl.to(
+                        slides[i - 1],
+                        {
+                            scale: 0.92,
+                            opacity: 0,
+                            ease: "none",
+                            duration: () => window.innerWidth,
+                            force3D: true,
+                        },
+                        slideLabel,
+                    );
+                }
+
+                // 2. Scroll the text vertically while paused horizontally
+                const txt = slide.querySelector(
+                    ".greeting-text-content",
+                ) as HTMLElement;
+                const hint = slide.querySelector(".scroll-hint") as HTMLElement;
+
+                if (txt && txt.scrollHeight > txt.clientHeight) {
+                    const scrollAmount = txt.scrollHeight - txt.clientHeight;
+                    const durationVal = Math.max(1, scrollAmount * 3);
+
+                    // If we have a hint, we fade it out at the same time the text scrolls down
+                    if (hint) {
+                        const syncLabel = `scrollSlide-${i}`;
+                        // Scroll the text
+                        tl.to(
+                            txt,
+                            {
+                                scrollTop: scrollAmount,
+                                ease: "none",
+                                duration: durationVal,
+                            },
+                            syncLabel, // Unique label per slide to prevent concurrent timeline firing
+                        );
+
+                        // Fade the hint out
+                        tl.to(
+                            hint,
+                            {
+                                opacity: 0,
+                                ease: "power1.inOut",
+                                duration: durationVal * 0.8, // Fade out slightly before hitting true bottom
+                            },
+                            syncLabel,
+                        );
+                    } else {
+                        // Just scroll text if no hint exists
+                        tl.to(txt, {
+                            scrollTop: scrollAmount,
+                            ease: "none",
+                            duration: durationVal,
+                        });
+                    }
+                }
+            });
+        });
+    }
+
+    // Initialize
+    document.addEventListener("astro:page-load", () => {
+        // Kill existing ScrollTriggers gently to avoid aggressive lag spikes on client routing
+        ScrollTrigger.getAll().forEach((st) => {
+            if (
+                st.trigger &&
+                (st.trigger as HTMLElement).closest(
+                    ".horizontal-scroll-container",
+                )
+            ) {
+                st.kill();
+            }
+        });
+        initHorizontalCarousels();
+    });
+</script>
+
+<style>
+    .horizontal-scroll-container {
+        width: 100vw;
+        /* Hide native horizontal scrollbar */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .horizontal-scroll-container::-webkit-scrollbar {
+        display: none;
+    }
+</style>
