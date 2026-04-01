@@ -6,7 +6,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:lighthouse": "lighthouse http://localhost:4321 --view",
+    "test:build": "astro check && astro build",
+    "test:preview": "npm build && npm preview"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.2",
