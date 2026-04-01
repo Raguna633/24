@@ -64,12 +64,12 @@ const kelasSMK = [
 ];
 
 const kelasSMA = [
-  'SMA - IPA 1',
-  'SMA - IPA 2',
-  'SMA - IPA 3',
-  'SMA - IPS 1',
-  'SMA - IPS 2',
-  'SMA - IPS 3',
+  'SMA - IPA I',
+  'SMA - IPA II',
+  'SMA - IPA III',
+  'SMA - IPS I',
+  'SMA - IPS II',
+  'SMA - IPS III',
   'SMA - Bahasa 1',
   'SMA - Bahasa 2'
 ];
@@ -196,7 +196,7 @@ function generateInstagramUsername(name) {
 // Fungsi untuk generate alamat
 function generateAddress() {
   const jalan = ['Merdeka', 'Pahlawan', 'Sudirman', 'Gatot Subroto', 'Thamrin',
-                 'Diponegoro', 'HOS Cokroaminoto', 'A Yani', 'Imam Bonjol', 'Jend Sudirman'];
+    'Diponegoro', 'HOS Cokroaminoto', 'A Yani', 'Imam Bonjol', 'Jend Sudirman'];
   const kotaIndex = Math.floor(Math.random() * kota.length);
   const jalanIndex = Math.floor(Math.random() * jalan.length);
   const nomor = Math.floor(Math.random() * 100) + 1;
