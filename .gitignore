@@ -25,3 +25,4 @@ pnpm-debug.log*
 
 task/
 .clinerules/
+package-lock.json
