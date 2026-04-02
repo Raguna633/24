@@ -18,8 +18,7 @@ export function filterStudents(
     const q = filters.search.toLowerCase();
     result = result.filter(s =>
       s.name.toLowerCase().includes(q) ||
-      s.class.toLowerCase().includes(q) ||
-      s.hobbies?.some(h => h.toLowerCase().includes(q))
+      s.class.toLowerCase().includes(q)
     );
   }
 

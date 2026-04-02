@@ -8,20 +8,37 @@ export interface Student {
   slug: string;
   name: string;
   class: string;
-  photo: string;
+  photo: any; // Allow string or ImageMetadata
   gender: Gender;
   jenjang: Jenjang;
   quote?: string;
-  hobbies?: string[];
-  address?: string;
+  alamat?: string;
   instagram?: string;
   downloadPassword: string;
 }
 
-export function normalizePhotoPath(path?: string): string {
+export function normalizePhotoPath(path?: any): string {
   if (!path) return '/assets/placeholder.jpg';
-  if (path.startsWith('http') || path.startsWith('/')) return path;
-  return `/assets/uniform/${path.split('/').pop()}`;
+  
+  // Handle Astro Image object
+  if (typeof path === 'object' && 'src' in path) {
+    return path.src;
+  }
+  
+  // Handle string paths
+  if (typeof path === 'string') {
+    if (path.startsWith('http') || path.startsWith('/')) return path;
+    
+    const filename = path.split('/').pop();
+    // If it's a student photo but somehow still a string
+    if (path.includes('students/')) {
+      return `/assets/students/${filename}`;
+    }
+    // Default to uniform folder
+    return `/assets/uniform/${filename}`;
+  }
+
+  return '/assets/placeholder.jpg';
 }
 
 export function generateStudentPassword(name: string, id: string): string {
@@ -42,14 +59,14 @@ export function mapStudentCollection(
   return students.map(s => ({
     slug: s.id,
     name: s.data.name,
-    class: s.data.kelas || s.data.class,
+    class: s.data.kelas || s.data.class || 'Unknown',
     gender: s.data.gender as Gender,
     jenjang: s.data.jenjang as Jenjang,
     quote: s.data.quote,
-    hobbies: s.data.hobbies,
-    address: s.data.address,
+    alamat: s.data.alamat,
+    address: s.data.alamat,
     instagram: s.data.instagram,
-    photo: normalizePhotoPath(s.data.photo),
+    photo: s.data.photo,
     downloadPassword: generateStudentPassword(s.data.name, s.id),
   }));
 }

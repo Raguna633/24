@@ -4,9 +4,10 @@ const students = defineCollection({
     schema: ({ image }) =>
         z.object({
             name: z.string(),
-            kelas: z.string(),
-            alamat: z.string(),
-            photo: image().optional(),
+            kelas: z.string().optional(),
+            class: z.string().optional(),
+            alamat: z.string().optional(),
+            photo: z.union([image(), z.string()]).optional(),
             quote: z.string().optional(),
             instagram: z.string().optional(),
             jenjang: z.string(),
@@ -19,7 +20,7 @@ const uniforms = defineCollection({
     schema: ({ image }) =>
         z.object({
             uniformName: z.string(),
-            uniformPhotos: z.array(image()).optional(),
+            uniformPhotos: z.array(z.union([image(), z.string()])).optional(),
             modelName: z.string(),
             modelClass: z.string(),
         }),
@@ -29,11 +30,11 @@ const classes = defineCollection({
     schema: ({ image }) =>
         z.object({
             name: z.string(),
-            heroPhoto: z.array(image()).optional(),
+            heroPhoto: z.array(z.union([image(), z.string()])).optional(),
             walas: z.string(),
-            walasPhoto: image().optional(),
+            walasPhoto: z.union([image(), z.string()]).optional(),
             walasQuote: z.string(),
-            groupPhoto: z.array(image()).optional(),
+            groupPhoto: z.array(z.union([image(), z.string()])).optional(),
         }),
 });
 
