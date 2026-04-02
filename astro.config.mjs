@@ -20,12 +20,8 @@ export default defineConfig({
 
   // // Image optimization configuration
   image: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-    ],
+    // remotePatterns untuk remote images
+    remotePatterns: [{ hostname: 'res.cloudinary.com' }],
   },
 
   // Output configuration
