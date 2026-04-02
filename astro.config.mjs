@@ -19,12 +19,14 @@ export default defineConfig({
   },
 
   // // Image optimization configuration
-  // image: {
-  //   // Domains yang diizinkan untuk remote images
-  //   domains: ['res.cloudinary.com'],
-  //   // Format output yang disupport
-  //   formats: ['avif', 'webp'],
-  // },
+  image: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+    ],
+  },
 
   // Output configuration
   output: 'static', // Static Site Generation (SSG)
