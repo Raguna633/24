@@ -9,9 +9,9 @@ import LineDecor from "../../LineDecor.astro";
 import TefatieText from "./TefatieText.astro";
 import TextCustom from "../../TextCustom.astro";
 
-import heroBg from "../../../../public/assets/class/a_pplg/bg1.jpg";
-import walasImage from "../../../../public/assets/class/a_pplg/dummy_kepsek.webp";
-import tefaGroup from "../../../../public/assets/class/a_pplg/group_tefa.webp";
+// import heroBg from "../../../../public/assets/class/a_pplg/bg1.jpg";
+// import walasImage from "../../../../public/assets/class/a_pplg/dummy_kepsek.webp";
+// import tefaGroup from "../../../../public/assets/class/a_pplg/group_tefa.webp";
 ---
 
 <div class="">
@@ -45,12 +45,12 @@ import tefaGroup from "../../../../public/assets/class/a_pplg/group_tefa.webp";
     <div
       class="hero-image relative mx-0 sm:mx-[clamp(1rem,5vw,6rem)] mt-16 inset-0 overflow-hidden sm:rounded-4xl drop-shadow-black z-10"
     >
-      <Image
+      <!-- <Image
         src={heroBg as ImageMetadata}
         alt="Hero Background"
         class="object-cover w-full h-full border-3 border-[#b1b2b5FF] z-0"
         sizes="100vw"
-      />
+      /> -->
     </div>
   </div>
   <div class="walas-wrapper h-0 z-20">
@@ -506,12 +506,12 @@ const { kelas } = Astro.params;
         </div>
       </div>
       <div class="image-wrapper relative aspect-4/3 w-full max-w-182 bottom-0">
-        <Image
+        <!-- <Image
           src={tefaGroup as ImageMetadata}
           alt={"Tim Tefa Pertama :v"}
           sizes="100%"
           class:list={"-bottom-10 relative object-cover w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"}
-        />
+        /> -->
       </div>
       <LineDecor
         width="120%"
