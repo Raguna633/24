@@ -1,0 +1,29 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import XIIAPPLG from "../../components/classes/smk/a-pplg.astro";
+
+export async function getStaticPaths() {
+  return [
+    { params: { slug: "xii-a-pplg" } },
+    { params: { slug: "xii-b-apl" } },
+    { params: { slug: "xii-c-apl" } },
+    { params: { slug: "xii-d-mplb" } },
+    { params: { slug: "xii-ipa-1" } },
+    { params: { slug: "xii-ipa-2" } },
+    { params: { slug: "xii-ipa-3" } },
+    { params: { slug: "xii-ipa-4" } },
+    { params: { slug: "xii-ips-1" } },
+    { params: { slug: "xii-ips-2" } },
+    { params: { slug: "xii-ips-3" } },
+  ];
+}
+
+const { slug } = Astro.params;
+
+// For now, only xii-a-pplg has a specific component.
+// Others will fallback to it as a placeholder until their components are ready.
+---
+
+<MainLayout description="" title="" forceDesktopView={true}>
+    <XIIAPPLG />
+</MainLayout>

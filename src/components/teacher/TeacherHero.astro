@@ -1,4 +1,5 @@
 ---
+import CloudinaryImage from "../ui/CloudinaryImage.astro";
 import hero1 from "../../assets/teachers/hero-1.webp";
 import hero2 from "../../assets/teachers/hero-2.webp";
 ---
@@ -6,7 +7,7 @@ import hero2 from "../../assets/teachers/hero-2.webp";
 <div id="teacher-hero-container" transition:name="teacher-hero-section">
   <!-- Dynamic Hero Images Section -->
   <section
-    class="max-w-screen-2xl mx-auto px-8 min-h-screen flex items-center overflow-hidden"
+    class="max-w-screen-2xl mx-auto px-8 min-h-screen flex justify-center items-center overflow-hidden"
     id="hero-landscapes"
   >
     <div
@@ -20,10 +21,12 @@ import hero2 from "../../assets/teachers/hero-2.webp";
           <div
             class="overflow-hidden rounded-xl shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)] bg-[#f2ede7] relative"
           >
-            <img
-              class="w-full aspect-[16/10] object-cover grayscale hover:grayscale-0 transition-all duration-700 parallax-img-1"
+            <CloudinaryImage
+              class="aspect-[16/10] object-cover grayscale hover:grayscale-0 transition-all duration-700 parallax-img-1"
               alt="Dewan Guru/Asatidz"
-              src={hero1.src}
+              src="https://res.cloudinary.com/dhbps9kvp/image/upload/v1775105002/hero-1.webp"
+              sizes="w-full"
+              loading="eager"
             />
             <div
               class="absolute bottom-4 left-4 bg-[rgb(var(--color-secondary))] rounded-lg px-4 py-2 text-white"
@@ -49,10 +52,12 @@ import hero2 from "../../assets/teachers/hero-2.webp";
           <div
             class="overflow-hidden rounded-xl shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)] bg-[#f2ede7] relative"
           >
-            <img
-              class="w-full aspect-[16/10] object-cover grayscale hover:grayscale-0 transition-all duration-700 parallax-img-2"
+            <CloudinaryImage
+              class="aspect-[16/10] object-cover grayscale hover:grayscale-0 transition-all duration-700 parallax-img-2"
               alt="Dewan Guru/Asatidzah"
-              src={hero2.src}
+              src="https://res.cloudinary.com/dhbps9kvp/image/upload/v1775105002/hero-2.webp"
+              sizes="w-full"
+              loading="eager"
             />
             <div
               class="absolute bottom-4 right-4 bg-[rgb(var(--color-secondary))] rounded-lg px-4 py-2 text-white"

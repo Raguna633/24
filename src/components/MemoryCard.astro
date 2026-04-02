@@ -1,13 +1,14 @@
 ---
 // src/components/ui/MemoryCard.astro
 import { Image } from "astro:assets";
+import CloudinaryImage from "./ui/CloudinaryImage.astro";
 import type { ImageMetadata } from "astro";
 
 interface Props {
   title: string;
   date: Date;
   excerpt: string;
-  thumbnail: ImageMetadata;
+  thumbnail: ImageMetadata | string;
   category: string;
   slug: string;
   featured?: boolean;
@@ -59,19 +60,30 @@ const categoryColor = categoryColors[category] || categoryColors.other;
         ${featured ? "aspect-landscape" : "aspect-[4/3]"}
       `}
       >
-        <Image
-          src={thumbnail}
-          alt={title}
-          class="w-full h-full object-cover group-hover:scale-105
-                 transition-transform duration-500"
-          widths={[400, 800, 1200]}
-          sizes={featured
-            ? "(max-width: 768px) 100vw, 66vw"
-            : "(max-width: 768px) 100vw, 33vw"}
-          format="webp"
-          quality={85}
-          loading="lazy"
-        />
+        {
+          typeof thumbnail === "string" && thumbnail.includes("res.cloudinary.com") ? (
+            <CloudinaryImage
+              src={thumbnail}
+              alt={title}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              widths={[400, 800, 1200]}
+              loading="lazy"
+            />
+          ) : (
+            <Image
+              src={thumbnail as any}
+              alt={title}
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              widths={[400, 800, 1200]}
+              sizes={featured
+                ? "(max-width: 768px) 100vw, 66vw"
+                : "(max-width: 768px) 100vw, 33vw"}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+          )
+        }
 
         <!-- Category badge -->
         <div class="absolute top-4 left-4">

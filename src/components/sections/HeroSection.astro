@@ -8,6 +8,7 @@ import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 
 import heroBg from "/src/assets/27250374_1290.webp";
+import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 ---
 
 <section
@@ -15,16 +16,27 @@ import heroBg from "/src/assets/27250374_1290.webp";
   class="relative min-h-screen flex items-center justify-center overflow-hidden"
 >
   <!-- Background Image -->
-  <Image
-    src={heroBg}
-    alt="Hero section background"
-    class="absolute inset-0 w-full h-full object-cover z-0"
-    loading="eager"
-    width={1920}
-    height={1080}
-    format="webp"
-    class:list={"z-0"}
-  />
+  {
+    typeof heroBg === "string" && heroBg.includes("res.cloudinary.com") ? (
+      <CloudinaryImage
+        src="https://res.cloudinary.com/dhbps9kvp/image/upload/v1775105080/27250374_1290.webp"
+        alt="Hero section background"
+        class="absolute inset-0 w-full h-full object-cover z-0"
+        widths={[1920, 2560]}
+        loading="eager"
+      />
+    ) : (
+      <Image
+        src={heroBg as any}
+        alt="Hero section background"
+        class="absolute inset-0 w-full h-full object-cover z-0"
+        loading="eager"
+        width={1920}
+        height={1080}
+        format="webp"
+      />
+    )
+  }
 
   <!-- Content Container -->
   <div

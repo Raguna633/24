@@ -1,5 +1,5 @@
 ---
-import Image from "astro/components/Image.astro";
+import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import WaveCanvas from "./WaveCanvas.astro";
 import bgTitle from "../../assets/27250374_1290.webp";
@@ -7,31 +7,30 @@ import "../styles/global.css";
 ---
 
 <div
-    class="pt-8 z-0 absolute w-full h-32 inset-0 flex-col text-center justify-center mx-auto items-center"
-    id="title-container"
+  class="pt-8 z-0 absolute w-full h-32 inset-0 flex-col text-center justify-center mx-auto items-center"
+  id="title-container"
+>
+  <h1
+    class="z-10 relative text-white mx-auto text-center lg:mb-8 lg:mt-4 font-black tracking-wider lg:text-2xl"
   >
-    <h1
-      class="z-10 relative text-white mx-auto text-center lg:mb-8 lg:mt-4 font-black tracking-wider lg:text-2xl"
-    >
-      WELCOME TO OUR CLASS
-    </h1>
-    <WaveCanvas
-      color="#f5f0ea"
-      position="bottom"
-      height={40}
-      speed={0.05}
-      gradientMode="linear"
-      gradientDirection="to-bottom"
-      gradientStops={[
-        { offset: 0, color: "#f5f0ea", opacity: 0 }, // Top: transparent
-        { offset: 0.4, color: "#f5f0ea", opacity: 0.4 },
-        { offset: 0.7, color: "#f5f0ea", opacity: 0.7 },
-        { offset: 1, color: "#f5f0ea", opacity: 1 }, // Bottom: solid
-      ]}
-    />
-  </div>
+    WELCOME TO OUR CLASS
+  </h1>
+  <WaveCanvas
+    color="#f5f0ea"
+    position="bottom"
+    height={40}
+    speed={0.05}
+    gradientMode="linear"
+    gradientDirection="to-bottom"
+    gradientStops={[
+      { offset: 0, color: "#f5f0ea", opacity: 0 }, // Top: transparent
+      { offset: 0.4, color: "#f5f0ea", opacity: 0.4 },
+      { offset: 0.7, color: "#f5f0ea", opacity: 0.7 },
+      { offset: 1, color: "#f5f0ea", opacity: 1 }, // Bottom: solid
+    ]}
+  />
+</div>
 
-  
 <style>
   #title-container {
     background:

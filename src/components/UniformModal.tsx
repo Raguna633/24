@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { getOptimizedCloudinaryUrl } from "../utils/cloudinary";
 
 interface UniformData {
   id: string;
@@ -137,7 +138,7 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
         onClick={(e) => e.stopPropagation()}
       >
         <img 
-          src={currentPhoto.src} 
+          src={getOptimizedCloudinaryUrl(currentPhoto.src, isFullscreen ? 2000 : 1200)} 
           alt={`Photo ${activePhotoIndex + 1} of ${activeUniform.data.uniformName}`}
           className={`object-contain transition-all duration-300 ${isFullscreen ? 'w-full h-full' : 'max-w-full max-h-full rounded-md shadow-2xl'}`}
           style={{ width: isFullscreen ? '100%' : 'auto', height: isFullscreen ? '100%' : 'auto' }}

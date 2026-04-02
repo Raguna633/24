@@ -1,0 +1,36 @@
+---
+import { getOptimizedCloudinaryUrl, getCloudinarySrcset } from "../../utils/cloudinary";
+
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: "lazy" | "eager";
+  decoding?: "async" | "sync" | "auto";
+}
+
+const { 
+  src, 
+  alt, 
+  class: className, 
+  widths = [400, 800, 1200, 1600, 1920], 
+  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  loading = "lazy",
+  decoding = "async"
+} = Astro.props;
+
+const optimizedSrc = getOptimizedCloudinaryUrl(src, widths[1]); // Default ke lebar menengah
+const srcset = getCloudinarySrcset(src, widths);
+---
+
+<img
+  src={optimizedSrc}
+  srcset={srcset}
+  sizes={sizes}
+  alt={alt}
+  class={className}
+  loading={loading}
+  decoding={decoding}
+/>

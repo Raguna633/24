@@ -1,6 +1,6 @@
 ---
 import Image from "astro/components/Image.astro";
-import bg from "../../assets/ip3a.webp";
+import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 ---
 
 <section
@@ -9,10 +9,9 @@ import bg from "../../assets/ip3a.webp";
   <div
     class="absolute inset-0 parallax-bg-wrapper bg-cover bg-center overflow-hidden h-full"
   >
-    <Image
-      src={bg}
-      width={1920}
-      height={1080}
+    <CloudinaryImage
+      src="https://res.cloudinary.com/dhbps9kvp/image/upload/v1775105102/ip3a.webp"
+      widths={[1920, 2560]}
       alt="Background Image"
       class="parallax-bg-image w-full h-full object-cover scale-[1.3]"
       loading="eager"

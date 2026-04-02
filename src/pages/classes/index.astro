@@ -1,13 +1,146 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";  
-import JenjangCard from "../../components/JenjangCard.astro";
+import ClassesCard from "../../components/ClassesCard.astro";
 import PageTitle from "../../components/PageTitle.astro";
+
+import aPPLGPict from "../../assets/classes/a-pplg/hero/bg-1.jpg";
+import bAPLPict from "../../assets/classes/b-apl/hero/bg-1.jpg";
+import cAPLPict from "../../assets/classes/a-pplg/hero/bg-1.jpg";
+import dOTKPPict from "../../assets/classes/a-pplg/hero/bg-1.jpg";
+import ipaI from "../../assets/classes/ipa1/hero/bg-1.jpg";
+import ipaII from "../../assets/classes/a-pplg/hero/bg-1.jpg";
+import ipaIII from "../../assets/classes/a-pplg/hero/bg-1.jpg";
+import ipaIV from "../../assets/classes/ipa4/hero/bg-1.jpg";
+import ipsI from "../../assets/classes/ips1/hero/bg-1.jpg";
+import ipsII from "../../assets/classes/a-pplg/hero/bg-1.jpg";
+import ipsIII from "../../assets/classes/a-pplg/hero/bg-1.jpg";
+
+// export function getStaticPaths() {
+//     return [
+//         { params: { jenjang: "smk"}},
+//         { params: { jenjang: "sma" }},
+//     ]
+// }
+
+const { jenjang } = Astro.params;
+
+const classTitle = "Foto bersama dengan wali kelas XII";
+
+interface Classes {
+  name: string;
+  img: ImageMetadata;
+  width: number;
+  height: number;
+  alt: string;
+  url: string
+}
+
+const classes: Classes[] = [
+  {
+    name: "A PPLG",
+    img: aPPLGPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} A PPLG`,
+    url: "/classes/xii-a-pplg"
+  },
+  {
+    name: "B APL",
+    img: bAPLPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} B APL`,
+    url: "/classes/xii-b-apl"
+  },
+  {
+    name: "C APL",
+    img: cAPLPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} C APL`,
+    url: "/classes/xii-c-apl"
+  },
+  {
+    name: "D MPLB",
+    img: dOTKPPict,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} D OTKP`,
+    url: "/classes/xii-d-mplb"
+  },
+  {
+    name: "IPA I",
+    img: ipaI,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA I`,
+    url: "/classes/xii-ipa-1"
+  },
+  {
+    name: "IPA II",
+    img: ipaII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA II`,
+    url: "/classes/xii-ipa-2"
+  },
+  {
+    name: "IPA III",
+    img: ipaIII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA III`,
+    url: "/classes/xii-ipa-3"
+  },
+  {
+    name: "IPA IV",
+    img: ipaIV,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPA IV`,
+    url: "/classes/xii-ipa-4"
+  },
+  {
+    name: "IPS I",
+    img: ipsI,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPS I`,
+    url: "/classes/xii-ips-1"
+  },
+  {
+    name: "IPS II",
+    img: ipsII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPS II`,
+    url: "/classes/xii-ips-2"
+  },
+  {
+    name: "IPS III",
+    img: ipsIII,
+    width: 1920,
+    height: 1080,
+    alt: `${classTitle} IPS III`,
+    url: "/classes/xii-ips-3"
+  },
+];
+
+const smaClasses: Classes[] = [
+  
+];
+
+// const classes = jenjang === "smk" ? smkClasses : smaClasses;
+
+// if (jenjang !== "smk" && jenjang !== "sma") {
+//     return Astro.redirect("/404");
+// }
 ---
 
 <MainLayout title="" description="">
-  <section class="flex flex-col bg-[#f5f0ea] min-h-screen min-w-screen justify-center items-center w-full py-[144px] bg-cover">
+  <section class="flex flex-col bg-[#f5f0ea] min-h-screen min-w-screen justify-center items-center w-full pt-40 bg-cover">
     <PageTitle/>
-    <JenjangCard/>
+    <ClassesCard classes={classes}/>
   </section>
 </MainLayout>
 

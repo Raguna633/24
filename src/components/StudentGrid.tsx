@@ -1,3 +1,5 @@
+import { getOptimizedCloudinaryUrl } from "../utils/cloudinary";
+
 interface Student {
   name: string;
   class: string;
@@ -32,7 +34,7 @@ export default function StudentGrid({ students }: StudentGridProps) {
         >
           <div className="aspect-square overflow-hidden">
             <img
-              src={student.photo}
+              src={getOptimizedCloudinaryUrl(student.photo, 400)}
               alt={student.name}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
               loading="lazy"

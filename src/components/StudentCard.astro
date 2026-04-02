@@ -1,50 +1,72 @@
 ---
 // src/components/ui/StudentCard.astro
 import { Image } from "astro:assets";
+import CloudinaryImage from "./ui/CloudinaryImage.astro";
 import type { ImageMetadata } from "astro";
 
 interface Props {
   name: string;
   class: string;
   quote?: string;
-  photo: string | ImageMetadata;
+  photo?: string | ImageMetadata | null;
   slug: string;
-  hobbies?: string[];
 }
 
-const { name, class: className, quote, photo, slug, hobbies } = Astro.props;
+const { name, class: className, quote, photo, slug } = Astro.props;
+
+// Fallback ke gambar dummy jika photo tidak ada / undefined
+const displayPhoto = photo ?? "/images/dummy-avatar.webp";
 ---
 
 <article
   class="card group cursor-pointer transform transition-all duration-300
          hover:-translate-y-2"
 >
-  <a href={`/students/${slug}`} class="block group bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden" data-student-link>
+  <a
+    href={`/students/${slug}`}
+    class="block group bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden"
+    data-student-link
+  >
     <!-- Image container -->
-    <div class="relative aspect-photo overflow-hidden bg-gray-200 rounded-t-[16px]">
-      {typeof photo === 'string' ? (
-        <img
-          src={photo}
-          alt={`Photo of ${name}`}
-          class="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
-          loading="lazy"
-        />
-      ) : (
-        <Image
-          src={photo}
-          alt={`Photo of ${name}`}
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          widths={[300, 600]}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          format="webp"
-          quality={85}
-          loading="lazy"
-        />
-      )}
+    <div
+      class="relative aspect-photo overflow-hidden bg-gray-200 rounded-t-[16px]"
+    >
+      {
+        typeof displayPhoto === "string" ? (
+          displayPhoto.includes("res.cloudinary.com") ? (
+            <CloudinaryImage
+              src={displayPhoto}
+              alt={`Photo of ${name}`}
+              class="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
+              widths={[300, 600]}
+              loading="lazy"
+            />
+          ) : (
+            <img
+              src={displayPhoto}
+              alt={`Photo of ${name}`}
+              class="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
+              loading="lazy"
+            />
+          )
+        ) : (
+          <Image
+            src={displayPhoto}
+            alt={`Photo of ${name}`}
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            widths={[300, 600]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            format="webp"
+            quality={85}
+            loading="lazy"
+          />
+        )
+      }
 
       <!-- Gradient overlay (visible on hover) -->
       <div
-        class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      >
       </div>
 
       <!-- View profile badge (visible on hover) -->
@@ -80,22 +102,6 @@ const { name, class: className, quote, photo, slug, hobbies } = Astro.props;
           <blockquote class="text-sm text-gray-700 italic line-clamp-2 mb-3">
             "{quote}"
           </blockquote>
-        )
-      }
-
-      <!-- Hobbies (optional) -->
-      {
-        hobbies && hobbies.length > 0 && (
-          <div class="flex flex-wrap gap-2">
-            {hobbies.slice(0, 3).map((hobby) => (
-              <span class="badge badge-primary text-xs">{hobby}</span>
-            ))}
-            {hobbies.length > 3 && (
-              <span class="text-xs text-gray-500">
-                +{hobbies.length - 3} more
-              </span>
-            )}
-          </div>
         )
       }
     </div>

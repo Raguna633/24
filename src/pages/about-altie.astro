@@ -1,14 +1,13 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import Image from "astro/components/Image.astro";
+import { Image } from "astro:assets";
 import Lenis from "lenis";
 import AltieHero from "../components/about-altie/AltieHero.astro";
 ---
 
 <MainLayout title="About Altie">
-  <AltieHero/>
+  <AltieHero />
 </MainLayout>
-
 
 <style>
   .overlay {

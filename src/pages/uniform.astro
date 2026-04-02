@@ -101,7 +101,7 @@ const uniformsData = allUniforms.map((u) => ({
       {/* Header Section dengan Decorative Border */}
       <header class="py-12 mx-8 text-center relative">
         {/* Title with Underline Decoration */}
-        <div class="inline-block relative opacity-0 hero-title-wrapper">
+        <div class="inline-block relative hero-title-wrapper">
           <TextReveal>
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-2">
               Our School Uniforms
@@ -491,11 +491,6 @@ const uniformsData = allUniforms.map((u) => ({
       ease: "power4.out",
       stagger: 0.15
     }, "-=0.8")
-    .to(".hero-title-wrapper", {
-      opacity: 1,
-      duration: 0.5,
-      ease: "none"
-    }, "-=1")
     .to(".hero-desc", {
       opacity: 1,
       duration: 0.8,

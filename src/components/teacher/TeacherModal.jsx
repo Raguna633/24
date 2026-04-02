@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getOptimizedCloudinaryUrl } from '../../utils/cloudinary';
 
 const TeacherModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,8 +11,7 @@ const TeacherModal = () => {
     const handleOpenModal = (event) => {
       setTeacherData(event.detail);
       setIsRendered(true);
-      // Small delay to allow CSS transitions to trigger from display:block to display:block w/ opacity
-      setTimeout(() => setIsOpen(true), 10);
+      // handled by useEffect now to prevent flash
       
       // Stop body scrolling if lenis is used, might need to disable lenis instance, 
       // but standard approach is overflow hidden
@@ -22,8 +22,20 @@ const TeacherModal = () => {
     
     return () => {
       window.removeEventListener('openTeacherModal', handleOpenModal);
+      document.body.style.overflow = '';
     };
   }, []);
+
+  // Handle entry animation with a safer delay to prevent "flashing"
+  useEffect(() => {
+    if (isRendered) {
+      // Use double rAF or 50ms delay to guarantee initial state (opacity-0) is painted
+      const timer = setTimeout(() => setIsOpen(true), 50);
+      return () => clearTimeout(timer);
+    } else {
+      setIsOpen(false);
+    }
+  }, [isRendered]);
 
   const closeModal = () => {
     setIsOpen(false);
@@ -77,7 +89,7 @@ const TeacherModal = () => {
             <div className="absolute inset-0 bg-[#251e54]/10 group-hover:bg-transparent transition-colors duration-500 z-10 pointer-events-none"></div>
             {teacherData && (
               <img 
-                src={teacherData.image} 
+                src={getOptimizedCloudinaryUrl(teacherData.image, 800)} 
                 alt={teacherData.name}
                 className="w-full h-[350px] md:h-[500px] object-cover filter sepia-[0.15] contrast-110"
               />
@@ -113,7 +125,7 @@ const TeacherModal = () => {
       >
         {teacherData && (
           <img 
-            src={teacherData.image} 
+            src={getOptimizedCloudinaryUrl(teacherData.image, 1600)} 
             alt={teacherData.name}
             className={`w-full max-h-screen object-contain transform transition-transform duration-700 ease-out ${isLightboxOpen ? 'scale-100' : 'scale-90'}`} 
             onClick={(e) => {

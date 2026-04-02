@@ -1,5 +1,5 @@
 ---
-import Image from "astro/components/Image.astro";
+import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import TerminalCard from "../TerminalCard.astro";
 import WalasName from "../WalasName.astro";
@@ -73,8 +73,22 @@ import tefaGroup from "../../../../public/assets/class/a_pplg/group_tefa.webp";
   />
   <section class="greeting h-full w-full justify-center relative z-0 mb-24">
     <div class="line-decor absolute inset-0 -z-10">
-      <LineDecor left="-10%" width="120%" height="2vw" color="#b1b2b5" top="15%"/>
-      <LineDecor right="-72%" width="160%" height="2vw" color="#b1b2b5" top="20%" rotate="70deg" zIndex={-1}/>
+      <LineDecor
+        left="-10%"
+        width="120%"
+        height="2vw"
+        color="#b1b2b5"
+        top="15%"
+      />
+      <LineDecor
+        right="-72%"
+        width="160%"
+        height="2vw"
+        color="#b1b2b5"
+        top="20%"
+        rotate="70deg"
+        zIndex={-1}
+      />
     </div>
     <div
       class="content relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 pt-54 w-full items-center"
@@ -407,32 +421,33 @@ import tefaGroup from "../../../../public/assets/class/a_pplg/group_tefa.webp";
   <FadeOverlay zIndex={10} translateY="-100%" />
 
   <section class="group justify-center z-0">
-    <div class="tefa-group -z-10 flex flex-col justify-end items-center relative w-screen h-216 max-h-216">
-      <div
-        class="bg-[#3b507d] bg-cover absolute w-full h-full -z-10"
-      ></div>
+    <div
+      class="tefa-group -z-10 flex flex-col justify-end items-center relative w-screen h-216 max-h-216"
+    >
+      <div class="bg-[#3b507d] bg-cover absolute w-full h-full -z-10"></div>
       <div
         class="bg-[url(/public/assets/4854834.svg)] bg-cover absolute w-full h-[110%] bottom-0 opacity-20 -z-10"
-      ></div>
+      >
+      </div>
       <div class="grid grid-cols-3 w-screen h-fit absolute top-36">
         <div class="relative w-full h-full">
           <TextCustom
-          maxWidth="clamp(18rem, 25vw, 38rem)"
-          font="poppins"
-          lineHeight="2.4"
-          className="tracking-[1px] absolute top-1/2  justify-self-center -translate-x-[8%] font-bold text-shadow-lg/50"
-          color="white"
-          mode="text"
-          align="left"
-          paragraphs={[
-            `“Learning to write programs stretches your mind, and helps you think better, creates a way of thinking about things that I think is helpful in all domains.”`,
-            "– Bill Gates –"
-          ]}
+            maxWidth="clamp(18rem, 25vw, 38rem)"
+            font="poppins"
+            lineHeight="2.4"
+            className="tracking-[1px] absolute top-1/2  justify-self-center -translate-x-[8%] font-bold text-shadow-lg/50"
+            color="white"
+            mode="text"
+            align="left"
+            paragraphs={[
+              `“Learning to write programs stretches your mind, and helps you think better, creates a way of thinking about things that I think is helpful in all domains.”`,
+              "– Bill Gates –",
+            ]}
           />
           <TextCustom
-          mode="code"
-          className="opacity-30"
-          text={`
+            mode="code"
+            className="opacity-30"
+            text={`
 void main() async {"
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
@@ -458,15 +473,15 @@ class _splash_pageState extends State<splash_page> {
           />
         </div>
         <div class="anchor relative flex justify-center">
-          <TefatieText width="150%" className="absolute flex h-fit top-[22%]"/>
+          <TefatieText width="150%" className="absolute flex h-fit top-[22%]" />
         </div>
         <div class="w-full h-full">
           <TextCustom
-          mode="code"
-          className="opacity-30"
-          text={`
+            mode="code"
+            className="opacity-30"
+            text={`
 import MainLayout from "../../../layouts/MainLayout.astro";
-import Image from "astro/components/Image.astro";
+import { Image } from "astro:assets"
 import type { ImageMetadata } from "astro";
 
 export async function getStaticPaths() {
@@ -492,18 +507,31 @@ const { kelas } = Astro.params;
       </div>
       <div class="image-wrapper relative aspect-4/3 w-full max-w-182 bottom-0">
         <Image
-        src={tefaGroup as ImageMetadata}
-        alt={"Tim Tefa Pertama :v"}
-        sizes="100%"
-        class:list={"-bottom-10 relative object-cover w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"}
+          src={tefaGroup as ImageMetadata}
+          alt={"Tim Tefa Pertama :v"}
+          sizes="100%"
+          class:list={"-bottom-10 relative object-cover w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"}
         />
       </div>
-      <LineDecor width="120%" zIndex={-1} height="4.5vw" color="#000" bottom="8%" className="opacity-50 absolute"/>
+      <LineDecor
+        width="120%"
+        zIndex={-1}
+        height="4.5vw"
+        color="#000"
+        bottom="8%"
+        className="opacity-50 absolute"
+      />
     </div>
     <div class="bg-[#f5f0eaff] flex items-center z-10 w-screen h-[1000px]">
       <div class="bottom-element w-full h-[175px] relative">
-        <div class="absolute bg-(--color-secondary) z-0 w-[786px] h-[175px] rounded-tr-full"></div>
-        <div class="absolute bg-(--color-primary) z-10 w-[786px] h-[46px] h-10 bottom-0"></div>
+        <div
+          class="absolute bg-(--color-secondary) z-0 w-[786px] h-[175px] rounded-tr-full"
+        >
+        </div>
+        <div
+          class="absolute bg-(--color-primary) z-10 w-[786px] h-[46px] h-10 bottom-0"
+        >
+        </div>
       </div>
     </div>
   </section>
@@ -518,7 +546,7 @@ const { kelas } = Astro.params;
   body {
     @apply bg-[#f5f0eaff];
   }
-  
+
   .hero-title {
     font-family: "qontra", sans-serif;
   }

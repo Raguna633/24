@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 
 import aboutBg from "/src/assets/l-banyakan.webp";
+import CloudinaryImage from "../ui/CloudinaryImage.astro";
 ---
 
 <section
@@ -10,15 +11,27 @@ import aboutBg from "/src/assets/l-banyakan.webp";
           overflow-hidden"
 >
   <!-- Background Image & Overlay -->
-  <Image
-    src={aboutBg}
-    alt="About section background"
-    class="absolute inset-0 w-full h-full object-cover z-0"
-    loading="eager"
-    width={1920}
-    height={1080}
-    format="webp"
-  />
+  {
+    typeof aboutBg === "string" && aboutBg.includes("res.cloudinary.com") ? (
+      <CloudinaryImage
+        src={aboutBg}
+        alt="About section background"
+        class="absolute inset-0 w-full h-full object-cover z-0"
+        widths={[1920, 2560]}
+        loading="eager"
+      />
+    ) : (
+      <Image
+        src={aboutBg as any}
+        alt="About section background"
+        class="absolute inset-0 w-full h-full object-cover z-0"
+        loading="eager"
+        width={1920}
+        height={1080}
+        format="webp"
+      />
+    )
+  }
   <div class="absolute inset-0 z-[2] bg-black/40 backdrop-blur-[2px]"></div>
 
   <!-- Decorative background elements -->

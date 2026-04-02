@@ -10,7 +10,6 @@ interface Student {
   slug: string;
   jenjang: 'SMK' | 'SMA';
   gender: 'Putra' | 'Putri';
-  hobbies?: string[];
 }
 
 interface StudentBrowserProps {
@@ -39,8 +38,7 @@ export default function StudentBrowser({ students }: StudentBrowserProps) {
       const searchLower = filters.search.toLowerCase();
       result = result.filter(s =>
         s.name.toLowerCase().includes(searchLower) ||
-        s.class.toLowerCase().includes(searchLower) ||
-        s.hobbies?.some(h => h.toLowerCase().includes(searchLower))
+        s.class.toLowerCase().includes(searchLower)
       );
     }
 

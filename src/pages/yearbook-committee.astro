@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import Copy from "../components/Copy.jsx";
 import TextReveal from "../components/animations/TextReveal.astro";
 import { Image, getImage } from "astro:assets";
+import CloudinaryImage from "../components/ui/CloudinaryImage.astro";
 
 import bgTexture from "../assets/yearbook-committee/watercolor-paper-texture.jpg";
 import headerStroke from "../assets/yearbook-committee/header-stroke.svg?raw";
@@ -10,8 +11,8 @@ import firstStroke from "../assets/yearbook-committee/first-stroke.svg?raw";
 import secondStroke from "../assets/yearbook-committee/second-stroke.svg?raw";
 import thirdStroke from "../assets/yearbook-committee/third-stroke.svg?raw";
 import trapesiumBg from "../assets/yearbook-committee/trapesium.svg?raw";
-import bknPutra from "../assets/yearbook-committee/bkn_putra.webp";
-import bknPutri from "../assets/yearbook-committee/bkn_putri.webp";
+const bknPutra = "https://res.cloudinary.com/dhbps9kvp/image/upload/bkn_putra.webp";
+const bknPutri = "https://res.cloudinary.com/dhbps9kvp/image/upload/bkn_putri.webp";
 
 // Optimize background texture to webp via Astro pipeline
 const optimizedBg = await getImage({ src: bgTexture, format: "webp" });
@@ -96,7 +97,7 @@ const optimizedBg = await getImage({ src: bgTexture, format: "webp" });
         <div
           class="img-wrapper relative z-10 w-full overflow-hidden shadow-xl aspect-video bg-white"
         >
-          <Image
+          <CloudinaryImage
             src={bknPutra}
             alt="Committee Putra"
             class="w-full h-full object-cover overflow-hidden transform transition-transform duration-1000 hover:scale-105"
@@ -239,7 +240,7 @@ const optimizedBg = await getImage({ src: bgTexture, format: "webp" });
         <div
           class="img-wrapper relative z-10 w-full shadow-xl aspect-video bg-white overflow-hidden"
         >
-          <Image
+          <CloudinaryImage
             src={bknPutri}
             alt="Committee Putri"
             class="w-full h-full object-cover transform transition-transform duration-1000 hover:scale-105"

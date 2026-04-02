@@ -1,13 +1,14 @@
 ---
 // src/components/ui/TeacherCard.astro
 import { Image } from 'astro:assets';
+import CloudinaryImage from './ui/CloudinaryImage.astro';
 import type { ImageMetadata } from 'astro';
 
 interface Props {
   name: string;
   role: string;
   subject?: string;
-  photo: ImageMetadata;
+  photo: ImageMetadata | string;
   message?: string;
 }
 
@@ -18,16 +19,28 @@ const { name, role, subject, photo, message } = Astro.props;
   <div class="relative">
     <!-- Image -->
     <div class="aspect-photo overflow-hidden bg-gray-200">
-      <Image
-        src={photo}
-        alt={`Photo of ${name}`}
-        class="w-full h-full object-cover"
-        widths={[300, 600]}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        format="webp"
-        quality={85}
-        loading="lazy"
-      />
+      {
+        typeof photo === 'string' && photo.includes('res.cloudinary.com') ? (
+          <CloudinaryImage
+            src={photo}
+            alt={`Photo of ${name}`}
+            class="w-full h-full object-cover"
+            widths={[300, 600]}
+            loading="lazy"
+          />
+        ) : (
+          <Image
+            src={photo as any}
+            alt={`Photo of ${name}`}
+            class="w-full h-full object-cover"
+            widths={[300, 600]}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            format="webp"
+            quality={85}
+            loading="lazy"
+          />
+        )
+      }
     </div>
     
     <!-- Message overlay (shown on hover) -->

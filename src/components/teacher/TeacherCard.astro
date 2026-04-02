@@ -1,5 +1,5 @@
 ---
-import dummyImg from '../../assets/teachers/dummy.webp';
+const dummyImg = 'https://res.cloudinary.com/dhbps9kvp/image/upload/v1775104998/dummy.webp';
 import Copy from '../Copy';
 
 interface Props {
@@ -18,11 +18,11 @@ const { name, subjects, index, offset = false } = Astro.props;
   data-index={index} 
   data-name={name} 
   data-subjects={subjects} 
-  data-img={dummyImg.src}
+  data-img={dummyImg}
 >
   <div class="relative mb-4 overflow-hidden rounded-xl bg-white shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)]">
     <img 
-      src={dummyImg.src} 
+      src={dummyImg} 
       alt={name} 
       transition:name={`teacher-photo-${index}`} 
       class="w-full aspect-[3/4] object-cover group-hover:scale-105 transition-transform duration-700 grayscale hover:grayscale-0" 
@@ -33,7 +33,11 @@ const { name, subjects, index, offset = false } = Astro.props;
   
   <!-- Content Details -->
   <div class="px-1 text-center">
-    <h4 class="text-[22px] md:text-2xl font-sans font-bold text-[#183f89] mb-1" transition:name={`teacher-name-${index}`}>{name}</h4>
-    <p class="text-sm md:text-[15px] font-sans text-[#3557a2] font-medium" transition:name={`teacher-subjects-${index}`}>{subjects}</p>
+    <Copy client:visible animateOnScroll={true} blockColor="#183f89">
+      <h4 class="text-[22px] md:text-2xl font-sans font-bold text-[#183f89] mb-1" transition:name={`teacher-name-${index}`}>{name}</h4>
+    </Copy>
+    <Copy client:visible animateOnScroll={true} blockColor="#183f89">
+      <p class="text-sm md:text-[15px] font-sans text-[#3557a2] font-medium" transition:name={`teacher-subjects-${index}`}>{subjects}</p>
+    </Copy>
   </div>
 </div>

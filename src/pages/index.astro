@@ -20,38 +20,15 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 
-import pimpinanPhoto from "/src/assets/pimpinan/pak_kyai.webp";
-import kepsekPhoto from "/src/assets/dummy_kepsek.webp";
-import aktPutra from "/src/assets/panitia/ket_akt_putra.png";
-import aktPutri from "/src/assets/panitia/ket_akt_putri.png";
-import hafPutra from "/src/assets/panitia/ket_haf_putra.png";
-import hafPutri from "/src/assets/panitia/ket_haf_putri.png";
-import rihPutra from "/src/assets/panitia/ket_rih_putra.png";
-import rihPutri from "/src/assets/panitia/ket_rih_putri.png";
-import bg1 from "/src/assets/vlcsnap-2025-12-16-19h50m31s981.webp";
-import bg2 from "/src/assets/altie_corner/masjid.webp";
-import bg3 from "/src/assets/altie_corner/kantor.webp";
-import bg4 from "/src/assets/altie_corner/rps-apl-belakang.webp";
-import bg5 from "/src/assets/altie_corner/maryamah.webp";
-import bg6 from "/src/assets/altie_corner/lap-albadar.webp";
-import bg7 from "/src/assets/altie_corner/lorong-putra.webp";
-import bg8 from "/src/assets/altie_corner/cafe-lama.webp";
-import bg9 from "/src/assets/altie_corner/ghoniah.webp";
-import bg10 from "/src/assets/altie_corner/pendopo.webp";
-import altieLogo from "/src/assets/altie.webp";
-import smaLogo from "/src/assets/sma.webp";
-import smkLogo from "/src/assets/smk.webp";
-import ip3aBg from "/src/assets/ip3a.webp";
-
 interface GreetingData {
   layout: "teacher" | "generation";
   name: string;
   title: string;
   excerptLength: number;
   greeting: string;
-  photo: ImageMetadata;
-  backgroundImage: ImageMetadata;
-  schoolLogo: ImageMetadata;
+  photo: string;
+  backgroundImage: string;
+  schoolLogo: string;
 }
 
 const pimpinanGreeting = {
@@ -76,9 +53,9 @@ Anak-anakku, saya mohon maaf yang sangat dalam apabila masih banyak kekurangan d
 Anak-anakku, itulah yang dapat saya sampaikan pada kesempatan ini mudah-mudahan ada manfaat serta hikmahnya. Sebagaimana harapan yang amat 
 dalam, semoga kalian menjadi orang yang sholeh dan sholehah yang senantiasa berjuang di jalan Allah dan berguna bagi bangsa dan negara.
 Wassalamu’alaikum Wr. Wb.`,
-  photo: pimpinanPhoto,
-  backgroundImage: bg1,
-  schoolLogo: altieLogo,
+  photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059307/pak_kyai.webp",
+  backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059730/vlcsnap-2025-12-16-19h50m31s981.webp",
+  schoolLogo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059728/altie.webp",
 };
 
 const kepsekGreetings: GreetingData[] = [
@@ -100,9 +77,9 @@ const kepsekGreetings: GreetingData[] = [
   •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
   bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: kepsekPhoto,
-    backgroundImage: bg2,
-    schoolLogo: altieLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059486/dummy_kepsek.webp",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059800/masjid.webp",
+    schoolLogo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059728/altie.webp",
   },
   {
     layout: "teacher",
@@ -122,9 +99,9 @@ const kepsekGreetings: GreetingData[] = [
   •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
   bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: kepsekPhoto,
-    backgroundImage: bg3,
-    schoolLogo: smaLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059486/dummy_kepsek.webp",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059806/kantor.webp",
+    schoolLogo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059727/sma.webp",
   },
   {
     layout: "teacher",
@@ -144,9 +121,9 @@ const kepsekGreetings: GreetingData[] = [
   •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
   bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: kepsekPhoto,
-    backgroundImage: bg4,
-    schoolLogo: smkLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059486/dummy_kepsek.webp",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059802/rps-apl-belakang.webp",
+    schoolLogo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059727/smk.webp",
   },
 ];
 
@@ -169,9 +146,9 @@ const angkatanGreetings: GreetingData[] = [
   •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
   bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: aktPutra,
-    backgroundImage: bg5,
-    schoolLogo: altieLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059230/ket_akt_putra.png",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059799/maryamah.webp",
+    schoolLogo: "",
   },
   {
     layout: "generation",
@@ -185,9 +162,9 @@ Di balik segala perbedaan, selalu ada tawa yang menyatukan. Candaan sederhana ya
 Hari ini, kita melangkah ke arah masing-masing dengan membawa cerita yang sama. Semoga setiap dari kita melangkah dengan keyakinan, membawa nilai yang telah kita pelajari, dan tetap bangga pernah menjadi bagian dari angkatan ini.
 Terima kasih atas setiap dinamika dan kenangan yang tak tergantikan.
 Wassalamu’alaikum warahmatullahi wabarakatuh.`,
-    photo: aktPutri,
-    backgroundImage: bg6,
-    schoolLogo: altieLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059232/ket_akt_putri.png",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059811/lap-albadar.webp",
+    schoolLogo: "",
   },
   {
     layout: "generation",
@@ -207,9 +184,9 @@ Wassalamu’alaikum warahmatullahi wabarakatuh.`,
   •	"Hidup itu ibarat permainan sepak bola, Harus selalu bergerak dan menyerang serta bertahan agar kita
   bisa menang"
   Wassalamu'alaikum Wr. Wb.`,
-    photo: hafPutra,
-    backgroundImage: bg7,
-    schoolLogo: altieLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059232/ket_haf_putra.png",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059805/lorong-putra.webp",
+    schoolLogo: "",
   },
   {
     layout: "generation",
@@ -225,9 +202,9 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
 
 “Selamat dan sukses untuk ganti nama angkatan!"
 `,
-    photo: hafPutri,
-    backgroundImage: bg8,
-    schoolLogo: altieLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059229/ket_haf_putri.png",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059803/cafe-lama.webp",
+    schoolLogo: "",
   },
   {
     layout: "generation",
@@ -243,9 +220,9 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
 
 “Selamat dan sukses untuk ganti nama angkatan!"
 `,
-    photo: rihPutra,
-    backgroundImage: bg9,
-    schoolLogo: altieLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059230/ket_rih_putra.png",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059808/ghoniah.webp",
+    schoolLogo: "",
   },
   {
     layout: "generation",
@@ -261,9 +238,9 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
 
 “Selamat dan sukses untuk ganti nama angkatan!"
 `,
-    photo: rihPutri,
-    backgroundImage: bg10,
-    schoolLogo: altieLogo,
+    photo: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059230/ket_rih_putri.png",
+    backgroundImage: "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059810/pendopo.webp",
+    schoolLogo: "",
   },
 ];
 ---

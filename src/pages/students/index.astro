@@ -7,19 +7,18 @@ import { getCollection } from 'astro:content';
 const studentsData = await getCollection('students');
 
 // Normalize student data
-function normalizePhotoPath(path: string | undefined): string {
-  if (!path) return '/assets/placeholder.jpg';
-  if (path.startsWith('http') || path.startsWith('/')) return path;
-  const filename = path.split('/').pop() || 'placeholder.jpg';
-  return `/assets/uniform/${filename}`;
-}
+// function normalizePhotoPath(path: string | undefined): string {
+//   if (!path) return '/assets/placeholder.jpg';
+//   if (path.startsWith('http') || path.startsWith('/')) return path;
+//   const filename = path.split('/').pop() || 'placeholder.jpg';
+//   return `/assets/students/${filename}`;
+// }
 
 const students = studentsData.map(s => ({
   name: s.data.name,
-  class: s.data.class,
-  photo: normalizePhotoPath(s.data.photo),
+  class: s.data.kelas || s.data.class || 'Unknown',
+  photo: s.data.photo,
   quote: s.data.quote,
-  hobbies: s.data.hobbies,
   slug: s.id,
   jenjang: s.data.jenjang,
   gender: s.data.gender,
@@ -27,7 +26,7 @@ const students = studentsData.map(s => ({
 ---
 
 <MainLayout title="Daftar Siswa" description="Daftar lengkap siswa angkatan 2025">
-  <!-- Background with interesting elements -->
+   <!-- Background with interesting elements -->
   <div class="min-h-screen bg-gradient-to-br from-primary-500/10 to-secondary-500/5 relative overflow-hidden">
     <!-- Decorative elements -->
     <div class="absolute inset-0 opacity-5">
@@ -63,7 +62,7 @@ const students = studentsData.map(s => ({
           <div 
             data-student-card
             data-index={index}
-            data-search-text={`${student.name} ${student.class} ${student.hobbies?.join(' ') || ''}`.toLowerCase()}
+            data-search-text={`${student.name} ${student.class}`.toLowerCase()}
             data-jenjang={student.jenjang}
             data-gender={student.gender}
             data-sort-key={student.name}
@@ -73,7 +72,6 @@ const students = studentsData.map(s => ({
               class={student.class}
               photo={student.photo}
               quote={student.quote}
-              hobbies={student.hobbies}
               slug={student.slug}
             />
           </div>
@@ -110,4 +108,4 @@ const students = studentsData.map(s => ({
       </div>
     </div>
   </div>
-</MainLayout>
+</MainLayout> 
