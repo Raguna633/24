@@ -1,0 +1,210 @@
+---
+// src/components/TextReveal.astro
+interface Props {
+  text: string;
+  className?: string;
+  blockColor?: string;
+  stagger?: number;
+  duration?: number;
+  delay?: number;
+}
+
+const { 
+  text, 
+  className = "", 
+  blockColor = "var(--color-primary-500, #0a2130)", 
+  stagger = 0.1, 
+  duration = 0.6,
+  delay = 0 
+} = Astro.props;
+---
+
+<div class={`text-reveal-outer relative ${className}`} data-text-reveal data-stagger={stagger} data-duration={duration} data-delay={delay} data-color={blockColor}>
+  {/* Screen Reader Layer */}
+  <div class="sr-only">
+    <p>{text}</p>
+  </div>
+
+  {/* Visual Animation Layer */}
+  <div class="text-reveal-visual whitespace-pre-wrap translate-z-0" aria-hidden="true">
+    <p>{text}</p>
+  </div>
+</div>
+
+<style>
+  .text-reveal-outer .text-reveal-visual {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* We use :global because the wrapper/block are injected via JS */
+  .text-reveal-outer :global(.block-line-wrapper) {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    margin-bottom: 0.2em;
+    min-height: 1.2em; /* Ensure empty lines still have height if needed */
+  }
+
+  .text-reveal-outer :global(.block-revealer) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    transform: scaleX(0);
+    will-change: transform;
+  }
+
+  .text-reveal-outer :global(.gsap-line-inner) {
+    display: block;
+    opacity: 0;
+    will-change: opacity;
+  }
+</style>
+
+<script>
+  import gsap from "gsap";
+  import { waitForLoading } from "../utils/loadingState";
+
+  async function initTextReveal() {
+    const containers = document.querySelectorAll("[data-text-reveal]");
+    if (!containers.length) return;
+
+    // Workflow 03: The Gatekeeper
+    await waitForLoading();
+
+    containers.forEach((container) => {
+      const visual = container.querySelector(".text-reveal-visual") as HTMLElement;
+      if (!visual || container.getAttribute("data-initialized") === "true") return;
+      container.setAttribute("data-initialized", "true");
+
+      // Make visual layer ready for splitting and reveal
+      gsap.set(visual, { autoAlpha: 1 });
+
+      // Use textContent to preserve \n exactly as passed from Astro
+      const text = (container.querySelector(".sr-only p")?.textContent || "").trim();
+      const stagger = parseFloat(container.getAttribute("data-stagger") || "0.1");
+      const duration = parseFloat(container.getAttribute("data-duration") || "0.6");
+      const delay = parseFloat(container.getAttribute("data-delay") || "0");
+      const blockColor = container.getAttribute("data-color") || "#0a2130";
+
+      // 1. SPLIT INTO LINE-BLOCKS (To preserve \n)
+      const textBlocks = text.split('\n');
+      visual.innerHTML = "";
+      
+      const linesToAnimate: HTMLElement[] = [];
+      const blocksToAnimate: HTMLElement[] = [];
+
+      textBlocks.forEach((blockText) => {
+        if (blockText.trim() === "") {
+          // Handle empty line for spacing
+          const br = document.createElement("br");
+          visual.appendChild(br);
+          return;
+        }
+
+        // Split words within this block
+        const words = blockText.split(/\s+/);
+        const tempContainer = document.createElement("div");
+        tempContainer.style.display = "block";
+        visual.appendChild(tempContainer);
+
+        const wordSpans = words.map((word) => {
+          const span = document.createElement("span");
+          span.style.display = "inline-block";
+          span.innerHTML = word + "&nbsp;";
+          tempContainer.appendChild(span);
+          return span;
+        });
+
+        // Measure line breaks within this block
+        const measurements = wordSpans.map(span => span.offsetTop);
+        let lines: HTMLSpanElement[][] = [];
+        let currentLine: HTMLSpanElement[] = [];
+        let currentTop: number | null = null;
+
+        wordSpans.forEach((span, i) => {
+          const top = measurements[i];
+          if (currentTop === null || top > currentTop + 5) {
+            currentTop = top;
+            if (currentLine.length > 0) lines.push(currentLine);
+            currentLine = [];
+          }
+          currentLine.push(span);
+        });
+        if (currentLine.length > 0) lines.push(currentLine);
+
+        // Build wrappers for these measured lines
+        lines.forEach((line) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "block-line-wrapper";
+
+          const inner = document.createElement("div");
+          inner.className = "gsap-line-inner";
+          line.forEach(s => inner.appendChild(s));
+
+          const block = document.createElement("div");
+          block.className = "block-revealer";
+          block.style.backgroundColor = blockColor;
+
+          wrapper.appendChild(inner);
+          wrapper.appendChild(block);
+          visual.appendChild(wrapper);
+
+          linesToAnimate.push(inner);
+          blocksToAnimate.push(block);
+        });
+
+        // Clean up temp container
+        visual.removeChild(tempContainer);
+      });
+
+      // 2. PREPARE TIMELINE
+      const tl = gsap.timeline({
+        paused: true,
+        delay: delay,
+        defaults: { force3D: true }
+      });
+
+      blocksToAnimate.forEach((block, i) => {
+        const line = linesToAnimate[i];
+        const start = i * stagger;
+
+        tl.to(block, { 
+            scaleX: 1, 
+            duration: duration, 
+            ease: "power4.inOut",
+            transformOrigin: "left center" 
+          }, start)
+          .set(line, { opacity: 1 }, start + duration)
+          .set(block, { transformOrigin: "right center" }, start + duration)
+          .to(block, { 
+            scaleX: 0, 
+            duration: duration, 
+            ease: "power4.inOut" 
+          }, start + duration);
+      });
+
+      // 3. TRIGGER via IntersectionObserver (Fixes Carousel detection)
+      // IntersectionObserver is more reliable than ScrollTrigger for elements moved by parents (transforms/pinning)
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            tl.play();
+            observer.unobserve(container);
+          }
+        });
+      }, { 
+        threshold: 0.15,
+        rootMargin: "0px 0px -10% 0px" // Slight offset to trigger earlier/later if needed
+      });
+
+      observer.observe(container);
+    });
+  }
+
+  // Initialize on page load and after SPA transitions
+  document.addEventListener("astro:page-load", initTextReveal);
+</script>
