@@ -1,7 +1,7 @@
 ---
 // GreetingSection.astro - Carousel-optimized with better mobile scroll
 
-import Copy from "../Copy.jsx";
+import BlockReveal from "../BlockReveal.astro";
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
@@ -68,7 +68,7 @@ const overlayDirection = isTeacherLayout
           widths={[1920, 2560]}
           alt="Background Image"
           class="parallax-bg-image w-full h-full object-cover scale-[1.3]"
-          loading="eager"
+          loading="lazy"
           decoding="async"
         />
         <div class={"absolute z-10 inset-0 bg-black/50"} />
@@ -84,7 +84,7 @@ const overlayDirection = isTeacherLayout
               widths={[1920, 2560]}
               alt="School Logo"
               class="w-full h-full object-contain opacity-75"
-              loading="eager"
+              loading="lazy"
               decoding="async"
             />
           </div>
@@ -112,7 +112,7 @@ const overlayDirection = isTeacherLayout
               widths={[1920, 2560]}
               alt={`Photo of ${name}`}
               class="w-full h-full object-cover"
-              loading="eager"
+              loading="lazy"
               decoding="async"
             />
           </div>
@@ -134,31 +134,11 @@ const overlayDirection = isTeacherLayout
       <div class={`${textAlign} flex-1 min-h-0 flex flex-col lg:block`}>
         <!-- Header -->
         <div class="space-y-3 mb-6 gsap-greeting-text shrink-0">
-          <Copy blockColor="#fff" client:visible>
-            <p
-              class="text-[clamp(0.8rem,2vw,1rem)] font-medium text-accent-300 uppercase tracking-wider inline-block"
-            >
-              Sambutan
-            </p>
-          </Copy>
+          <BlockReveal blockColor="#fff" text="Sambutan" className="text-[clamp(0.8rem,2vw,1rem)] font-medium text-accent-300 uppercase tracking-wider block" />
 
-          <Copy blockColor="#fff" client:visible>
-            <h2
-              class="text-[clamp(1.6rem,5vw,3.75rem)]
-                     font-heading font-bold leading-tight inline-block"
-            >
-              {name}
-            </h2>
-          </Copy>
+          <BlockReveal blockColor="#fff" text={name} className="text-[clamp(1.6rem,5vw,3.75rem)] font-heading font-bold leading-tight block" />
 
-          <Copy blockColor="#fff" client:visible>
-            <h3
-              class="text-[clamp(1rem,2.5vw,1.25rem)] font-medium
-                     text-white/80 uppercase tracking-wide inline-block"
-            >
-              {title}
-            </h3>
-          </Copy>
+          <BlockReveal blockColor="#fff" text={title} className="text-[clamp(1rem,2.5vw,1.25rem)] font-medium text-white/80 uppercase tracking-wide block" />
 
           <div class="flex items-center gap-4 pt-2">
             <div class="w-12 sm:w-16 h-px bg-accent-300"></div>
@@ -191,17 +171,9 @@ const overlayDirection = isTeacherLayout
             </svg>
 
             <!-- Full Text directly -->
-            {
-              greeting.split(/\r?\n/).map((line) =>
-                line.trim() ? (
-                  <Copy blockColor="#fff" client:visible>
-                    <p class="text-[clamp(0.8rem,2.5vw,1.5rem)] leading-relaxed text-white/90 italic text-justify mb-5 last:mb-0">
-                      {line}
-                    </p>
-                  </Copy>
-                ) : null,
-              )
-            }
+            <div class="text-[clamp(0.8rem,2.5vw,1.5rem)] leading-relaxed text-white/90 italic text-justify mb-5 last:mb-0">
+              <BlockReveal blockColor="#fff" text={greeting} delay={0.5} />
+            </div>
 
             <!-- Scroll Hint -->
             <div class="scroll-hint">
@@ -226,9 +198,7 @@ const overlayDirection = isTeacherLayout
             <div
               class="text-accent-200 font-medium text-[clamp(0.8rem,2vw,1.125rem)] inline-block"
             >
-              <Copy blockColor="#fff" client:visible>
-                — {name}
-              </Copy>
+              <BlockReveal blockColor="#fff" text={`— ${name}`} delay={1} />
             </div>
           </div>
         </div>
@@ -258,24 +228,23 @@ const overlayDirection = isTeacherLayout
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { waitForLoading } from "../../utils/loadingState";
-
-  gsap.registerPlugin(ScrollTrigger);
+  import { fadeUp, prefersReducedMotion } from "../../utils/gsap-animations";
 
   document.addEventListener("astro:page-load", async () => {
     await waitForLoading();
-    // The script for button toggling is removed. No longer using Expand/Collapse.
+
+    if (prefersReducedMotion()) return;
 
     // 2. Standalone Vertical Text Scroller (For Greetings not in a HorizontalCarousel)
     const standaloneSections = document.querySelectorAll("[data-greeting]");
 
     standaloneSections.forEach((sec) => {
+      // Skip if handled by Horizontal Carousel
       if (sec.closest(".horizontal-scroll-container")) return;
 
-      const txt = sec.querySelector(".greeting-text-content");
+      const txt = sec.querySelector(".greeting-text-content") as HTMLElement;
       if (!txt) return;
 
-      // ✨ BEST PRACTICE: Jadikan kalkulasi overflow sebagai fungsi
-      // agar bisa dipanggil ulang secara dinamis oleh invalidateOnRefresh
       const getOverflow = () =>
         Math.max(0, txt.scrollHeight - txt.clientHeight);
 
@@ -283,27 +252,24 @@ const overlayDirection = isTeacherLayout
         txt.style.overflowY = "hidden";
         txt.scrollTop = 0;
 
-        const hint = sec.querySelector(".scroll-hint");
+        const hint = sec.querySelector(".scroll-hint") as HTMLElement;
         if (hint) {
           hint.style.display = "flex";
           hint.style.opacity = "1";
         }
 
         gsap.to(txt, {
-          // ✨ Perbaikan 1: Gunakan function () => agar dinamis saat resize
           scrollTop: () => getOverflow(),
           ease: "none",
           scrollTrigger: {
             trigger: sec,
             start: "top top",
-            // ✨ Perbaikan 2: Rasio 3:1. Jarak pin = 3x jarak teks yang disembunyikan.
-            // Ini akan membuat kecepatan scroll seragam dengan Carousel Greeting (lebih lambat & nyaman).
             end: () => `+=${getOverflow() * 3}`,
             pin: true,
-            scrub: 1, // ✨ Perbaikan 3: Ubah ke angka (1) untuk smooth interpolating, redam efek kaku roda gesek mouse Desktop
+            scrub: 1,
             anticipatePin: 1,
-            fastScrollEnd: true, // Menjaga jika discroll secara agresif
-            invalidateOnRefresh: true, // Akan memicu getOverflow() ulang saat resize
+            fastScrollEnd: true,
+            invalidateOnRefresh: true,
           },
         });
 
@@ -314,9 +280,8 @@ const overlayDirection = isTeacherLayout
             scrollTrigger: {
               trigger: sec,
               start: "top top",
-              // Sesuaikan fade out agar lebih awal dari akhir pinning teks (separuhnya dari *3)
               end: () => `+=${getOverflow() * 1.5}`,
-              scrub: 1, // Samakan scrubnya dengan teks di atas
+              scrub: 1,
               fastScrollEnd: true,
               invalidateOnRefresh: true,
             },
@@ -329,27 +294,24 @@ const overlayDirection = isTeacherLayout
     const sections = document.querySelectorAll("[data-greeting]");
 
     sections.forEach((sec) => {
-      // Find elements inside this section
-      const imageFloat = sec.querySelector(".greeting-image-float");
+      const imageFloat = sec.querySelector(".greeting-image-float") as HTMLElement;
       const decos = sec.querySelectorAll(".gsap-greeting-deco");
-      const textHeader = sec.querySelector(".gsap-greeting-text");
-      const textContent = sec.querySelector(".gsap-greeting-content");
+      const textHeader = sec.querySelector(".gsap-greeting-text") as HTMLElement;
+      const textContent = sec.querySelector(".gsap-greeting-content") as HTMLElement;
       const floatingBgs = sec.querySelectorAll(".gsap-floating-bg");
 
-      // Set initial states hidden/shifted
+      // Set initial state for complex animation (unblur + rotateY)
       gsap.set(imageFloat, {
         filter: "blur(16px)",
-        scale: 0.65,
+        scale: 0.8,
         opacity: 0,
         rotationY: 15,
       });
-      // gsap.set(textHeader, { opacity: 0, x: 50 }); // Diserahkan ke Copy.jsx
-      gsap.set(textContent, { opacity: 0, y: 40 });
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sec,
-          start: "top 80%", // Triggers when section top hits 80% of viewport
+          start: "top 80%",
           toggleActions: "play none none reverse",
         },
       });
@@ -362,63 +324,40 @@ const overlayDirection = isTeacherLayout
           opacity: 1,
           rotationY: 0,
           duration: 1.2,
-          ease: "back.out(1.4)",
-          delay: 0.2,
-          force3D: true, // Optimasi GPU (penting utuk animasi blur di mobile)
-        });
+          ease: "power4.out",
+          force3D: true,
+        }, 0.2);
       }
 
       // 2. Animate small decorations around image
       if (decos.length) {
-        tl.to(
-          decos,
-          {
-            opacity: 0.8,
-            scale: 1,
-            stagger: 0.2,
-            duration: 0.8,
-            ease: "elastic.out(1, 0.5)",
-          },
-          "-=0.8",
-        );
+        tl.from(decos, {
+          opacity: 0,
+          scale: 0,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+        }, "-=0.8");
       }
 
-      // 3. Stagger in text headers from the side
-      if (textHeader) {
-        tl.to(
-          textHeader,
-          {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power3.out",
-          },
-          "-=1.0",
-        );
-      }
-
-      // 4. Fade up the main reading content
+      // 3. Fade up the main reading content (Using utility for efficiency)
       if (textContent) {
-        tl.to(
-          textContent,
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out",
-          },
-          "-=0.6",
-        );
+        tl.from(textContent, {
+          opacity: 0,
+          y: 30,
+          duration: 0.8,
+          ease: "power2.out",
+          force3D: true,
+        }, "-=0.6");
       }
 
       // 5. Ambient floating background pulses loop
       // 🔥 OPTIMIZATION: Di-pause jika sedang tidak ada di viewport (menghemat baterai & frame budget Android)
       if (floatingBgs.length) {
         const pulseAnim = gsap.to(floatingBgs, {
-          y: "random(-20, 20)",
-          x: "random(-20, 20)",
-          scale: "random(0.8, 1.2)",
-          duration: 3,
+          y: "random(-15, 15)",
+          x: "random(-15, 15)",
+          duration: 4,
           ease: "sine.inOut",
           yoyo: true,
           repeat: -1,

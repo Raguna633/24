@@ -2,7 +2,7 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import ImageCard from "../components/ImageCard.astro";
 import TextReveal from "../components/animations/TextReveal.astro";
-import Copy from "../components/Copy.jsx";
+import BlockReveal from "../components/BlockReveal.astro";
 import UniformModal from "../components/UniformModal.tsx";
 import { getCollection } from "astro:content";
 
@@ -126,16 +126,16 @@ const uniformsData = allUniforms.map((u) => ({
         {/* Fun Stats Section */}
         <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto mt-8">
           <div class="stat-card opacity-0 hero-stat">
-            <div class="stat-number"><Copy client:visible delay={2.2} blockColor="#f5f0ea">{allUniforms.length}</Copy></div>
-            <div class="stat-label"><Copy client:visible delay={2} blockColor="#f5f0ea">Uniforms</Copy></div>
+            <div class="stat-number"><BlockReveal blockColor="#f5f0ea" text={allUniforms.length.toString()} delay={2.2} /></div>
+            <div class="stat-label"><BlockReveal blockColor="#f5f0ea" text="Uniforms" delay={2} /></div>
           </div>
           <div class="stat-card opacity-0 hero-stat">
-            <div class="stat-number"><Copy client:visible delay={2.2} blockColor="#f5f0ea">3</Copy></div>
-            <div class="stat-label"><Copy client:visible delay={2} blockColor="#f5f0ea">Years</Copy></div>
+            <div class="stat-number"><BlockReveal blockColor="#f5f0ea" text="3" delay={2.2} /></div>
+            <div class="stat-label"><BlockReveal blockColor="#f5f0ea" text="Years" delay={2} /></div>
           </div>
           <div class="stat-card opacity-0 hero-stat">
-            <div class="stat-number"><Copy client:visible delay={2.2} blockColor="#f5f0ea">∞</Copy></div>
-            <div class="stat-label"><Copy client:visible delay={2} blockColor="#f5f0ea">Memories</Copy></div>
+            <div class="stat-number"><BlockReveal blockColor="#f5f0ea" text="∞" delay={2.2} /></div>
+            <div class="stat-label"><BlockReveal blockColor="#f5f0ea" text="Memories" delay={2} /></div>
           </div>
         </div>
       </header>

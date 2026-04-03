@@ -5,7 +5,7 @@
 import { Image } from "astro:assets";
 import CloudinaryImage from "./ui/CloudinaryImage.astro";
 import type { ImageMetadata } from "astro";
-import Copy from "../components/Copy.jsx"
+import BlockReveal from "./BlockReveal.astro"
 
 interface ImageData {
   id?: string;
@@ -82,7 +82,7 @@ const itemWidthClass = gridCols === 5
             
             {image.title && (
               <div class="mt-4 text-xs md:text-sm font-medium text-gray-700 transition-colors duration-300 group-hover:text-primary">
-                <Copy client:visible blockColor="#3557A2">{image.title}</Copy>
+                <BlockReveal blockColor="#3557A2" text={image.title} />
               </div>
             )}
           </button>
@@ -115,7 +115,7 @@ const itemWidthClass = gridCols === 5
             </div>
             {image.title && (
               <div class="mt-4 text-xs md:text-sm font-medium text-gray-700">
-                <Copy client:visible blockColor="#3557A2">{image.title}</Copy>
+                <BlockReveal blockColor="#3557A2" text={image.title} />
               </div>
             )}
           </div>

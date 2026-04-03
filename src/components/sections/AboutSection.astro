@@ -18,14 +18,14 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
         alt="About section background"
         class="absolute inset-0 w-full h-full object-cover z-0"
         widths={[1920, 2560]}
-        loading="eager"
+        loading="lazy"
       />
     ) : (
       <Image
         src={aboutBg as any}
-        alt="About section background"
-        class="absolute inset-0 w-full h-full object-cover z-0"
-        loading="eager"
+        alt="About Section Background"
+        class="absolute inset-0 w-full h-full object-cover z-0 opacity-20"
+        loading="lazy"
         width={1920}
         height={1080}
         format="webp"
@@ -135,18 +135,26 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
   </div>
 </section>
 
+<style>
+  [data-about-animate] {
+    opacity: 0;
+    will-change: transform, opacity, filter;
+  }
+</style>
+
 <script>
   import gsap from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
-  gsap.registerPlugin(ScrollTrigger);
+  import { waitForLoading } from "../../utils/loadingState";
+  import { fadeUp } from "../../utils/gsap-animations";
 
-  function initAboutAnimations() {
+  async function initAboutAnimations() {
     const section = document.getElementById("about-section");
     if (!section) return;
 
-    // Helper: Split text into lines natively based on offsetTop
+    await waitForLoading();
+
+    // Helper: Split text into lines with BATHTED measurements to avoid layout thrashing
     const splitIntoLines = (container: HTMLElement) => {
-      // Prevent double splitting
       if (container.getAttribute("data-split") === "true") {
         return Array.from(container.querySelectorAll(".gsap-line-inner"));
       }
@@ -154,24 +162,31 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
       const text = container.innerText.trim();
       if (!text) return [];
+      
       const words = text.split(/\s+/);
       container.innerHTML = "";
 
+      // 1. Create all word spans first (DOM Phase)
       const wordSpans = words.map((word) => {
         const span = document.createElement("span");
         span.style.display = "inline-block";
-        span.innerHTML = word + "&nbsp;"; // Force actual space rendering
+        span.innerHTML = word + "&nbsp;";
         container.appendChild(span);
         return span;
       });
 
-      let currentTop: number | null = null;
+      // 2. Measure all offsetTops (Read Phase - this is the ONLY layout trigger)
+      const measurements = wordSpans.map(span => span.offsetTop);
+
+      // 3. Batch words into lines (Logic Phase)
       let lines: HTMLSpanElement[][] = [];
       let currentLine: HTMLSpanElement[] = [];
+      let currentTop: number | null = null;
 
-      wordSpans.forEach((span) => {
-        if (currentTop === null || span.offsetTop > currentTop + 5) {
-          currentTop = span.offsetTop;
+      wordSpans.forEach((span, i) => {
+        const top = measurements[i];
+        if (currentTop === null || top > currentTop + 5) {
+          currentTop = top;
           if (currentLine.length > 0) lines.push(currentLine);
           currentLine = [];
         }
@@ -179,13 +194,14 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
       });
       if (currentLine.length > 0) lines.push(currentLine);
 
+      // 4. Wrap lines (Mutation Phase)
       container.innerHTML = "";
       const lineElements: HTMLElement[] = [];
 
       lines.forEach((line) => {
         const wrapper = document.createElement("div");
         wrapper.style.overflow = "hidden";
-        wrapper.style.display = "block"; // Stack like natural lines
+        wrapper.style.display = "block";
 
         const inner = document.createElement("div");
         inner.className = "gsap-line-inner";
@@ -205,56 +221,83 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
     const parentStack = section.closest("[data-parallax-stack]");
     const isPinned = !!parentStack;
 
-    // 1. Gather ALL elements in true top-to-bottom DOM order
+    // 1. Gather ALL elements and handle initial visibility
     const animateRoots = section.querySelectorAll("[data-about-animate]");
     let allElements: HTMLElement[] = [];
 
     animateRoots.forEach((el) => {
-      // If it's a paragraph, split it into lines so each line animates sequentially
+      // Make elements ready for GSAP but keep them invisible via lines
+      gsap.set(el, { autoAlpha: 1 });
+
       if (el.tagName.toLowerCase() === "p") {
-        gsap.set(el, { opacity: 1, y: 0 });
         const lines = splitIntoLines(el as HTMLElement);
-        allElements.push(...lines);
+        allElements.push(...lines as HTMLElement[]);
       } else {
-        // Otherwise, animate the block as a whole (Heading, Deco Line, CTA)
         allElements.push(el as HTMLElement);
       }
     });
 
-    // 2. Create a unified Scrub timeline for everything
+    const sectionBg = section.querySelector("img") as HTMLElement;
+
+    // 2. Create a unified Scrub timeline
     if (allElements.length > 0) {
-      gsap.fromTo(
+      // Ensure elements are at their "from" state immediately to avoid jumps
+      gsap.set(allElements, { y: 40, opacity: 0, rotationX: 10, filter: "blur(8px)" });
+
+      gsap.to(sectionBg, {
+        scale: 1.1,
+        ease: "power2.out",
+        force3D: true,
+        scrollTrigger: {
+          trigger: isPinned
+            ? parentStack?.closest(".pin-spacer") || parentStack
+            : section,
+          // Offset start based on ParallaxStack duration (1.5 * vh)
+          start: isPinned
+            ? `top+=${window.innerHeight * 1.5} center`
+            : "top 80%",
+          end: isPinned 
+            ? `bottom+=${window.innerHeight * 2.5} center` 
+            : "bottom 80%",
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      gsap.to(
         allElements,
-        { y: 40, opacity: 0, rotationX: 10, filter: "blur(8px)" },
         {
           y: 0,
           opacity: 1,
           rotationX: 0,
           filter: "blur(0px)",
-          stagger: 0.1, // Stagger uniformly from top element to bottom element
+          stagger: 0.1,
           ease: "power2.out",
+          force3D: true,
           scrollTrigger: {
-            // ParallaxStack creates a .pin-spacer wrap around the stack, use it if it exists
             trigger: isPinned
               ? parentStack?.closest(".pin-spacer") || parentStack
               : section,
-            // If pinned, start revealing exactly after Hero finishes its 1.5vh exit duration
+            // Offset start based on ParallaxStack duration (1.5 * vh)
             start: isPinned
               ? `top+=${window.innerHeight * 1.5} top`
               : "top 80%",
-            // End before the next section arrives
-            end: isPinned ? `+=${window.innerHeight * 1.0}` : "bottom 60%",
-            scrub: 1, // Smooth floaty scrub
+            end: isPinned 
+              ? `top+=${window.innerHeight * 2.5} top` 
+              : "bottom 60%",
+            scrub: 1,
+            invalidateOnRefresh: true,
           },
         },
       );
     }
   }
 
-  // Wait for ParallaxStack to setup its pins first before calculating line offsets
+  // Use page-load with proper lifecycle
   document.addEventListener("astro:page-load", () => {
-    setTimeout(() => {
-      requestAnimationFrame(initAboutAnimations);
-    }, 150);
+    // Small rAF delay ensures DOM is fully painted for measurements
+    requestAnimationFrame(() => {
+      initAboutAnimations();
+    });
   });
 </script>

@@ -283,10 +283,15 @@ const forceDesktopViewData = forceDesktopView;
     <!-- Scripts -->
     <script>
       import { initLenis } from "../scripts/lenis";
+      import { setupGSAP } from "../utils/gsap-config";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
 
       // ==================== MAIN INITIALIZATION ====================
       
       function initMainLayout() {
+        // Setup GSAP with optimized defaults once per page load
+        setupGSAP();
+
         // DOM Elements - Query inside init to ensure we get elements from the NEW page DOM
         const toggleButton = document.getElementById('viewModeToggle');
         const toggleIcon = document.getElementById('toggleIcon');
@@ -539,6 +544,11 @@ const forceDesktopViewData = forceDesktopView;
       document.addEventListener('astro:page-load', () => {
         initMainLayout();
         initLenis();
+      });
+
+      // Cleanup before swapping to new page to prevent memory leaks
+      document.addEventListener('astro:before-swap', () => {
+        ScrollTrigger.getAll().forEach(t => t.kill());
       });
     </script>
 

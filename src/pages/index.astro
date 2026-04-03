@@ -315,18 +315,12 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { waitForLoading } from "../utils/loadingState";
-
-  gsap.registerPlugin(ScrollTrigger);
+  import { prefersReducedMotion, fadeUp } from "../utils/gsap-animations";
 
   async function initIndexAnimations() {
     await waitForLoading();
 
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion()) return;
 
     // 1. Subtle Parallax for Background Images
     const parallaxWrappers = document.querySelectorAll(".parallax-bg-wrapper");
@@ -341,7 +335,7 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
         {
           yPercent: 15,
           ease: "none",
-          force3D: true, // offloads to GPU
+          force3D: true,
           scrollTrigger: {
             trigger: wrapper,
             start: "top bottom",
@@ -353,36 +347,21 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
       );
     });
 
-    // 2. Section Entrance (Fade in only to prevent layout shift that breaks child triggers)
+    // 2. Section Entrance (Fade in only)
     const revealSections = document.querySelectorAll(".section-reveal");
 
     revealSections.forEach((section) => {
-      // ✨ FIX BUG: Abaikan animasi fade-in jika elemen ini berada di dalam Horizontal Carousel.
-      // Jika tidak diabaikan, animasi time-based ini (1.5 detik) akan menimpa 
-      // animasi scrub timeline dari Carousel saat di-scroll ekstra cepat.
+      // Ignore if inside Horizontal Carousel
       if (section.parentElement?.closest(".horizontal-scroll-container")) return;
 
-      gsap.fromTo(
-        section,
-        {
-          opacity: 0,
-        },
-        {
-          opacity: 1,
-          duration: 1.5,
-          ease: "power2.inOut",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 85%", // starts when section's top is 85% down viewport
-            toggleActions: "play none none reverse",
-          },
-        },
-      );
+      fadeUp(section as HTMLElement, {
+        y: 0,
+        duration: 1.5,
+        start: "top 85%",
+      });
     });
   }
 
-  // Initialize once
-  document.addEventListener("DOMContentLoaded", initIndexAnimations);
-  // Re-initialize for Astro view transitions
+  // Handle initialization for Astro transitions
   document.addEventListener("astro:page-load", initIndexAnimations);
 </script>

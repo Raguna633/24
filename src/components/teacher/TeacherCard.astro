@@ -1,6 +1,6 @@
 ---
 const dummyImg = 'https://res.cloudinary.com/dhbps9kvp/image/upload/v1775104998/dummy.webp';
-import Copy from '../Copy';
+import BlockReveal from '../BlockReveal.astro';
 
 interface Props {
   name: string;
@@ -33,11 +33,11 @@ const { name, subjects, index, offset = false } = Astro.props;
   
   <!-- Content Details -->
   <div class="px-1 text-center">
-    <Copy client:visible animateOnScroll={true} blockColor="#183f89">
-      <h4 class="text-[22px] md:text-2xl font-sans font-bold text-[#183f89] mb-1" transition:name={`teacher-name-${index}`}>{name}</h4>
-    </Copy>
-    <Copy client:visible animateOnScroll={true} blockColor="#183f89">
-      <p class="text-sm md:text-[15px] font-sans text-[#3557a2] font-medium" transition:name={`teacher-subjects-${index}`}>{subjects}</p>
-    </Copy>
+    <div class="text-[22px] md:text-2xl font-sans font-bold text-[#183f89] mb-1" transition:name={`teacher-name-${index}`}>
+      <BlockReveal blockColor="#183f89" text={name} />
+    </div>
+    <div class="text-sm md:text-[15px] font-sans text-[#3557a2] font-medium" transition:name={`teacher-subjects-${index}`}>
+      <BlockReveal blockColor="#183f89" text={subjects} />
+    </div>
   </div>
 </div>

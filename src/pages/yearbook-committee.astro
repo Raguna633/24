@@ -1,6 +1,6 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import Copy from "../components/Copy.jsx";
+import BlockReveal from "../components/BlockReveal.astro";
 import TextReveal from "../components/animations/TextReveal.astro";
 import { Image, getImage } from "astro:assets";
 import CloudinaryImage from "../components/ui/CloudinaryImage.astro";
@@ -43,7 +43,7 @@ const optimizedBg = await getImage({ src: bgTexture, format: "webp" });
       <h1
         class="text-4xl md:text-6xl lg:text-7xl font-black uppercase text-center tracking-wide text-black pb-2 text-shadow-lg"
       >
-        <Copy client:idle blockColor="#f5f0ea" duration={1.5}>YEARBOOK COMMITTEE</Copy>
+        <BlockReveal blockColor="#f5f0ea" text="YEARBOOK COMMITTEE" duration={1.5} />
       </h1>
       <div
         class="mt-2 w-[300px] md:w-[450px] lg:w-[600px] text-center flex justify-center animated-stroke-wrapper header-stroke relative z-10 transition-transform"
@@ -114,29 +114,19 @@ const optimizedBg = await getImage({ src: bgTexture, format: "webp" });
         class="w-full lg:w-2/5 flex flex-col items-center gap-2 text-sm md:text-base lg:text-lg font-bold text-black uppercase tracking-wider md:tracking-widest pr-0 lg:pr-8 text-shadow-lg"
       >
         <div class="text-right name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.0}
-            >Fahsa Erdiansyah</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Fahsa Erdiansyah" stagger={0.0} />
         </div>
         <div class="text-right name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.2}
-            >M. Fahri Fathul Rozy</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="M. Fahri Fathul Rozy" stagger={0.2} />
         </div>
         <div class="text-right name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.4}
-            >Rayza Maulana Abdussyukur</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Rayza Maulana Abdussyukur" stagger={0.4} />
         </div>
         <div class="text-right name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.6}
-            >Restu Hadi Nugraha</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Restu Hadi Nugraha" stagger={0.6} />
         </div>
         <div class="text-right name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.8}
-            >Ardian Zahy</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Ardian Zahy" stagger={0.8} />
         </div>
       </div>
     </section>
@@ -188,44 +178,28 @@ const optimizedBg = await getImage({ src: bgTexture, format: "webp" });
         class="w-full lg:w-2/5 flex flex-col items-center lg:items-start gap-2 text-sm md:text-base lg:text-lg font-bold text-shadow-lg text-black uppercase tracking-wider md:tracking-widest pl-0 lg:pl-8"
       >
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.0}
-            >Amelia Khuzaefa Alena</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Amelia Khuzaefa Alena" stagger={0.0} />
         </div>
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.2}
-            >Aprillina Cahyani</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Aprillina Cahyani" stagger={0.2} />
         </div>
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.4}
-            >Davina Adira Aprilia</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Davina Adira Aprilia" stagger={0.4} />
         </div>
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.6}
-            >Fidella Nisa</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Fidella Nisa" stagger={0.6} />
         </div>
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={0.8}
-            >Keyza Allisya Amanda</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Keyza Allisya Amanda" stagger={0.8} />
         </div>
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={1}
-            >Qadira Evania Putri Suangsa</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Qadira Evania Putri Suangsa" stagger={1} />
         </div>
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={1.2}
-            >Silvia Azzahra</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Silvia Azzahra" stagger={1.2} />
         </div>
         <div class="text-left name-text">
-          <Copy client:visible blockColor="#f5f0ea" stagger={1.4}
-            >Wifa Fauziah</Copy
-          >
+          <BlockReveal blockColor="#f5f0ea" text="Wifa Fauziah" stagger={1.4} />
         </div>
       </div>
 
