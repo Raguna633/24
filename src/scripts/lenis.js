@@ -35,8 +35,9 @@ export function initLenis() {
     // 6. Add Lenis RAF to GSAP ticker
     gsap.ticker.add(window.lenisRaf);
 
-    // 7. Disable GSAP lag smoothing for smoother animation
-    gsap.ticker.lagSmoothing(0);
+    // 8. Sync lag smoothing with global config (Rule 05a)
+    // Don't disable it (0) as it can cause freezes on low-end devices
+    gsap.ticker.lagSmoothing(500, 33);
 
     // 8. Listen for viewport changes (ONLY ONCE using a global flag)
     if (!window.lenisEventsInitialized) {
