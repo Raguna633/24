@@ -1,0 +1,122 @@
+---
+import { getEntry, getCollection } from "astro:content";
+import ClassHeroSection from "../ClassHeroSection.astro";
+import StudentCard from "../../StudentCard.astro";
+import NextClassesCTA from "../NextClassesCTA.astro";
+import FadeOverlay from "../../FadeOverlay.astro";
+import StoryTextReveal from "../../sections/StoryTextReveal.astro";
+
+const classData = await getEntry('classes', 'ips2');
+if (!classData) {
+  throw new Error("Data kelas ips2 tidak ditemukan di collection");
+}
+const classContent = classData.data;
+
+const heroBg1 = typeof classContent.heroPhoto?.[0] === 'string' ? classContent.heroPhoto[0] : (classContent.heroPhoto?.[0] as any)?.src || '';
+const heroBg2 = typeof classContent.heroPhoto?.[1] === 'string' ? classContent.heroPhoto[1] : (classContent.heroPhoto?.[1] as any)?.src || '';
+const walasPic = typeof classContent.walasPhoto === 'string' ? classContent.walasPhoto : (classContent.walasPhoto as any)?.src || '';
+
+// Ambil semua siswa kelas IPS II dari collection
+const allStudents = await getCollection('students', ({ data }) => data.kelas === 'IPS II');
+// Urutkan berdasarkan nama
+allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
+---
+
+<div class="overflow-x-hidden">
+  <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
+
+  <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
+
+  <StoryTextReveal
+    walasImage={walasPic}
+    walasName={classContent.walasName}
+    walasTitle={`Wali Kelas XII ${classContent.className}`}
+    topTexts={classContent.walasGreeting.topText}
+    bottomTexts={classContent.walasGreeting.bottomText}
+    bgImage={heroBg2}
+    textColor="#2A358F"
+  />
+
+  <FadeOverlay connectorHeight="200" />
+
+  <!-- Placeholder for Group Photos -->
+  <section class="w-screen h-screen flex justify-center items-center bg-[#f5f0ea]">
+    <h2 class="text-3xl md:text-5xl text-gray-500 font-bold opacity-60 text-center tracking-widest">Foto group kelas akan berada di sini</h2>
+  </section>
+
+  <FadeOverlay />
+
+  <section class="students-section py-24 px-6 bg-[#f5f0ea]" aria-label={`Daftar siswa kelas ${classContent.className}`}>
+    <div class="max-w-7xl mx-auto">
+      <div class="students-heading mb-16 text-center">
+        <p class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label">Keluarga</p>
+        <h2 class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title">{classContent.className}</h2>
+        <p class="text-base text-gray-400 mt-4 opacity-0 students-heading-count">{allStudents.length} orang yang membentuk cerita ini</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {allStudents.map((student) => (
+          <div class="student-card-wrapper opacity-0">
+            <StudentCard name={student.data.name} slug={student.slug} photo={student.data.photo} quote={student.data.quote} class={student.data.kelas ?? ''} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <NextClassesCTA prevClass={classContent.prevClass} nextClass={classContent.nextClass} />
+
+  <style>
+    body, html { overflow-x: hidden; max-width: 100vw; }
+    body { @apply bg-[#f5f0eaff]; }
+    
+  </style>
+
+  <script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import { waitForLoading } from "../../../utils/loadingState";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("astro:page-load", async () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      await waitForLoading();
+
+      // Heading siswa
+      gsap.set('.students-heading-label, .students-heading-title, .students-heading-count', { y: 30 });
+      gsap.to('.students-heading-label', {
+        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+      });
+      gsap.to('.students-heading-title', {
+        opacity: 1, y: 0, duration: 1.2, ease: 'power4.out', force3D: true,
+        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+        delay: 0.15,
+      });
+      gsap.to('.students-heading-count', {
+        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+        delay: 0.3,
+      });
+
+      // Student cards
+      const studentCards = gsap.utils.toArray<HTMLElement>('.student-card-wrapper');
+      gsap.set(studentCards, { y: 50 });
+      studentCards.forEach((card, i) => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: 'power3.out',
+          force3D: true,
+          delay: (i % 4) * 0.08,
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 90%',
+            once: true,
+          },
+        });
+      });
+    });
+  </script>
+</div>

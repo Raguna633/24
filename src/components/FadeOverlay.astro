@@ -49,6 +49,12 @@ const {
   fullWidth = true,
   marginY = "0px"
 } = Astro.props;
+
+// Format connectorHeight agar jika user memasukkan angka (misal: 200 atau "200") 
+// tanpa satuan, otomatis diubah menjadi "200px". Jika kosong tetap "0px".
+const finalConnectorHeight = connectorHeight 
+  ? (isNaN(Number(connectorHeight)) ? connectorHeight : `${connectorHeight}px`) 
+  : "0px";
 ---
 
 <div
@@ -56,7 +62,7 @@ const {
   style={`
     grid-row: ${gridRow};
     z-index: ${zIndex};
-    height: ${connectorHeight ? connectorHeight : '0px'};
+    height: ${finalConnectorHeight};
   `}
 >
   {showTop && (

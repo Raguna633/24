@@ -1,0 +1,752 @@
+---
+import { getEntry, getCollection } from "astro:content";
+import ClassHeroSection from "../ClassHeroSection.astro";
+import StudentCard from "../../StudentCard.astro";
+import NextClassesCTA from "../NextClassesCTA.astro";
+import { Image } from "astro:assets";
+import FadeOverlay from "../../FadeOverlay.astro";
+import StoryTextReveal from "../../sections/StoryTextReveal.astro";
+
+import group1 from "../../../assets/apl-b-group1.webp";
+import group2 from "../../../assets/apl-b-group2.webp";
+import group3 from "../../../assets/apl-b-group3.webp";
+import radioactiveSvg from "../../../assets/radioactive.svg";
+import bgPattern from "../../../assets/b-apl-pattern.svg?raw";
+import breakerSvg1 from "../../../assets/breaker1.svg";
+import breakerSvg2 from "../../../assets/breaker2.svg";
+import breakerSvg3 from "../../../assets/breaker3.svg";
+import microscopeSvg from "../../../assets/microscope.svg";
+import atomSvg from "../../../assets/atom.svg";
+import reportSvg from "../../../assets/report.svg";
+
+const classData = await getEntry("classes", "b-apl");
+if (!classData) {
+  throw new Error("Data kelas b-apl tidak ditemukan di collection");
+}
+const classContent = classData.data;
+
+const heroBg1 =
+  typeof classContent.heroPhoto?.[0] === "string"
+    ? classContent.heroPhoto[0]
+    : (classContent.heroPhoto?.[0] as any)?.src || "";
+const heroBg2 =
+  typeof classContent.heroPhoto?.[1] === "string"
+    ? classContent.heroPhoto[1]
+    : (classContent.heroPhoto?.[1] as any)?.src || "";
+const walasPic =
+  typeof classContent.walasPhoto === "string"
+    ? classContent.walasPhoto
+    : (classContent.walasPhoto as any)?.src || "";
+
+// Ambil semua siswa kelas B APL dari collection
+const allStudents = await getCollection(
+  "students",
+  ({ data }) => data.kelas === "B APL",
+);
+// Urutkan berdasarkan nama
+allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
+---
+
+<div class="overflow-x-hidden">
+  <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
+
+  <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
+
+  <StoryTextReveal
+    walasImage={walasPic}
+    walasName={classContent.walasName}
+    walasTitle={`Wali Kelas XII ${classContent.className}`}
+    topTexts={classContent.walasGreeting.topText}
+    bottomTexts={classContent.walasGreeting.bottomText}
+    bgImage={heroBg2}
+    textColor="#2A358F"
+  />
+
+  <FadeOverlay connectorHeight="200" />
+
+  <div
+    class="groups bg-slate-950 text-cyan-400 min-h-screen font-sans overflow-x-hidden relative selection:bg-cyan-500 selection:text-slate-900"
+  >
+    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-slate-950">
+      <!-- Cyber-Lab Pattern from inline SVG -->
+      <div 
+        class="absolute top-0 left-0 w-full h-full opacity-20 text-cyan-600 mix-blend-screen lab-pattern" 
+        aria-hidden="true" 
+        set:html={bgPattern.replace("<svg ", "<svg preserveAspectRatio=\"xMidYMid slice\" ")}
+      ></div>
+      <div
+        class="absolute inset-0 bg-linear-to-b from-slate-950/90 via-slate-950/40 to-slate-950/80"
+      >
+      </div>
+      <div class="absolute inset-0 shadow-[inset_0_0_150px_rgba(2,6,23,0.9)]">
+      </div>
+
+      <!-- Falling Diagonal Lines -->
+      <div class="absolute inset-0 falling-lines-container opacity-30">
+        <div class="falling-lines-wrapper absolute inset-x-0 -top-1/4 h-[150%]">
+          {
+            Array.from({ length: 20 }).map((_, i) => (
+              <div
+                class="falling-line absolute w-[2px] h-[200px] bg-linear-to-b from-transparent via-white to-transparent -rotate-35 blur-[1px]"
+                style={{
+                  left: `${(i * 7) % 100}%`,
+                  top: `${(i * 13) % 100}%`,
+                  opacity: 0.8 + (i % 5) * 0.1,
+                }}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="relative z-10 w-screen h-screen flex flex-col justify-center items-center text-center px-4 gsap-header overflow-hidden"
+    >
+      <h1
+        class="text-5xl md:text-7xl font-bold tracking-widest mb-2 text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-lime-400 to-blue-600 gsap-fade-up will-animate opacity-0 text-shadow-[0_0_20px_rgba(6,182,212,0.5)]"
+        style="font-family: 'Orbitron', sans-serif;"
+      >
+        PROJECT: B APL
+      </h1>
+
+      <h2
+        class="text-xl md:text-2xl tracking-[0.3em] text-lime-300 mb-16 gsap-fade-up will-animate opacity-0 font-mono"
+      >
+        ANALISIS PENGUJIAN LABORATORIUM
+      </h2>
+
+      <!-- Quote Clipboard/Dashboard -->
+      <div
+        class="max-w-4xl w-full border-t-12 border-x border-b border-cyan-800/80 rounded-sm p-8 md:p-12 bg-slate-950/80 backdrop-blur-xl relative gsap-fade-up will-animate opacity-0 shadow-[0_0_30px_rgba(6,182,212,0.15)] overflow-hidden"
+      >
+        <!-- Dashboard Top Bar -->
+        <div class="absolute -top-[12px] left-4 bg-slate-900 border-x border-cyan-700/50 px-4 py-0.5 rounded-b-sm flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span class="text-[10px] text-cyan-400 font-mono tracking-widest">RECORDING</span>
+        </div>
+        <div class="absolute -top-[12px] right-4 bg-cyan-800 text-[10px] px-3 py-0.5 font-mono text-cyan-100 uppercase tracking-widest rounded-b-sm">
+            DOC_ID: APL_B_99
+        </div>
+
+        <div class="absolute bottom-4 left-4 opacity-15 w-32 h-32 pointer-events-none z-0 rotate-[-15deg]">
+            <img src={reportSvg.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+        </div>
+        
+        <div class="relative z-10 w-full text-center md:text-left">
+            <p class="text-xl md:text-2xl mb-4 font-light italic text-cyan-50">
+            "No amount of experimentation can ever prove me right; a single
+            experiment can prove me wrong."
+            </p>
+            <p class="text-right font-bold tracking-widest text-sm text-lime-400 font-mono">
+            - Albert Einstein
+            </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="groups-wrapper relative z-10 w-screen h-screen overflow-hidden block" style="clip-path: inset(0);">
+      <section
+        class="absolute inset-0 flex items-center justify-center py-24 px-4 gsap-section first-group will-animate"
+        id="group-1"
+      >
+        <div
+          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative overflow-hidden"
+        >
+          <div
+            class="absolute top-4 left-4 text-xs text-cyan-600 tracking-widest font-mono"
+          >
+            SYS.REC.001 // APL_B
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+            <div
+              class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0"
+            >
+              <div
+                class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]"
+              >
+                <h3
+                  class="text-sm tracking-widest text-lime-400 mb-3 border-b border-cyan-500/30 pb-2"
+                >
+                  &lt;SUBJECT_DATA_01&gt;
+                </h3>
+                <ul class="space-y-2 text-sm text-cyan-100">
+                  <li class="flex justify-between">
+                    <span>GROUP:</span>
+                    <span>ALPHA</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>MEMBER_COUNT:</span>
+                    <span>06</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>EXP_STATUS:</span>
+                    <span class="text-lime-400 animate-pulse">ACTIVE</span>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+
+            <div class="lg:col-span-8 relative gsap-photo will-animate opacity-0">
+              <!-- Floating Decoration for Group 1 -->
+              <div class="absolute -top-12 -left-12 opacity-100 w-24 h-24 pointer-events-none gsap-float-slow z-20">
+                <img src={atomSvg.src} alt="" class="w-full h-full object-contain" />
+              </div>
+
+              <div class="absolute -bottom-8 -right-8 opacity-100 w-20 h-20 pointer-events-none gsap-float-fast z-20">
+                <img src={breakerSvg1.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+              </div>
+
+              <!-- Cyber-Lab Duotone Wrapper -->
+              <div
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+              >
+                <Image
+                  src={group1}
+                  alt="12 B APL Group 1"
+                  widths={[400, 800, 1200]}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 840px"
+                  loading="lazy"
+                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                />
+
+                <div
+                  class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-slate-950 via-transparent to-transparent pointer-events-none opacity-80"
+                >
+                </div>
+
+                <!-- Decorative crosshair -->
+                <div
+                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-lime-500/30 rounded-full pointer-events-none opacity-50 transition-opacity duration-500 group-hover:opacity-0 flex items-center justify-center"
+                >
+                   <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
+                   <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
+                   <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
+                   <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="absolute top-[150vh] left-0 w-full h-screen flex items-center justify-center py-24 px-4 gsap-section second-group will-animate"
+        id="group-2"
+      >
+        <div
+          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+            <div class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1">
+              <!-- Floating Decoration for Group 2 -->
+              <div class="absolute -bottom-10 -right-10 opacity-100 w-28 h-28 pointer-events-none gsap-float-fast z-20">
+                <img src={radioactiveSvg.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+              </div>
+
+              <div class="absolute -top-8 -left-8 opacity-100 w-16 h-16 pointer-events-none gsap-float-slow z-20">
+                <img src={breakerSvg2.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+              </div>
+
+              <!-- Cyber-Lab Duotone Wrapper -->
+              <div
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+              >
+                <Image
+                  src={group2}
+                  alt="12 B APL Group 2"
+                  widths={[400, 800, 1200]}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 840px"
+                  loading="lazy"
+                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                />
+
+                <div
+                  class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-slate-950 via-transparent to-transparent pointer-events-none opacity-80"
+                >
+                </div>
+
+                <!-- Decorative crosshair -->
+                <div
+                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-lime-500/30 rounded-full pointer-events-none opacity-50 transition-opacity duration-500 group-hover:opacity-0 flex items-center justify-center"
+                >
+                   <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
+                   <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
+                   <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
+                   <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0 order-1 lg:order-2"
+            >
+              <div class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]">
+                <h3
+                  class="text-sm tracking-widest text-lime-400 mb-3 border-b border-cyan-500/30 pb-2"
+                >
+                  &lt;SUBJECT_DATA_02&gt;
+                </h3>
+                <ul class="space-y-2 text-sm text-cyan-100">
+                  <li class="flex justify-between">
+                    <span>GROUP:</span>
+                    <span>BETA</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>MEMBER_COUNT:</span>
+                    <span>05</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>EXP_STATUS:</span>
+                    <span class="text-lime-400 animate-pulse">ACTIVE</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="absolute top-[300vh] left-0 w-full h-screen flex items-center justify-center py-24 px-4 gsap-section third-group will-animate"
+        id="group-3"
+      >
+      <div
+          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+            <div class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1">
+              <!-- Floating Decoration for Group 3 -->
+              <div class="absolute -top-10 right-10 opacity-100 w-20 h-20 pointer-events-none gsap-float-alt z-20">
+                <img src={microscopeSvg.src} alt="" class="w-full h-full object-contain" />
+              </div>
+              
+              <div class="absolute bottom-4 left-4 opacity-100 w-14 h-14 pointer-events-none gsap-float-slow z-20">
+                <img src={breakerSvg3.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+              </div>
+
+              <!-- Cyber-Lab Duotone Wrapper -->
+              <div
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+              >
+                <Image
+                  src={group3}
+                  alt="12 B APL Group 3"
+                  widths={[400, 800, 1200]}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 840px"
+                  loading="lazy"
+                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                />
+
+                <div
+                  class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-slate-950 via-transparent to-transparent pointer-events-none opacity-80"
+                >
+                </div>
+
+                <!-- Decorative crosshair -->
+                <div
+                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-lime-500/30 rounded-full pointer-events-none opacity-50 transition-opacity duration-500 group-hover:opacity-0 flex items-center justify-center"
+                >
+                   <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
+                   <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
+                   <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
+                   <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0 order-1 lg:order-2"
+            >
+              <div class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]">
+                <h3
+                  class="text-sm tracking-widest text-lime-400 mb-3 border-b border-cyan-500/30 pb-2"
+                >
+                  &lt;SUBJECT_DATA_03&gt;
+                </h3>
+                <ul class="space-y-2 text-sm text-cyan-100">
+                  <li class="flex justify-between">
+                    <span>GROUP:</span>
+                    <span>Theta</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>MEMBER_COUNT:</span>
+                    <span>06</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>EXP_STATUS:</span>
+                    <span class="text-lime-400 animate-pulse">ACTIVE</span>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <FadeOverlay />
+
+  <section
+    class="students-section py-24 px-6 bg-[#f5f0ea]"
+    aria-label={`Daftar siswa kelas ${classContent.className}`}
+  >
+    <div class="max-w-7xl mx-auto">
+      <div class="students-heading mb-16 text-center">
+        <p
+          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label"
+        >
+          Keluarga
+        </p>
+        <h2
+          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title"
+        >
+          {classContent.className}
+        </h2>
+        <p
+          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count"
+        >
+          {allStudents.length} orang yang membentuk cerita ini
+        </p>
+      </div>
+      <div
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+      >
+        {
+          allStudents.map((student) => (
+            <div class="student-card-wrapper opacity-0">
+              <StudentCard
+                name={student.data.name}
+                slug={student.slug}
+                photo={student.data.photo}
+                quote={student.data.quote}
+                class={student.data.kelas ?? ""}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <NextClassesCTA
+    prevClass={classContent.prevClass}
+    nextClass={classContent.nextClass}
+  />
+
+  <style is:global>
+    body,
+    html {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    body {
+      @apply bg-[#f5f0eaff];
+    }
+
+    
+
+    /* Cyber-Lab floating/glowing animations are handled by GSAP and Tailwind classes */
+
+    .lab-pattern svg {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      object-fit: cover;
+    }
+  </style>
+
+  <script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+    import { waitForLoading } from "../../../utils/loadingState";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    document.addEventListener("astro:page-load", async () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      await waitForLoading();
+
+      // --- STORYTELLING ANIMATIONS ---
+      
+      // 1. Header & Dashboard Orchestration
+      const tlHeader = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".gsap-header",
+          start: "top top",
+          end: "+=150%",
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1
+        }
+      });
+      tlHeader.fromTo(".gsap-header .gsap-fade-up",
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.2, stagger: 0.2, ease: "power3.out", force3D: true }
+      );
+
+      // 2. Storytelling Setup for Group Sections
+      const groupsTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".groups-wrapper",
+          start: "top top",
+          end: "+=500%", 
+          pin: true,     
+          scrub: 1.5,   
+          anticipatePin: 1,
+        }
+      });
+
+      // --- SVG Reveal Animation for Background ---
+      // Since the SVG pattern uses 'fill' instead of strokes, drawing individual paths strips their visibility.
+      // Instead, we use a single GPU accelerated clip-path to reveal the entire background progressively.
+      const bgContainer = document.querySelector('.lab-pattern') as HTMLElement | null;
+      if (bgContainer) {
+        gsap.set(bgContainer, {
+          clipPath: 'inset(0 0 100% 0)', // Hidden from the bottom
+          opacity: 0.1 // Resetting to slightly lower opacity for a subtle look
+        });
+        
+        groupsTl.to(bgContainer, {
+          clipPath: 'inset(0 0 0% 0)', // Fully revealed
+          duration: 4, 
+          ease: "none",
+        }, 0);
+      }
+
+      // Group 1 Entrance
+      groupsTl.fromTo("#group-1 .gsap-data-panel", 
+        { x: -40, opacity: 0 }, 
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true }
+      );
+      groupsTl.fromTo("#group-1 .gsap-photo", 
+        { y: 60, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", force3D: true }, 
+        "-=0.6"
+      );
+      
+      const g1Icons = document.querySelectorAll("#group-1 .gsap-float-slow, #group-1 .gsap-float-fast, #group-1 .gsap-float-alt");
+      groupsTl.fromTo(g1Icons, 
+        { scale: 0, opacity: 0, rotation: -90 }, 
+        { scale: 1, opacity: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "back.out(1.5)", force3D: true }, 
+        "-=1.0"
+      );
+
+      // Transition Scroll 1 -> 2
+      groupsTl.to([".groups-wrapper .gsap-section", ".falling-lines-wrapper"], {
+        y: "-150vh",
+        duration: 2.5,
+        ease: "power2.inOut"
+      }, "+=0.3");
+
+      // Animate Group 2
+      groupsTl.fromTo("#group-2 .gsap-data-panel", 
+        { x: 40, opacity: 0 }, 
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true }
+      );
+      groupsTl.fromTo("#group-2 .gsap-photo", 
+        { y: 80, opacity: 0, rotation: -2 }, 
+        { y: 0, opacity: 1, duration: 1.5, rotation: 0, ease: "power4.out", force3D: true }, 
+        "-=0.6"
+      );
+
+      const g2Icons = document.querySelectorAll("#group-2 .gsap-float-slow, #group-2 .gsap-float-fast, #group-2 .gsap-float-alt");
+      groupsTl.fromTo(g2Icons, 
+        { scale: 0, opacity: 0, rotation: -90 }, 
+        { scale: 1, opacity: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "back.out(1.5)", force3D: true }, 
+        "-=1.0"
+      );
+
+      // Transition Scroll 2 -> 3
+      groupsTl.to([".groups-wrapper .gsap-section", ".falling-lines-wrapper"], {
+        y: "-300vh",
+        duration: 2.5,
+        ease: "power2.inOut"
+      }, "+=0.3");
+
+      // Animate Group 3
+      groupsTl.fromTo("#group-3 .gsap-data-panel", 
+        { x: -40, opacity: 0 }, 
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true }
+      );
+      groupsTl.fromTo("#group-3 .gsap-photo", 
+        { y: 60, opacity: 0, rotation: 2 }, 
+        { y: 0, opacity: 1, duration: 1.5, rotation: 0, ease: "power4.out", force3D: true }, 
+        "-=0.6"
+      );
+
+      const g3Icons = document.querySelectorAll("#group-3 .gsap-float-slow, #group-3 .gsap-float-fast, #group-3 .gsap-float-alt");
+      groupsTl.fromTo(g3Icons, 
+        { scale: 0, opacity: 0, rotation: 90 }, 
+        { scale: 1, opacity: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "back.out(1.5)", force3D: true }, 
+        "-=1.0"
+      );
+      // --- END STORYTELLING ANIMATIONS ---
+
+      // Heading siswa
+      gsap.set(
+        ".students-heading-label, .students-heading-title, .students-heading-count",
+        { y: 30 },
+      );
+      gsap.to(".students-heading-label", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".students-section",
+          start: "top 75%",
+          once: true,
+        },
+      });
+      gsap.to(".students-heading-title", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out",
+        force3D: true,
+        scrollTrigger: {
+          trigger: ".students-section",
+          start: "top 75%",
+          once: true,
+        },
+        delay: 0.15,
+      });
+      gsap.to(".students-heading-count", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".students-section",
+          start: "top 75%",
+          once: true,
+        },
+        delay: 0.3,
+      });
+
+      // Student cards
+      const studentCards = gsap.utils.toArray<HTMLElement>(
+        ".student-card-wrapper",
+      );
+      gsap.set(studentCards, { y: 50 });
+      studentCards.forEach((card, i) => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: "power3.out",
+          force3D: true,
+          delay: (i % 4) * 0.08,
+          scrollTrigger: {
+            trigger: card,
+            start: "top 90%",
+            once: true,
+          },
+        });
+      });
+
+      // Individual falling animation
+      const lines = gsap.utils.toArray<HTMLElement>(".falling-line");
+      lines.forEach((line, i) => {
+        gsap.to(line, {
+          y: "100vh",
+          duration: 15 + (i % 5) * 5,
+          repeat: -1,
+          ease: "none",
+          delay: -(i * 2),
+          force3D: true,
+        });
+      });
+
+      // Parallax effect for falling lines layer is now integrated to the groupsTl scroll timeline and transitioning sequence
+
+      // Lab Icons: Floating, Rotation, and Parallax
+      const floatSlow = gsap.utils.toArray<HTMLElement>(".gsap-float-slow");
+      const floatFast = gsap.utils.toArray<HTMLElement>(".gsap-float-fast");
+      const floatAlt = gsap.utils.toArray<HTMLElement>(".gsap-float-alt");
+
+      // Base Floating + Rotation
+      floatSlow.forEach((el) => {
+        const icon = el.querySelector("img");
+        if (icon) {
+          gsap.to(icon, {
+            y: -20,
+            duration: 3,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          });
+          gsap.to(icon, {
+            rotation: 360,
+            duration: 20,
+            repeat: -1,
+            ease: "none",
+          });
+        }
+      });
+
+      floatFast.forEach((el) => {
+        const icon = el.querySelector("img");
+        if (icon) {
+          gsap.to(icon, {
+            y: -15,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          });
+          gsap.to(icon, {
+            rotation: -360,
+            duration: 15,
+            repeat: -1,
+            ease: "none",
+          });
+        }
+      });
+
+      floatAlt.forEach((el) => {
+        const icon = el.querySelector("img");
+        if (icon) {
+          gsap.to(icon, {
+            y: -25,
+            x: 10,
+            duration: 4,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+          });
+          gsap.to(icon, {
+            rotation: 360,
+            duration: 25,
+            repeat: -1,
+            ease: "none",
+          });
+        }
+      });
+
+      // Parallax Scroll Effect for Icons
+      [...floatSlow, ...floatFast, ...floatAlt].forEach((el) => {
+        gsap.to(el, {
+          y: (i, target) => {
+            // Move more or less based on class for depth variety
+            if (target.classList.contains("gsap-float-slow")) return 100;
+            if (target.classList.contains("gsap-float-fast")) return -60;
+            return 40;
+          },
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+      });
+    });
+  </script>
+</div>

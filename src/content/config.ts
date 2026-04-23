@@ -29,12 +29,25 @@ const uniforms = defineCollection({
 const classes = defineCollection({
     schema: ({ image }) =>
         z.object({
-            name: z.string(),
+            className: z.string(),
             heroPhoto: z.array(z.union([image(), z.string()])).optional(),
-            walas: z.string(),
+            walasName: z.string(),
             walasPhoto: z.union([image(), z.string()]).optional(),
-            walasQuote: z.string(),
+            walasGreeting: z.object({
+                topText: z.array(z.string()),
+                bottomText: z.array(z.string()),
+            }),
             groupPhoto: z.array(z.union([image(), z.string()])).optional(),
+            prevClass: z.object({
+                name: z.string(),
+                slug: z.string(),
+                jenjang: z.string(),
+            }).optional(),
+            nextClass: z.object({
+                name: z.string(),
+                slug: z.string(),
+                jenjang: z.string(),
+            }).optional(),
         }),
 });
 

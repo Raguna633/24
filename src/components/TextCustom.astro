@@ -79,7 +79,9 @@ const {
 {
   mode === "code" && (
     <pre class={`code-block ${className}`}>
-      <code>{text}</code>
+      <code>{text.replace(/^\n/, "").replace(/\n$/, "").split("\n").map((line) => (
+        <div class="code-line">{line || " "}</div>
+      ))}</code>
     </pre>
   )
 }
@@ -116,5 +118,11 @@ const {
     overflow-x: visible;
     white-space: pre; /* 🔥 KUNCI UTAMA */
     pointer-events: none;
+  }
+
+  .code-line {
+    white-space: pre;
+    display: block;
+    min-height: 1.6em;
   }
 </style>

@@ -171,9 +171,13 @@ const overlayDirection = isTeacherLayout
             </svg>
 
             <!-- Full Text directly -->
-            <div class="text-[clamp(0.8rem,2.5vw,1.5rem)] leading-relaxed text-white/90 italic text-justify mb-5 last:mb-0">
-              <BlockReveal blockColor="#fff" text={greeting} delay={0.5} />
-            </div>
+            {
+              greeting.split(/\r?\n/).map((line) =>
+                line.trim() ? (
+                  <BlockReveal blockColor="#fff" text={line} className="text-[clamp(0.8rem,2.5vw,1.5rem)] leading-relaxed text-white/90 italic text-justify mb-5 last:mb-0"/>
+                ) : null,
+              )
+            }
 
             <!-- Scroll Hint -->
             <div class="scroll-hint">

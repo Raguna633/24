@@ -4,13 +4,15 @@ interface Props {
   duration?: number;
   stagger?: number;
   animateOnScroll?: boolean;
+  manualControl?: boolean;
 }
 
 const { 
   delay = 0, 
   duration = 1.8, 
   stagger = 0.15,
-  animateOnScroll = true 
+  animateOnScroll = true,
+  manualControl = false
 } = Astro.props;
 ---
 
@@ -21,6 +23,7 @@ const {
   data-duration={duration} 
   data-stagger={stagger} 
   data-scroll={animateOnScroll ? 'true' : 'false'}
+  data-manual={manualControl ? 'true' : 'false'}
 >
   <slot />
 </div>
@@ -65,8 +68,33 @@ const {
       const duration = parseFloat(wrapper.getAttribute('data-duration') || "1.2");
       const stagger = parseFloat(wrapper.getAttribute('data-stagger') || "0.15");
       const animateOnScroll = wrapper.getAttribute('data-scroll') === 'true';
+      const manualControl = wrapper.getAttribute('data-manual') === 'true';
 
-      // Split the text into lines
+      // Skip internal animation logic if manually controlled
+      if (manualControl) {
+        // We still split the text so the parent can access the lines
+        const split = new SplitText(wrapper, {
+          type: "lines",
+          linesClass: "split-line-inner"
+        });
+        
+        split.lines.forEach((line) => {
+          const lineWrapper = document.createElement("div");
+          lineWrapper.className = "block-line-wrapper";
+          if (line.parentNode) {
+            line.parentNode.insertBefore(lineWrapper, line);
+            lineWrapper.appendChild(line);
+          }
+        });
+        
+        // Ensure they are hidden initially
+        gsap.set(split.lines, { y: "150%", autoAlpha: 0 });
+        
+        // Dispatch event for parent synchronization
+        wrapper.dispatchEvent(new CustomEvent('text-reveal:ready'));
+        
+        return; 
+      }
       const split = new SplitText(wrapper, {
         type: "lines",
         linesClass: "split-line-inner" // Class assigned directly to the text chunks

@@ -1,0 +1,140 @@
+---
+// ============================================================
+// NextClassesCTA.astro — Section [7]: Navigasi ke kelas lain
+// ============================================================
+
+interface ClassRef {
+  name: string;
+  slug: string;
+  jenjang: string;
+}
+
+interface Props {
+  prevClass?: ClassRef;
+  nextClass?: ClassRef;
+}
+
+const { prevClass, nextClass } = Astro.props;
+---
+
+<section
+  class="next-classes-cta py-24 md:py-32 px-6 bg-[#f5f0ea] border-t border-[#2A358F]/10"
+  aria-label="Navigasi ke kelas lain"
+>
+  <div class="max-w-5xl mx-auto">
+
+    <!-- Heading -->
+    <div class="text-center mb-16 opacity-0" data-cta-heading>
+      <p class="text-[#2A358F]/40 text-sm tracking-[0.3em] uppercase mb-4">
+        Masih Ada Cerita Lain
+      </p>
+      <h2 class="text-3xl md:text-4xl font-bold text-black">
+        Jelajahi Kelas Lainnya
+      </h2>
+    </div>
+
+    <!-- Tombol navigasi: Kiri (kelas sebelumnya) dan Kanan (kelas berikutnya) -->
+    <div class="flex flex-col sm:flex-row gap-6 justify-center items-stretch">
+
+      <!-- Tombol: Kelas Sebelumnya -->
+      {prevClass && (
+        <a
+          href={`/classes/${prevClass.slug}`}
+          class="cta-btn group flex-1 max-w-xs mx-auto sm:mx-0 flex flex-col items-start p-8 rounded-2xl border border-[#2A358F]/20 hover:border-[#2A358F]/60 hover:bg-[#2A358F]/5 transition-all duration-500 opacity-0"
+          data-direction="prev"
+          aria-label={`Kunjungi kelas ${prevClass.name}`}
+        >
+          <span class="text-[#2A358F]/40 text-sm mb-4 group-hover:-translate-x-1 transition-transform duration-300">
+            ← Sebelumnya
+          </span>
+          <span class="text-xl font-bold text-black">
+            {prevClass.name}
+          </span>
+          <span class="text-sm text-gray-400 mt-1 uppercase tracking-wider">
+            {prevClass.jenjang.toUpperCase()}
+          </span>
+        </a>
+      )}
+
+      <!-- Tombol: Kelas Berikutnya -->
+      {nextClass && (
+        <a
+          href={`/classes/${nextClass.slug}`}
+          class="cta-btn group flex-1 max-w-xs mx-auto sm:mx-0 flex flex-col items-end p-8 rounded-2xl border border-[#2A358F]/20 hover:border-[#2A358F]/60 hover:bg-[#2A358F]/5 transition-all duration-500 text-right opacity-0"
+          data-direction="next"
+          aria-label={`Kunjungi kelas ${nextClass.name}`}
+        >
+          <span class="text-[#2A358F]/40 text-sm mb-4 group-hover:translate-x-1 transition-transform duration-300">
+            Berikutnya →
+          </span>
+          <span class="text-xl font-bold text-black">
+            {nextClass.name}
+          </span>
+          <span class="text-sm text-gray-400 mt-1 uppercase tracking-wider">
+            {nextClass.jenjang.toUpperCase()}
+          </span>
+        </a>
+      )}
+
+    </div>
+
+    <!-- Link kembali ke semua kelas -->
+    <div class="text-center mt-12 opacity-0" data-cta-back>
+      <a
+        href="/classes"
+        class="text-[#2A358F]/50 hover:text-[#2A358F] text-sm transition-colors duration-300 underline underline-offset-4"
+      >
+        ← Lihat semua kelas
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  import { waitForLoading } from '../../utils/loadingState';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener('astro:page-load', async () => {
+    // 1. Tahan sampai overlay loading hilang & ScrollTrigger.kill() dari induk selesai
+    await waitForLoading();
+
+    // 2. Set posisi awal elemen (untuk menghindari FOUC atau state yang tidak stabil saat loading)
+    gsap.set('[data-cta-heading]', { y: 30, opacity: 0 });
+    gsap.set('.cta-btn', { y: 30, opacity: 0 });
+    gsap.set('[data-cta-back]', { opacity: 0 });
+
+    // 3. Inisialisasi ScrollTrigger setelah DOM & loading stabil
+    gsap.to('[data-cta-heading]', {
+      opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.next-classes-cta',
+        start: 'top 85%',
+        once: true,
+      },
+    });
+
+    // Tombol CTA muncul dengan stagger
+    gsap.to('.cta-btn', {
+      opacity: 1, y: 0, duration: 0.7, stagger: 0.15, ease: 'power2.out', force3D: true,
+      scrollTrigger: {
+        trigger: '.cta-btn',
+        start: 'top 90%',
+        once: true,
+      },
+    });
+
+    // Link kembali muncul paling akhir
+    gsap.to('[data-cta-back]', {
+      opacity: 1, duration: 0.5, ease: 'power1.out',
+      scrollTrigger: {
+        trigger: '[data-cta-back]',
+        start: 'top 95%',
+        once: true,
+      },
+    });
+  });
+</script>

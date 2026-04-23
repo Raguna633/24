@@ -1,146 +1,69 @@
 ---
-import MainLayout from "../../layouts/MainLayout.astro";  
+import MainLayout from "../../layouts/MainLayout.astro";
 import ClassesCard from "../../components/ClassesCard.astro";
 import PageTitle from "../../components/PageTitle.astro";
+import { getCollection } from "astro:content";
 
-const aPPLGPict = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const bAPLPict = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const cAPLPict = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const dOTKPPict = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const ipaI = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const ipaII = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const ipaIII = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const ipaIV = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const ipsI = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const ipsII = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
-const ipsIII = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
+// Ambil semua data kelas dari content collection
+const allClasses = await getCollection("classes");
 
-// export function getStaticPaths() {
-//     return [
-//         { params: { jenjang: "smk"}},
-//         { params: { jenjang: "sma" }},
-//     ]
-// }
+// Gambar fallback jika foto kelas belum tersedia
+const FALLBACK_IMG = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
 
-const { jenjang } = Astro.params;
+// Peta: slug content → slug URL halaman kelas
+// (karena nama file MDX seperti "a-pplg" sedangkan slug URL-nya "xii-a-pplg")
+const CONTENT_TO_URL_SLUG: Record<string, string> = {
+  "a-pplg":  "xii-a-pplg",
+  "b-apl":   "xii-b-apl",
+  "c-apl":   "xii-c-apl",
+  "d-mplb":  "xii-d-mplb",
+  "ipa1":    "xii-ipa-1",
+  "ipa2":    "xii-ipa-2",
+  "ipa3":    "xii-ipa-3",
+  "ipa4":    "xii-ipa-4",
+  "ips1":    "xii-ips-1",
+  "ips2":    "xii-ips-2",
+  "ips3":    "xii-ips-3",
+};
 
-const classTitle = "Foto bersama dengan wali kelas XII";
+// Urutan tampilan yang diinginkan
+const DISPLAY_ORDER = ["a-pplg","b-apl","c-apl","d-mplb","ipa1","ipa2","ipa3","ipa4","ips1","ips2","ips3"];
+
+// Bangun array kelas dalam urutan yang benar
+const classesEntry = DISPLAY_ORDER
+  .map((contentSlug) => allClasses.find((c) => c.slug === contentSlug))
+  .filter(Boolean) as typeof allClasses;
 
 interface Classes {
   name: string;
-  img: ImageMetadata;
+  img: string;
   width: number;
   height: number;
   alt: string;
-  url: string
+  url: string;
 }
 
-const classes: Classes[] = [
-  {
-    name: "A PPLG",
-    img: aPPLGPict,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} A PPLG`,
-    url: "/classes/xii-a-pplg"
-  },
-  {
-    name: "B APL",
-    img: bAPLPict,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} B APL`,
-    url: "/classes/xii-b-apl"
-  },
-  {
-    name: "C APL",
-    img: cAPLPict,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} C APL`,
-    url: "/classes/xii-c-apl"
-  },
-  {
-    name: "D MPLB",
-    img: dOTKPPict,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} D OTKP`,
-    url: "/classes/xii-d-mplb"
-  },
-  {
-    name: "IPA I",
-    img: ipaI,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} IPA I`,
-    url: "/classes/xii-ipa-1"
-  },
-  {
-    name: "IPA II",
-    img: ipaII,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} IPA II`,
-    url: "/classes/xii-ipa-2"
-  },
-  {
-    name: "IPA III",
-    img: ipaIII,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} IPA III`,
-    url: "/classes/xii-ipa-3"
-  },
-  {
-    name: "IPA IV",
-    img: ipaIV,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} IPA IV`,
-    url: "/classes/xii-ipa-4"
-  },
-  {
-    name: "IPS I",
-    img: ipsI,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} IPS I`,
-    url: "/classes/xii-ips-1"
-  },
-  {
-    name: "IPS II",
-    img: ipsII,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} IPS II`,
-    url: "/classes/xii-ips-2"
-  },
-  {
-    name: "IPS III",
-    img: ipsIII,
-    width: 1920,
-    height: 1080,
-    alt: `${classTitle} IPS III`,
-    url: "/classes/xii-ips-3"
-  },
-];
+const classes: Classes[] = classesEntry.map((entry) => {
+  const heroPhoto0 = entry.data.heroPhoto?.[0];
+  const img =
+    typeof heroPhoto0 === "string"
+      ? heroPhoto0
+      : (heroPhoto0 as any)?.src ?? FALLBACK_IMG;
 
-const smaClasses: Classes[] = [
-  
-];
-
-// const classes = jenjang === "smk" ? smkClasses : smaClasses;
-
-// if (jenjang !== "smk" && jenjang !== "sma") {
-//     return Astro.redirect("/404");
-// }
+  return {
+    name: `XII ${entry.data.className}`,
+    img,
+    width: 1920,
+    height: 1080,
+    alt: `Foto bersama dengan wali kelas XII ${entry.data.className}`,
+    url: `/classes/${CONTENT_TO_URL_SLUG[entry.slug] ?? entry.slug}`,
+  };
+});
 ---
 
-<MainLayout title="" description="">
+<MainLayout title="Semua Kelas — Yearbook 2025" description="Jelajahi kenangan setiap kelas angkatan 2025.">
   <section class="flex flex-col bg-[#f5f0ea] min-h-screen min-w-screen justify-center items-center w-full pt-40 bg-cover">
     <PageTitle/>
     <ClassesCard classes={classes}/>
   </section>
 </MainLayout>
-

@@ -1,6 +1,16 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import XIIAPPLG from "../../components/classes/smk/a-pplg.astro";
+import XIIBAPL from "../../components/classes/smk/b-apl.astro";
+import XIICAPL from "../../components/classes/smk/c-apl.astro";
+import XIIDMPLB from "../../components/classes/smk/d-mplb.astro";
+import XIIIPA1 from "../../components/classes/sma/ipa1.astro";
+import XIIIPA2 from "../../components/classes/sma/ipa2.astro";
+import XIIIPA3 from "../../components/classes/sma/ipa3.astro";
+import XIIIPA4 from "../../components/classes/sma/ipa4.astro";
+import XIIIPS1 from "../../components/classes/sma/ips1.astro";
+import XIIIPS2 from "../../components/classes/sma/ips2.astro";
+import XIIIPS3 from "../../components/classes/sma/ips3.astro";
 
 export async function getStaticPaths() {
   return [
@@ -20,10 +30,75 @@ export async function getStaticPaths() {
 
 const { slug } = Astro.params;
 
-// For now, only xii-a-pplg has a specific component.
-// Others will fallback to it as a placeholder until their components are ready.
+// Mapping slug ke komponen kelas
+const classComponents: Record<string, any> = {
+  "xii-a-pplg": XIIAPPLG,
+  "xii-b-apl": XIIBAPL,
+  "xii-c-apl": XIICAPL,
+  "xii-d-mplb": XIIDMPLB,
+  "xii-ipa-1": XIIIPA1,
+  "xii-ipa-2": XIIIPA2,
+  "xii-ipa-3": XIIIPA3,
+  "xii-ipa-4": XIIIPA4,
+  "xii-ips-1": XIIIPS1,
+  "xii-ips-2": XIIIPS2,
+  "xii-ips-3": XIIIPS3,
+};
+
+const SelectedComponent = classComponents[slug];
+const isAvailable = !!SelectedComponent;
+
+// Nama tampilan untuk halaman placeholder
+const classDisplayNames: Record<string, string> = {
+  "xii-a-pplg": "XII A PPLG",
+  "xii-b-apl":  "XII B APL",
+  "xii-c-apl":  "XII C APL",
+  "xii-d-mplb": "XII D MPLB",
+  "xii-ipa-1":  "XII IPA I",
+  "xii-ipa-2":  "XII IPA II",
+  "xii-ipa-3":  "XII IPA III",
+  "xii-ipa-4":  "XII IPA IV",
+  "xii-ips-1":  "XII IPS I",
+  "xii-ips-2":  "XII IPS II",
+  "xii-ips-3":  "XII IPS III",
+};
+const displayName = classDisplayNames[slug] ?? slug.toUpperCase();
 ---
 
-<MainLayout description="" title="" forceDesktopView={true}>
-    <XIIAPPLG />
-</MainLayout>
+{isAvailable ? (
+  <MainLayout
+    title={`${displayName} — Yearbook 2025`}
+    description={`Kenangan dan perjalanan kelas ${displayName} angkatan 2025.`}
+    forceDesktopView={true}
+  >
+    <div class="bg-[#f5f0ea]">
+      <SelectedComponent />
+    </div>
+  </MainLayout>
+) : (
+  <MainLayout
+    title={`${displayName} — Segera Hadir`}
+    description={`Halaman kenangan kelas ${displayName} sedang dalam persiapan.`}
+  >
+    <section class="min-h-screen flex items-center justify-center bg-[#f5f0ea] px-6">
+      <div class="text-center max-w-lg mx-auto">
+        <p class="text-[#2A358F]/40 text-sm tracking-[0.3em] uppercase mb-6">
+          Yearbook 2025
+        </p>
+        <h1 class="text-5xl md:text-7xl font-bold text-[#2A358F] mb-6 leading-tight">
+          {displayName}
+        </h1>
+        <p class="text-gray-500 text-lg leading-relaxed mb-10">
+          Halaman kenangan kelas ini sedang dalam persiapan.<br />
+          Ceritanya akan segera hadir.
+        </p>
+        <a
+          href="/classes"
+          class="inline-flex items-center gap-2 text-[#2A358F] border border-[#2A358F]/30 hover:border-[#2A358F] hover:bg-[#2A358F]/5 px-8 py-4 rounded-full transition-all duration-300 text-sm tracking-widest uppercase"
+        >
+          ← Kembali ke Semua Kelas
+        </a>
+      </div>
+    </section>
+  </MainLayout>
+)}

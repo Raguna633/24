@@ -1,0 +1,333 @@
+---
+import WalasName from "../classes/WalasName.astro";
+
+/**
+ * StoryTextReveal.astro
+ * A premium storytelling component with a pinned background image,
+ * radial/linear gradient overlay, and a ping-pong text reveal animation.
+ */
+
+interface Props {
+  bgImage: string;
+  gradientFrom?: string; // e.g. "rgba(245, 240, 234, 0.9)" (Vintage Beige)
+  gradientTo?: string; // e.g. "rgba(245, 240, 234, 0.9)"
+  gradientMiddle?: string; // e.g. "rgba(245, 240, 234, 0.9)"
+  textColor?: string; // Tailwind class: text-black, text-accent, etc.
+  textAlign?: string; // text-center, text-left, text-right
+  topTexts: string[]; // Array of strings for top slot
+  bottomTexts: string[]; // Array of strings for bottom slot
+  walasImage?: string;
+  walasName?: string;
+  walasTitle?: string;
+}
+
+const {
+  bgImage,
+  gradientFrom = "rgba(245, 240, 234, 1)",
+  gradientTo = "rgba(245, 240, 234, 1)",
+  gradientMiddle = "rgba(245, 240, 234, 0.5)",
+  textColor = "text-black",
+  textAlign = "text-center",
+  topTexts = [],
+  bottomTexts = [],
+  walasImage,
+  walasName,
+  walasTitle,
+} = Astro.props;
+
+// Step 1: Image Optimization via Cloudinary (Workflow 04)
+// We assume it's a Cloudinary URL or we prefix it if it's a relative path in content
+const optimizedImage = bgImage.includes("cloudinary.com")
+  ? bgImage.replace("/upload/", "/upload/f_auto,q_auto,w_1920,c_fill/")
+  : bgImage;
+---
+
+<section
+  class="story-reveal-section relative"
+  data-story-reveal
+>
+  <div
+    class="sticky-inner sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-between py-16 md:py-24"
+  >
+    <!-- Layer -1: Foundation Background -->
+    <div class="absolute inset-0 -z-10 bg-[#f5f0ea]"></div>
+
+    <!-- Layers 0 & 1: Background & Gradient Wrap -->
+    <div class="bg-layer-wrap absolute inset-0 z-0">
+      <div
+        class="bg-image-inner absolute inset-0 z-0 bg-[#f5f0ea] will-animate"
+        style="transform-origin: right center;"
+      >
+        <img
+          src={optimizedImage}
+          alt="Story Background"
+          class="h-full w-full object-cover opacity-80"
+        />
+        <div
+          class="absolute inset-0 z-10 pointer-events-none"
+          style={`background: linear-gradient(to bottom, ${gradientFrom} 0%, ${gradientMiddle} 50%, ${gradientTo} 100%)`}
+        >
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 1.5: Walas Card -->
+    {
+      walasImage && walasName && walasTitle && (
+        <div
+          class="walas-card-wrapper absolute top-0 left-0 h-full flex flex-col justify-center bg-[#f5f0ea] z-10 will-animate shadow-[10px_0_20px_rgba(0,0,0,0.1)] pl-[clamp(1.5rem,3vw,4rem)] pr-[clamp(1.5rem,3vw,3rem)] rounded-br-[clamp(2rem,6vw,8rem)] border-2 border-[#b1b2b5FF]"
+          style="width: clamp(280px, 32vw, 450px);"
+        >
+          <div class="walas-photo w-full aspect-3/4 overflow-hidden mb-6 relative z-10">
+            <img
+              src={walasImage}
+              alt={walasName}
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div class="walas-name-wrapper flex justify-center w-full z-10">
+            <WalasName
+              name={walasName}
+              title={walasTitle}
+              className="!relative !left-auto"
+            />
+          </div>
+        </div>
+      )
+    }
+
+    <!-- Layer 2: Content (Text Slots) -->
+    <div
+      class={`content-container absolute right-0 top-0 z-20 flex flex-col justify-around h-full px-8 ${textAlign} ${textColor}`}
+      style="width: 65%;"
+    >
+      <!-- Top Slot -->
+      <div
+        class="top-text-container relative h-20 md:h-32 flex items-center justify-center"
+      >
+        {
+          topTexts.map((text, i) => (
+            <div
+              class="top-text-item absolute inset-0 flex items-center justify-self-center opacity-0 invisible inline-block w-fit"
+              data-top-item={i}
+            >
+              <h2 class="text-3xl tracking-tight leading-none px-4 drop-shadow-[0px_5px_10px_rgba(245,240,234,1)]">
+                {text}
+              </h2>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Bottom Slot -->
+      <div
+        class="bottom-text-container relative h-20 md:h-32 flex items-center justify-center"
+      >
+        {
+          bottomTexts.map((text, i) => (
+            <div
+              class="bottom-text-item absolute inset-0 flex items-center justify-self-center opacity-0 invisible inline-block w-fit"
+              data-bottom-item={i}
+            >
+              <h2 class="text-3xl tracking-tight leading-none px-4 drop-shadow-[0px_5px_10px_rgba(245,240,234,1)]">
+                {text}
+              </h2>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Ensuring the container stays sharp and the masks work */
+  .story-reveal-section {
+    will-change: transform;
+  }
+
+  .top-text-item,
+  .bottom-text-item {
+    will-change: transform, opacity;
+  }
+
+  .bg-image-inner,
+  .walas-card-wrapper {
+    will-change: transform, clip-path, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+  import { waitForLoading } from "../../utils/loadingState";
+
+  const initStoryReveal = async () => {
+    gsap.registerPlugin(ScrollTrigger, SplitText);
+
+    const sections = document.querySelectorAll(
+      "[data-story-reveal]:not(.is-initialized)",
+    );
+    if (sections.length === 0) return;
+
+    // Workflow 03: Wait for Loader
+    await waitForLoading();
+
+    sections.forEach((section) => {
+      section.classList.add("is-initialized");
+
+      const topItems = section.querySelectorAll(".top-text-item");
+      const bottomItems = section.querySelectorAll(".bottom-text-item");
+
+      // Pre-split the text into words for smoother animation
+      const topSplits = Array.from(topItems).map((item) => {
+        const h2 = item.querySelector("h2");
+        return h2
+          ? new SplitText(h2, { type: "words", wordsClass: "split-word" })
+          : null;
+      });
+
+      const bottomSplits = Array.from(bottomItems).map((item) => {
+        const h2 = item.querySelector("h2");
+        return h2
+          ? new SplitText(h2, { type: "words", wordsClass: "split-word" })
+          : null;
+      });
+
+      // Workflow 03: Ensure parents are visible so children's autoAlpha can work
+      // Words will be hidden by the timeline's initial fromTo state
+      gsap.set([topItems, bottomItems], { autoAlpha: 1 });
+
+      const walasCard = section.querySelector(".walas-card-wrapper");
+      const bgImageInner = section.querySelector(".bg-image-inner");
+
+      if (walasCard) {
+        gsap.set(walasCard, { xPercent: -120 });
+      }
+
+      const maxCount = Math.max(topItems.length, bottomItems.length);
+      // Setiap elemen porsi kalimat ditambah proporsi scroll (misal: 40vh per pasang text + 100vh untuk background)
+      const dynamicScroll = maxCount * 160 + 100;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "+=" + dynamicScroll + "vh", // GSAP mengkalkulasi panjang scroll berdasarkan BANYAKNYA TULISAN secara dinamis!
+          scrub: 2, // Smooth scrubbing
+          pin: true, // GSAP menahan parent dan otomatis menambah pinSpacing (bantalan padding ideal)
+          anticipatePin: 1,
+        },
+      });
+
+      // Group: Intro Card & Background Reveal
+      if (walasCard && bgImageInner) {
+        tl.to(
+          walasCard,
+          {
+            xPercent: 0,
+            duration: 4,
+            ease: "power2.out",
+            force3D: true,
+          },
+          "intro",
+        );
+
+        tl.to(
+          bgImageInner,
+          {
+            scale: 0.7, // Mengecilkan div secara proporsional dari kanan-tengah
+            duration: 5,
+            ease: "power2.out",
+            force3D: true,
+          },
+          "intro",
+        );
+      }
+
+      // Animation parameters
+      const entryY = 40; // Further reduced for cleaner word-level look
+      const exitY = -40;
+      const entrySkew = 2;
+      const exitSkew = -2;
+      const duration = 1.2;
+      const stagger = 0.05;
+      const overlap = "-=0.6"; // Increased overlap for tighter word transitions
+
+      // GROUPED PAIR SEQUENCE
+      for (let i = 0; i < maxCount; i++) {
+        const topWords = topSplits[i]?.words;
+        const bottomWords = bottomSplits[i]?.words;
+
+        // 1. EXIT PREVIOUS PAIR
+        if (i > 0) {
+          const prevTopWords = topSplits[i - 1]?.words;
+          const prevBottomWords = bottomSplits[i - 1]?.words;
+          const exitTargets = [];
+          if (prevTopWords) exitTargets.push(prevTopWords);
+          if (prevBottomWords) exitTargets.push(prevBottomWords);
+
+          if (exitTargets.length > 0) {
+            tl.to(
+              exitTargets,
+              {
+                y: exitY,
+                opacity: 0,
+                skewY: exitSkew,
+                autoAlpha: 0,
+                duration: duration * 0.8,
+                stagger: stagger * 0.5,
+                ease: "power2.in",
+              },
+              "+=0.8",
+            );
+          }
+        }
+
+        // 2. ENTER CURRENT PAIR
+        // Top enters first
+        if (topWords) {
+          tl.fromTo(
+            topWords,
+            { y: entryY, opacity: 0, skewY: entrySkew, autoAlpha: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              skewY: 0,
+              autoAlpha: 1,
+              duration,
+              stagger,
+              ease: "power2.out",
+            },
+            i === 0 ? "+=0.2" : overlap,
+          );
+        }
+
+        // Bottom follows shortly after
+        if (bottomWords) {
+          tl.fromTo(
+            bottomWords,
+            { y: entryY, opacity: 0, skewY: entrySkew, autoAlpha: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              skewY: 0,
+              autoAlpha: 1,
+              duration,
+              stagger,
+              ease: "power2.out",
+            },
+            topWords ? "-=0.8" : i === 0 ? "+=0.2" : overlap,
+          );
+        }
+      }
+
+      tl.to({}, { duration: 1 });
+    });
+  };
+
+  document.addEventListener("astro:page-load", initStoryReveal);
+</script>
