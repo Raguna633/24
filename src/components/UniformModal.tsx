@@ -25,7 +25,7 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
     const handleGalleryClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const button = target.closest("[data-gallery-id]") as HTMLElement;
-      
+
       if (button) {
         const id = button.getAttribute("data-gallery-id");
         const uniform = uniforms.find((u) => u.id === id);
@@ -51,7 +51,7 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
   const nextPhoto = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!activeUniform) return;
-    setActivePhotoIndex((prev) => 
+    setActivePhotoIndex((prev) =>
       prev === activeUniform.data.uniformPhotos.length - 1 ? 0 : prev + 1
     );
   }, [activeUniform]);
@@ -59,7 +59,7 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
   const prevPhoto = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (!activeUniform) return;
-    setActivePhotoIndex((prev) => 
+    setActivePhotoIndex((prev) =>
       prev === 0 ? activeUniform.data.uniformPhotos.length - 1 : prev - 1
     );
   }, [activeUniform]);
@@ -87,14 +87,14 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
   const currentPhoto = photos[activePhotoIndex];
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-300"
       onClick={closeModal}
       aria-modal="true"
       role="dialog"
     >
       {/* Top Banner (Details & Close) */}
-      <div 
+      <div
         className={`absolute top-0 left-0 right-0 flex items-center justify-between p-4 md:p-6 bg-gradient-to-b from-black/70 to-transparent text-white transition-opacity duration-300 z-10 ${isFullscreen ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -104,22 +104,22 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
             Model: <span className="text-white font-medium">{activeUniform.data.modelName}</span> ({activeUniform.data.modelClass})
           </p>
         </div>
-        
+
         <div className="flex items-center gap-4">
-          <button 
+          <button
             onClick={toggleFullscreen}
             className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
             title="Toggle Fullscreen"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               {isFullscreen ? (
-                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
               ) : (
-                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
               )}
             </svg>
           </button>
-          <button 
+          <button
             onClick={closeModal}
             className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors"
             aria-label="Close Modal"
@@ -133,12 +133,12 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
       </div>
 
       {/* Main Image Container */}
-      <div 
-        className={`relative w-full flex items-center justify-center transition-all duration-500 ease-out-expo ${isFullscreen ? 'h-screen' : 'h-[80vh] md:h-[85vh] max-w-6xl'}`}
+      <div
+        className={`relative w-full flex items-center justify-center transition-all duration-500 ease-out-expo ${isFullscreen ? 'h-dvh' : 'h-[80vh] md:h-[85vh] max-w-6xl'}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <img 
-          src={getOptimizedCloudinaryUrl(currentPhoto.src, isFullscreen ? 2000 : 1200)} 
+        <img
+          src={getOptimizedCloudinaryUrl(currentPhoto.src, isFullscreen ? 2000 : 1200)}
           alt={`Photo ${activePhotoIndex + 1} of ${activeUniform.data.uniformName}`}
           className={`object-contain transition-all duration-300 ${isFullscreen ? 'w-full h-full' : 'max-w-full max-h-full rounded-md shadow-2xl'}`}
           style={{ width: isFullscreen ? '100%' : 'auto', height: isFullscreen ? '100%' : 'auto' }}
@@ -148,7 +148,7 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
       {/* Navigation Arrows (Only show if multiple photos) */}
       {photos.length > 1 && (
         <>
-          <button 
+          <button
             onClick={prevPhoto}
             className={`absolute left-4 md:left-8 p-3 rounded-full bg-black/40 text-white hover:bg-black/70 backdrop-blur-md transition-all z-10 ${isFullscreen ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}
             aria-label="Previous photo"
@@ -158,7 +158,7 @@ export default function UniformModal({ uniforms }: UniformModalProps) {
             </svg>
           </button>
 
-          <button 
+          <button
             onClick={nextPhoto}
             className={`absolute right-4 md:right-8 p-3 rounded-full bg-black/40 text-white hover:bg-black/70 backdrop-blur-md transition-all z-10 ${isFullscreen ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}
             aria-label="Next photo"

@@ -7,7 +7,9 @@ import UniformModal from "../components/UniformModal.tsx";
 import { getCollection } from "astro:content";
 
 // Fetch data from uniforms collection
-const allUniforms = (await getCollection("uniforms")).sort((a, b) => a.id.localeCompare(b.id));
+const allUniforms = (await getCollection("uniforms")).sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
 
 // Map data for ImageCard
 const uniformsData = allUniforms.map((u) => ({
@@ -23,11 +25,11 @@ const uniformsData = allUniforms.map((u) => ({
   description="Koleksi foto seragam sekolah kebanggaan kita"
 >
   <section
-    class="relative pb-16 overflow-hidden min-h-screen bg-gradient-to-b from-[#f5f0ea] to-[#f5f0ea]/50"
+    class="relative pb-16 overflow-hidden min-h-dvh bg-gradient-to-b from-[#f5f0ea] to-[#f5f0ea]/50"
     aria-label="Galeri seragam sekolah"
   >
     {/* ==================== DECORATIVE ELEMENTS ==================== */}
-    
+
     {/* Top Wave Divider */}
     <div class="wave-top opacity-0 hero-elem">
       <svg
@@ -36,7 +38,8 @@ const uniformsData = allUniforms.map((u) => ({
         viewBox="0 0 1200 120"
         preserveAspectRatio="none"
       >
-        <path d="M1200 0L0 0 892.25 114.72 1200 0z" class="shape-fill-white"></path>
+        <path d="M1200 0L0 0 892.25 114.72 1200 0z" class="shape-fill-white"
+        ></path>
       </svg>
     </div>
 
@@ -44,7 +47,7 @@ const uniformsData = allUniforms.map((u) => ({
     <div class="floating-circle circle-1 parallax-circle"></div>
     <div class="floating-circle circle-2 parallax-circle"></div>
     <div class="floating-circle circle-3 parallax-circle"></div>
-    
+
     {/* Floating Decorative Circles - Kanan */}
     <div class="floating-circle circle-4 parallax-circle"></div>
     <div class="floating-circle circle-5 parallax-circle"></div>
@@ -52,27 +55,98 @@ const uniformsData = allUniforms.map((u) => ({
     {/* Decorative Lines Pattern */}
     <div class="decorative-lines lines-left parallax-line">
       <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-        <line x1="50" y1="0" x2="50" y2="100" stroke="#3557A2" stroke-width="2" opacity="0.2"/>
-        <line x1="100" y1="50" x2="100" y2="150" stroke="#2A358F" stroke-width="2" opacity="0.3"/>
-        <line x1="150" y1="100" x2="150" y2="200" stroke="#3557A2" stroke-width="2" opacity="0.2"/>
+        <line
+          x1="50"
+          y1="0"
+          x2="50"
+          y2="100"
+          stroke="#3557A2"
+          stroke-width="2"
+          opacity="0.2"></line>
+        <line
+          x1="100"
+          y1="50"
+          x2="100"
+          y2="150"
+          stroke="#2A358F"
+          stroke-width="2"
+          opacity="0.3"></line>
+        <line
+          x1="150"
+          y1="100"
+          x2="150"
+          y2="200"
+          stroke="#3557A2"
+          stroke-width="2"
+          opacity="0.2"></line>
       </svg>
     </div>
 
     <div class="decorative-lines lines-right parallax-line">
       <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-        <line x1="50" y1="100" x2="50" y2="200" stroke="#3557A2" stroke-width="2" opacity="0.2"/>
-        <line x1="100" y1="150" x2="100" y2="250" stroke="#2A358F" stroke-width="2" opacity="0.3"/>
-        <line x1="150" y1="200" x2="150" y2="300" stroke="#3557A2" stroke-width="2" opacity="0.2"/>
+        <line
+          x1="50"
+          y1="100"
+          x2="50"
+          y2="200"
+          stroke="#3557A2"
+          stroke-width="2"
+          opacity="0.2"></line>
+        <line
+          x1="100"
+          y1="150"
+          x2="100"
+          y2="250"
+          stroke="#2A358F"
+          stroke-width="2"
+          opacity="0.3"></line>
+        <line
+          x1="150"
+          y1="200"
+          x2="150"
+          y2="300"
+          stroke="#3557A2"
+          stroke-width="2"
+          opacity="0.2"></line>
       </svg>
     </div>
 
     {/* Yearbook Badge/Stamp Decoration */}
     <div class="yearbook-badge parallax-badge opacity-0 hero-elem">
       <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="100" cy="100" r="80" fill="none" stroke="#2A358F" stroke-width="3" opacity="0.15"/>
-        <circle cx="100" cy="100" r="65" fill="none" stroke="#3557A2" stroke-width="2" opacity="0.2"/>
-        <text x="100" y="95" text-anchor="middle" font-size="24" fill="#3557A2" opacity="0.3" font-weight="bold">2026</text>
-        <text x="100" y="115" text-anchor="middle" font-size="12" fill="#2A358F" opacity="0.3">AZ24RQO</text>
+        <circle
+          cx="100"
+          cy="100"
+          r="80"
+          fill="none"
+          stroke="#2A358F"
+          stroke-width="3"
+          opacity="0.15"></circle>
+        <circle
+          cx="100"
+          cy="100"
+          r="65"
+          fill="none"
+          stroke="#3557A2"
+          stroke-width="2"
+          opacity="0.2"></circle>
+        <text
+          x="100"
+          y="95"
+          text-anchor="middle"
+          font-size="24"
+          fill="#3557A2"
+          opacity="0.3"
+          font-weight="bold">2026</text
+        >
+        <text
+          x="100"
+          y="115"
+          text-anchor="middle"
+          font-size="12"
+          fill="#2A358F"
+          opacity="0.3">AZ24RQO</text
+        >
       </svg>
     </div>
 
@@ -81,20 +155,34 @@ const uniformsData = allUniforms.map((u) => ({
 
     {/* ==================== CONTENT ==================== */}
     <div class="container max-w-screen mx-auto relative z-10">
-      
       {/* Decorative Corner Top Left */}
       <div class="corner-decoration top-left opacity-0 hero-elem">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 0 0 L 100 0 L 0 100 Z" fill="#3557A2" opacity="0.1"/>
-          <line x1="0" y1="30" x2="70" y2="0" stroke="#2A358F" stroke-width="2" opacity="0.3"/>
+          <path d="M 0 0 L 100 0 L 0 100 Z" fill="#3557A2" opacity="0.1"></path>
+          <line
+            x1="0"
+            y1="30"
+            x2="70"
+            y2="0"
+            stroke="#2A358F"
+            stroke-width="2"
+            opacity="0.3"></line>
         </svg>
       </div>
-      
+
       {/* Decorative Corner Top Right */}
       <div class="corner-decoration top-right opacity-0 hero-elem">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 100 0 L 0 0 L 100 100 Z" fill="#3557A2" opacity="0.1"/>
-          <line x1="100" y1="30" x2="30" y2="0" stroke="#2A358F" stroke-width="2" opacity="0.3"/>
+          <path d="M 100 0 L 0 0 L 100 100 Z" fill="#3557A2" opacity="0.1"
+          ></path>
+          <line
+            x1="100"
+            y1="30"
+            x2="30"
+            y2="0"
+            stroke="#2A358F"
+            stroke-width="2"
+            opacity="0.3"></line>
         </svg>
       </div>
 
@@ -103,18 +191,26 @@ const uniformsData = allUniforms.map((u) => ({
         {/* Title with Underline Decoration */}
         <div class="inline-block relative hero-title-wrapper">
           <TextReveal>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-2">
+            <h1
+              class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-2"
+            >
               Our School Uniforms
             </h1>
           </TextReveal>
           {/* Decorative Underline */}
           <div class="decorative-underline">
             <svg viewBox="0 0 400 20" xmlns="http://www.w3.org/2000/svg">
-              <path class="under-path" d="M 0 10 Q 100 5, 200 10 T 400 10" stroke="#3557A2" stroke-width="3" fill="none" opacity="0.4"/>
+              <path
+                class="under-path"
+                d="M 0 10 Q 100 5, 200 10 T 400 10"
+                stroke="#3557A2"
+                stroke-width="3"
+                fill="none"
+                opacity="0.4"></path>
             </svg>
           </div>
         </div>
-        
+
         <div class="opacity-0 hero-desc mt-6">
           <TextReveal>
             <p class="text-gray-600 text-lg max-w-2xl mx-auto">
@@ -126,16 +222,32 @@ const uniformsData = allUniforms.map((u) => ({
         {/* Fun Stats Section */}
         <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto mt-8">
           <div class="stat-card opacity-0 hero-stat">
-            <div class="stat-number"><BlockReveal blockColor="#f5f0ea" text={allUniforms.length.toString()} delay={2.2} /></div>
-            <div class="stat-label"><BlockReveal blockColor="#f5f0ea" text="Uniforms" delay={2} /></div>
+            <div class="stat-number">
+              <BlockReveal
+                blockColor="#f5f0ea"
+                text={allUniforms.length.toString()}
+                delay={2.2}
+              />
+            </div>
+            <div class="stat-label">
+              <BlockReveal blockColor="#f5f0ea" text="Uniforms" delay={2} />
+            </div>
           </div>
           <div class="stat-card opacity-0 hero-stat">
-            <div class="stat-number"><BlockReveal blockColor="#f5f0ea" text="3" delay={2.2} /></div>
-            <div class="stat-label"><BlockReveal blockColor="#f5f0ea" text="Years" delay={2} /></div>
+            <div class="stat-number">
+              <BlockReveal blockColor="#f5f0ea" text="3" delay={2.2} />
+            </div>
+            <div class="stat-label">
+              <BlockReveal blockColor="#f5f0ea" text="Years" delay={2} />
+            </div>
           </div>
           <div class="stat-card opacity-0 hero-stat">
-            <div class="stat-number"><BlockReveal blockColor="#f5f0ea" text="∞" delay={2.2} /></div>
-            <div class="stat-label"><BlockReveal blockColor="#f5f0ea" text="Memories" delay={2} /></div>
+            <div class="stat-number">
+              <BlockReveal blockColor="#f5f0ea" text="∞" delay={2.2} />
+            </div>
+            <div class="stat-label">
+              <BlockReveal blockColor="#f5f0ea" text="Memories" delay={2} />
+            </div>
           </div>
         </div>
       </header>
@@ -145,8 +257,12 @@ const uniformsData = allUniforms.map((u) => ({
         <div class="divider-line"></div>
         <div class="divider-icon pulse-icon">
           <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="25" cy="25" r="20" fill="#3557A2" opacity="0.2"/>
-            <path d="M 25 15 L 30 25 L 25 35 L 20 25 Z" fill="#2A358F" opacity="0.4"/>
+            <circle cx="25" cy="25" r="20" fill="#3557A2" opacity="0.2"
+            ></circle>
+            <path
+              d="M 25 15 L 30 25 L 25 35 L 20 25 Z"
+              fill="#2A358F"
+              opacity="0.4"></path>
           </svg>
         </div>
         <div class="divider-line"></div>
@@ -157,7 +273,7 @@ const uniformsData = allUniforms.map((u) => ({
         {/* Polaroid Frame Decoration (Background) */}
         <div class="polaroid-decoration polaroid-1 parallax-polaroid"></div>
         <div class="polaroid-decoration polaroid-2 parallax-polaroid"></div>
-        
+
         <ImageCard
           images={uniformsData}
           gridCols={4}
@@ -170,16 +286,28 @@ const uniformsData = allUniforms.map((u) => ({
 
       {/* Quote Section */}
       <div class="quote-section quote-fade opacity-0">
-        <svg class="quote-mark quote-left opacity-0" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-          <text x="10" y="40" font-size="48" fill="#3557A2" opacity="0.2">"</text>
+        <svg
+          class="quote-mark quote-left opacity-0"
+          viewBox="0 0 50 50"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <text x="10" y="40" font-size="48" fill="#3557A2" opacity="0.2"
+            >"</text
+          >
         </svg>
         <TextReveal>
           <p class="quote-text">
             Seragam adalah identitas kita, kenangan adalah harta kita
           </p>
         </TextReveal>
-        <svg class="quote-mark quote-right opacity-0" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-          <text x="10" y="40" font-size="48" fill="#3557A2" opacity="0.2">"</text>
+        <svg
+          class="quote-mark quote-right opacity-0"
+          viewBox="0 0 50 50"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <text x="10" y="40" font-size="48" fill="#3557A2" opacity="0.2"
+            >"</text
+          >
         </svg>
       </div>
     </div>
@@ -192,7 +320,9 @@ const uniformsData = allUniforms.map((u) => ({
         viewBox="0 0 1200 120"
         preserveAspectRatio="none"
       >
-        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill-primary"></path>
+        <path
+          d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+          class="shape-fill-primary"></path>
       </svg>
     </div>
   </section>
@@ -256,16 +386,45 @@ const uniformsData = allUniforms.map((u) => ({
   .floating-circle {
     position: absolute;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(53, 87, 162, 0.1), rgba(42, 53, 143, 0.05));
+    background: radial-gradient(
+      circle,
+      rgba(53, 87, 162, 0.1),
+      rgba(42, 53, 143, 0.05)
+    );
     z-index: 0;
     opacity: 0;
   }
 
-  .circle-1 { width: 200px; height: 200px; top: 15%; left: 5%; }
-  .circle-2 { width: 150px; height: 150px; top: 50%; left: 10%; }
-  .circle-3 { width: 100px; height: 100px; top: 75%; left: 8%; }
-  .circle-4 { width: 180px; height: 180px; top: 20%; right: 8%; }
-  .circle-5 { width: 120px; height: 120px; top: 60%; right: 5%; }
+  .circle-1 {
+    width: 200px;
+    height: 200px;
+    top: 15%;
+    left: 5%;
+  }
+  .circle-2 {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    left: 10%;
+  }
+  .circle-3 {
+    width: 100px;
+    height: 100px;
+    top: 75%;
+    left: 8%;
+  }
+  .circle-4 {
+    width: 180px;
+    height: 180px;
+    top: 20%;
+    right: 8%;
+  }
+  .circle-5 {
+    width: 120px;
+    height: 120px;
+    top: 60%;
+    right: 5%;
+  }
 
   /* ==================== DECORATIVE LINES ==================== */
   .decorative-lines {
@@ -275,8 +434,14 @@ const uniformsData = allUniforms.map((u) => ({
     z-index: 0;
   }
 
-  .lines-left { top: 30%; left: 2%; }
-  .lines-right { top: 40%; right: 2%; }
+  .lines-left {
+    top: 30%;
+    left: 2%;
+  }
+  .lines-right {
+    top: 40%;
+    right: 2%;
+  }
 
   /* ==================== YEARBOOK BADGE ==================== */
   .yearbook-badge {
@@ -292,14 +457,13 @@ const uniformsData = allUniforms.map((u) => ({
   .paper-texture {
     position: absolute;
     inset: 0;
-    background-image: 
-      repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.01) 2px,
-        rgba(0, 0, 0, 0.01) 4px
-      );
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.01) 2px,
+      rgba(0, 0, 0, 0.01) 4px
+    );
     pointer-events: none;
     z-index: 1;
   }
@@ -312,8 +476,14 @@ const uniformsData = allUniforms.map((u) => ({
     z-index: 0;
   }
 
-  .top-left { top: -20px; left: 0; }
-  .top-right { top: -20px; right: 0; }
+  .top-left {
+    top: -20px;
+    left: 0;
+  }
+  .top-right {
+    top: -20px;
+    right: 0;
+  }
 
   /* ==================== DECORATIVE UNDERLINE ==================== */
   .decorative-underline {
@@ -341,7 +511,7 @@ const uniformsData = allUniforms.map((u) => ({
   .stat-number {
     font-size: 2rem;
     font-weight: bold;
-    color: #3557A2;
+    color: #3557a2;
     line-height: 1;
   }
 
@@ -363,7 +533,7 @@ const uniformsData = allUniforms.map((u) => ({
   .divider-line {
     flex: 1;
     height: 2px;
-    background: linear-gradient(to right, transparent, #3557A2, transparent);
+    background: linear-gradient(to right, transparent, #3557a2, transparent);
     opacity: 0.3;
   }
 
@@ -386,7 +556,7 @@ const uniformsData = allUniforms.map((u) => ({
   }
 
   .polaroid-decoration::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 20px;
     left: 50%;
@@ -432,8 +602,15 @@ const uniformsData = allUniforms.map((u) => ({
     height: 50px;
   }
 
-  .quote-left { top: 0; left: 0; }
-  .quote-right { bottom: 0; right: 0; transform: rotate(180deg); }
+  .quote-left {
+    top: 0;
+    left: 0;
+  }
+  .quote-right {
+    bottom: 0;
+    right: 0;
+    transform: rotate(180deg);
+  }
 
   /* ==================== RESPONSIVE ==================== */
   @media (max-width: 768px) {
@@ -441,7 +618,9 @@ const uniformsData = allUniforms.map((u) => ({
       width: calc(134% + 1.3px);
       height: 181px;
     }
-    .floating-circle, .decorative-lines, .polaroid-decoration {
+    .floating-circle,
+    .decorative-lines,
+    .polaroid-decoration {
       display: none;
     }
     .yearbook-badge {
@@ -450,10 +629,19 @@ const uniformsData = allUniforms.map((u) => ({
       top: 5%;
       right: 5%;
     }
-    .corner-decoration { width: 60px; height: 60px; }
-    .decorative-underline { width: 280px; }
-    .quote-text { font-size: 1.125rem; }
-    .stat-number { font-size: 1.5rem; }
+    .corner-decoration {
+      width: 60px;
+      height: 60px;
+    }
+    .decorative-underline {
+      width: 280px;
+    }
+    .quote-text {
+      font-size: 1.125rem;
+    }
+    .stat-number {
+      font-size: 1.5rem;
+    }
   }
 </style>
 
@@ -466,11 +654,11 @@ const uniformsData = allUniforms.map((u) => ({
 
   document.addEventListener("astro:page-load", async () => {
     // Kill existing scroll triggers to prevent duplication during view transitions
-    ScrollTrigger.getAll().forEach(t => t.kill());
-    
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+
     // Set initial states
     gsap.set(".under-path", { strokeDasharray: 1000, strokeDashoffset: 1000 });
-    
+
     // Wait for the full loading screen gatekeeper
     await waitForLoading();
 
@@ -482,37 +670,51 @@ const uniformsData = allUniforms.map((u) => ({
       y: 0,
       duration: 1.2,
       ease: "power3.out",
-      stagger: 0.2
+      stagger: 0.2,
     })
-    .to(".hero-elem", {
-      opacity: 1,
-      y: 0,
-      duration: 1.2,
-      ease: "power4.out",
-      stagger: 0.15
-    }, "-=0.8")
-    .to(".hero-desc", {
-      opacity: 1,
-      duration: 0.8,
-      ease: "none"
-    }, "-=0.8")
-    .to(".under-path", {
-      strokeDashoffset: 0,
-      duration: 1.5,
-      ease: "power2.out"
-    }, "-=1")
-    .fromTo(".hero-stat", 
-      { opacity: 0, y: 30, scale: 0.9 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: "back.out(1.5)",
-        stagger: 0.1,
-        clearProps: "transform" // allow hover effects later
-      }, 
-    "-=0.8");
+      .to(
+        ".hero-elem",
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out",
+          stagger: 0.15,
+        },
+        "-=0.8",
+      )
+      .to(
+        ".hero-desc",
+        {
+          opacity: 1,
+          duration: 0.8,
+          ease: "none",
+        },
+        "-=0.8",
+      )
+      .to(
+        ".under-path",
+        {
+          strokeDashoffset: 0,
+          duration: 1.5,
+          ease: "power2.out",
+        },
+        "-=1",
+      )
+      .fromTo(
+        ".hero-stat",
+        { opacity: 0, y: 30, scale: 0.9 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          ease: "back.out(1.5)",
+          stagger: 0.1,
+          clearProps: "transform", // allow hover effects later
+        },
+        "-=0.8",
+      );
 
     // ==================== FLOAT & PULSE ANIMATIONS (INFINITE) ====================
     gsap.to(".floating-circle", {
@@ -522,13 +724,13 @@ const uniformsData = allUniforms.map((u) => ({
       yoyo: true,
       repeat: -1,
       ease: "sine.inOut",
-      stagger: 0.5
+      stagger: 0.5,
     });
 
     // Vertical Parallax for individual lines in Decorative SVG
-    gsap.utils.toArray('.parallax-line').forEach((container) => {
-      const lines = (container as HTMLElement).querySelectorAll('line');
-      
+    gsap.utils.toArray(".parallax-line").forEach((container) => {
+      const lines = (container as HTMLElement).querySelectorAll("line");
+
       // Reveal container
       gsap.to(container as HTMLElement, {
         opacity: 1,
@@ -537,20 +739,20 @@ const uniformsData = allUniforms.map((u) => ({
         scrollTrigger: {
           trigger: container as HTMLElement,
           start: "top 90%",
-        }
+        },
       });
 
       // Parallax for each line inside
       lines.forEach((line, i) => {
         gsap.to(line, {
-          y: -100 - (i * 120), // Per-line speed variation: -100, -220, -340 etc
+          y: -100 - i * 120, // Per-line speed variation: -100, -220, -340 etc
           ease: "none",
           scrollTrigger: {
             trigger: container as HTMLElement,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.5 // Smoother scrub for premium feel
-          }
+            scrub: 1.5, // Smoother scrub for premium feel
+          },
         });
       });
     });
@@ -560,7 +762,7 @@ const uniformsData = allUniforms.map((u) => ({
       duration: 2,
       yoyo: true,
       repeat: -1,
-      ease: "sine.inOut"
+      ease: "sine.inOut",
     });
 
     gsap.to(".yearbook-badge", {
@@ -568,17 +770,17 @@ const uniformsData = allUniforms.map((u) => ({
       duration: 30,
       repeat: -1,
       ease: "linear",
-      transformOrigin: "center center"
+      transformOrigin: "center center",
     });
 
     // ==================== SCROLL ANIMATIONS (BELOW FOLD) ====================
-    
+
     // Grid Cards
     const cards = document.querySelectorAll('[data-animate-scroll="true"]');
     if (cards.length > 0) {
       // First ensure they are hidden
       gsap.set(cards, { opacity: 0, y: 50 });
-      
+
       ScrollTrigger.batch(cards, {
         start: "top 85%",
         onEnter: (elements) => {
@@ -588,15 +790,16 @@ const uniformsData = allUniforms.map((u) => ({
             duration: 1,
             stagger: 0.1,
             ease: "power3.out",
-            clearProps: "transform"
+            clearProps: "transform",
           });
-        }
+        },
       });
     }
 
     // Dividers
-    gsap.utils.toArray('.scroll-fade').forEach(el => {
-      gsap.fromTo(el as Element, 
+    gsap.utils.toArray(".scroll-fade").forEach((el) => {
+      gsap.fromTo(
+        el as Element,
         { opacity: 0, y: 30 },
         {
           opacity: 1,
@@ -606,9 +809,9 @@ const uniformsData = allUniforms.map((u) => ({
           scrollTrigger: {
             trigger: el as Element,
             start: "top 90%",
-            toggleActions: "play none none reverse"
-          }
-        }
+            toggleActions: "play none none reverse",
+          },
+        },
       );
     });
 
@@ -617,25 +820,26 @@ const uniformsData = allUniforms.map((u) => ({
       scrollTrigger: {
         trigger: ".quote-section",
         start: "top 80%",
-        toggleActions: "play none none reverse"
-      }
+        toggleActions: "play none none reverse",
+      },
     });
 
-    quoteTl.to(".quote-fade", { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
-           .to(".quote-mark", { opacity: 1, duration: 0.8, stagger: 0.2 }, "-=0.5");
+    quoteTl
+      .to(".quote-fade", { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
+      .to(".quote-mark", { opacity: 1, duration: 0.8, stagger: 0.2 }, "-=0.5");
 
     // ==================== PARALLAX SCROLL ====================
     // Replaces JS requestAnimationFrame parallax
-    gsap.utils.toArray('.parallax-circle').forEach((el, i) => {
+    gsap.utils.toArray(".parallax-circle").forEach((el, i) => {
       gsap.to(el as Element, {
-        y: -100 - (i * 20),
+        y: -100 - i * 20,
         ease: "none",
         scrollTrigger: {
           trigger: "body",
           start: "top top",
           end: "bottom top",
-          scrub: 1
-        }
+          scrub: 1,
+        },
       });
     });
 
@@ -646,8 +850,8 @@ const uniformsData = allUniforms.map((u) => ({
         trigger: "body",
         start: "top top",
         end: "bottom top",
-        scrub: true
-      }
+        scrub: true,
+      },
     });
 
     gsap.to(".polaroid-1", {
@@ -658,8 +862,8 @@ const uniformsData = allUniforms.map((u) => ({
         trigger: ".polaroid-1",
         start: "top 90%",
         end: "bottom top",
-        scrub: 1
-      }
+        scrub: 1,
+      },
     });
 
     gsap.to(".polaroid-2", {
@@ -670,14 +874,14 @@ const uniformsData = allUniforms.map((u) => ({
         trigger: ".polaroid-2",
         start: "top 90%",
         end: "bottom top",
-        scrub: 1
-      }
+        scrub: 1,
+      },
     });
   });
 
   // Cleanup to prevent memory leaks during page swaps
   document.addEventListener("astro:before-swap", () => {
-    ScrollTrigger.getAll().forEach(t => t.kill());
+    ScrollTrigger.getAll().forEach((t) => t.kill());
     gsap.killTweensOf("*");
   });
 </script>

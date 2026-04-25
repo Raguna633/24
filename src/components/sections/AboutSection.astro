@@ -1,13 +1,14 @@
 ---
 import { Image } from "astro:assets";
 
-const aboutBg = "https://res.cloudinary.com/dhbps9kvp/image/upload/l-banyakan.webp";
+const aboutBg =
+  "https://res.cloudinary.com/dhbps9kvp/image/upload/l-banyakan.webp";
 import CloudinaryImage from "../ui/CloudinaryImage.astro";
 ---
 
 <section
   id="about-section"
-  class="relative min-h-screen h-full
+  class="relative min-h-dvh h-full
           overflow-hidden"
 >
   <!-- Background Image & Overlay -->
@@ -113,7 +114,9 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
       <!-- Call to action hint -->
       <div class="mt-8 sm:mt-16" data-about-animate>
-        <p class="text-[rgb(var(--color-primary))] font-medium text-xs sm:text-base">
+        <p
+          class="text-[rgb(var(--color-primary))] font-medium text-xs sm:text-base"
+        >
           Scroll ke bawah untuk melihat pesan dari guru-guru dan panitia kami
         </p>
         <div class="mt-4 animate-bounce">
@@ -162,7 +165,7 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
       const text = container.innerText.trim();
       if (!text) return [];
-      
+
       const words = text.split(/\s+/);
       container.innerHTML = "";
 
@@ -176,7 +179,7 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
       });
 
       // 2. Measure all offsetTops (Read Phase - this is the ONLY layout trigger)
-      const measurements = wordSpans.map(span => span.offsetTop);
+      const measurements = wordSpans.map((span) => span.offsetTop);
 
       // 3. Batch words into lines (Logic Phase)
       let lines: HTMLSpanElement[][] = [];
@@ -231,7 +234,7 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
       if (el.tagName.toLowerCase() === "p") {
         const lines = splitIntoLines(el as HTMLElement);
-        allElements.push(...lines as HTMLElement[]);
+        allElements.push(...(lines as HTMLElement[]));
       } else {
         allElements.push(el as HTMLElement);
       }
@@ -242,7 +245,12 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
     // 2. Create a unified Scrub timeline
     if (allElements.length > 0) {
       // Ensure elements are at their "from" state immediately to avoid jumps
-      gsap.set(allElements, { y: 40, opacity: 0, rotationX: 10, filter: "blur(8px)" });
+      gsap.set(allElements, {
+        y: 40,
+        opacity: 0,
+        rotationX: 10,
+        filter: "blur(8px)",
+      });
 
       gsap.to(sectionBg, {
         scale: 1.1,
@@ -256,40 +264,33 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
           start: isPinned
             ? `top+=${window.innerHeight * 1.5} center`
             : "top 80%",
-          end: isPinned 
-            ? `bottom+=${window.innerHeight * 2.5} center` 
+          end: isPinned
+            ? `bottom+=${window.innerHeight * 2.5} center`
             : "bottom 80%",
           scrub: 1,
           invalidateOnRefresh: true,
         },
       });
 
-      gsap.to(
-        allElements,
-        {
-          y: 0,
-          opacity: 1,
-          rotationX: 0,
-          filter: "blur(0px)",
-          stagger: 0.1,
-          ease: "power2.out",
-          force3D: true,
-          scrollTrigger: {
-            trigger: isPinned
-              ? parentStack?.closest(".pin-spacer") || parentStack
-              : section,
-            // Offset start based on ParallaxStack duration (1.5 * vh)
-            start: isPinned
-              ? `top+=${window.innerHeight * 1.5} top`
-              : "top 80%",
-            end: isPinned 
-              ? `top+=${window.innerHeight * 2.5} top` 
-              : "bottom 60%",
-            scrub: 1,
-            invalidateOnRefresh: true,
-          },
+      gsap.to(allElements, {
+        y: 0,
+        opacity: 1,
+        rotationX: 0,
+        filter: "blur(0px)",
+        stagger: 0.1,
+        ease: "power2.out",
+        force3D: true,
+        scrollTrigger: {
+          trigger: isPinned
+            ? parentStack?.closest(".pin-spacer") || parentStack
+            : section,
+          // Offset start based on ParallaxStack duration (1.5 * vh)
+          start: isPinned ? `top+=${window.innerHeight * 1.5} top` : "top 80%",
+          end: isPinned ? `top+=${window.innerHeight * 2.5} top` : "bottom 60%",
+          scrub: 1,
+          invalidateOnRefresh: true,
         },
-      );
+      });
     }
   }
 

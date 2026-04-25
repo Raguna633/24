@@ -2,8 +2,6 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import { Image } from "astro:assets";
 
-
-
 // const testTopTexts = [
 //   "Mengenang Masa Sekolah",
 //   "Tawa yang Tak Terlupakan",
@@ -21,23 +19,19 @@ import { Image } from "astro:assets";
 
 <MainLayout title="Story Reveal Test">
   <!-- Spacer to reach the section -->
-  <div class="h-screen flex items-center justify-center bg-[#f5f0ea]">
+  <div class="h-dvh flex items-center justify-center bg-[#f5f0ea]">
     <h1 class="text-3xl font-bold uppercase tracking-widest text-black">
       Scroll Down to Start Story
     </h1>
   </div>
 
-
-
   <!-- Footer Spacer -->
-  <div class="h-screen flex items-center justify-center bg-[#f5f0ea]">
+  <div class="h-dvh flex items-center justify-center bg-[#f5f0ea]">
     <h2 class="text-2xl font-medium text-black">The End of Story</h2>
   </div>
 </MainLayout>
 
-<style>
-
-</style>
+<style></style>
 
 <script>
   import { gsap } from "gsap";
@@ -54,7 +48,9 @@ import { Image } from "astro:assets";
 
     // Initial State - Set everything to hidden
     gsap.set(".screen-layer", { visibility: "visible" });
-    gsap.set("#welcome-screen, #desktop-screen, #xp-notification", { autoAlpha: 0 });
+    gsap.set("#welcome-screen, #desktop-screen, #xp-notification", {
+      autoAlpha: 0,
+    });
     gsap.set(".xp-notification", { scale: 0.8, y: 10 });
     gsap.set("#grup-anomali img", { y: "100%", autoAlpha: 0 });
 
@@ -64,39 +60,40 @@ import { Image } from "astro:assets";
     let memorySequenceStarted = false;
 
     // --- TIMELINES ---
-    
+
     // Phase 1: Intro Timeline (Auto-Boot)
-    const introTl = gsap.timeline({ 
+    const introTl = gsap.timeline({
       paused: true,
       onStart: () => {
-        document.body.classList.add('story-lock');
+        document.body.classList.add("story-lock");
         if ((window as any).lenis) (window as any).lenis.stop();
       },
       onComplete: () => {
         introFinished = true;
         // RELEASE lock briefly to allow the user to trigger the next phase
-        document.body.classList.remove('story-lock');
+        document.body.classList.remove("story-lock");
         if ((window as any).lenis) (window as any).lenis.start();
 
         if (masterTrigger) {
           const currentScroll = masterTrigger.scroll() - masterTrigger.start;
           if (currentScroll >= 300) startMemorySequence();
         }
-      }
+      },
     });
 
-    introTl.to(".laptop-wrapper", {
-      transform: "translateX(0)",
-      duration: 1.5,
-      ease: "power2.out",
-    })
-    .to("#boot-screen", { autoAlpha: 1, duration: 0.8 })
-    .to(".loading-bar", { x: 120, duration: 1, ease: "linear", repeat: 2 })
-    .to("#boot-screen", { autoAlpha: 0, duration: 0.4, display: "none" })
-    .to("#welcome-screen", { autoAlpha: 1, duration: 0.4 }, "<")
-    .to("#welcome-screen", { autoAlpha: 1, duration: 1.5 })
-    .to("#welcome-screen", { autoAlpha: 0, duration: 0.4, display: "none" })
-    .to("#desktop-screen", { autoAlpha: 1, duration: 0.4 });
+    introTl
+      .to(".laptop-wrapper", {
+        transform: "translateX(0)",
+        duration: 1.5,
+        ease: "power2.out",
+      })
+      .to("#boot-screen", { autoAlpha: 1, duration: 0.8 })
+      .to(".loading-bar", { x: 120, duration: 1, ease: "linear", repeat: 2 })
+      .to("#boot-screen", { autoAlpha: 0, duration: 0.4, display: "none" })
+      .to("#welcome-screen", { autoAlpha: 1, duration: 0.4 }, "<")
+      .to("#welcome-screen", { autoAlpha: 1, duration: 1.5 })
+      .to("#welcome-screen", { autoAlpha: 0, duration: 0.4, display: "none" })
+      .to("#desktop-screen", { autoAlpha: 1, duration: 0.4 });
 
     // Phases 2, 3, 4: Combined Memory Sequence (Automatic Chained)
     const startMemorySequence = () => {
@@ -104,42 +101,51 @@ import { Image } from "astro:assets";
       memorySequenceStarted = true;
 
       // RE-LOCK scroll during the automatic storytelling sequence
-      document.body.classList.add('story-lock');
+      document.body.classList.add("story-lock");
       if ((window as any).lenis) (window as any).lenis.stop();
 
       const memoryTl = gsap.timeline({
         onComplete: () => {
           // FINAL RELEASE: User can now exit the section
-          document.body.classList.remove('story-lock');
+          document.body.classList.remove("story-lock");
           if ((window as any).lenis) (window as any).lenis.start();
-        }
+        },
       });
 
       // Part A: Group Photo
-      memoryTl.to("#grup-anomali img", {
-        y: 0,
-        autoAlpha: 1,
-        duration: 1.2,
-        ease: "power2.out"
-      })
-      // Part B: Text Reveal
-      .to(textLines, {
-        y: 0,
-        autoAlpha: 1,
-        stagger: 0.2,
-        duration: 1.2,
-        ease: "power4.out"
-      }, "+=0.2");
+      memoryTl
+        .to("#grup-anomali img", {
+          y: 0,
+          autoAlpha: 1,
+          duration: 1.2,
+          ease: "power2.out",
+        })
+        // Part B: Text Reveal
+        .to(
+          textLines,
+          {
+            y: 0,
+            autoAlpha: 1,
+            stagger: 0.2,
+            duration: 1.2,
+            ease: "power4.out",
+          },
+          "+=0.2",
+        );
 
       // Part C: Notification (at 50% Text progress)
       const textTotalDuration = 1.2 + (textLines.length - 1) * 0.2;
-      memoryTl.to("#xp-notification", {
-        autoAlpha: 1,
-        scale: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "back.out(1.7)"
-      }, "-=" + (textTotalDuration * 0.5));
+      memoryTl.to(
+        "#xp-notification",
+        {
+          autoAlpha: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+        },
+        "-=" + textTotalDuration * 0.5,
+      );
     };
 
     // Unified Master Pin & Sequence Trigger (Targeting PARENT to lock background)
@@ -151,7 +157,7 @@ import { Image } from "astro:assets";
       pinSpacing: true,
       onUpdate: (self) => {
         const scroll = self.scroll() - self.start;
-        
+
         // 1. Intro Trigger
         if (scroll >= 0 && !introStarted) {
           introStarted = true;
@@ -162,24 +168,27 @@ import { Image } from "astro:assets";
         if (scroll >= 100 && introFinished && !memorySequenceStarted) {
           startMemorySequence();
         }
-      }
+      },
     });
 
     // Listen for component state
-    const textRevealWrapper = document.querySelector('[data-line-reveal]');
+    const textRevealWrapper = document.querySelector("[data-line-reveal]");
     if (textRevealWrapper) {
-      textRevealWrapper.addEventListener('text-reveal:ready', () => {
-        textLines = document.querySelectorAll('.line-reveal-wrapper .split-line-inner');
+      textRevealWrapper.addEventListener("text-reveal:ready", () => {
+        textLines = document.querySelectorAll(
+          ".line-reveal-wrapper .split-line-inner",
+        );
         if (masterTrigger) {
           const scroll = masterTrigger.scroll() - masterTrigger.start;
           if (scroll >= 300) startMemorySequence();
         }
       });
-      textLines = document.querySelectorAll('.line-reveal-wrapper .split-line-inner');
+      textLines = document.querySelectorAll(
+        ".line-reveal-wrapper .split-line-inner",
+      );
     }
 
     // Safety refresh
     setTimeout(() => ScrollTrigger.refresh(), 500);
   });
 </script>
-

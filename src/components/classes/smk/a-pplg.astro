@@ -10,7 +10,7 @@ import LineDecor from "../../LineDecor.astro";
 import TefatieText from "./TefatieText.astro";
 import TextCustom from "../../TextCustom.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
-import TextReveal from "../../animations/TextReveal.astro"
+import TextReveal from "../../animations/TextReveal.astro";
 import tefaGroup from "../../../assets/pplg-group-tefa.webp";
 import cppIcon from "../../../assets/cpp.svg";
 import csharpIcon from "../../../assets/csharp.svg";
@@ -29,18 +29,30 @@ import pramuka from "../../../assets/pramuka.svg";
 
 import aPplgPattern from "../../../assets/a-pplg-pattern.svg?raw";
 
-const classData = await getEntry('classes', 'a-pplg');
+const classData = await getEntry("classes", "a-pplg");
 if (!classData) {
   throw new Error("Data kelas a-pplg tidak ditemukan di collection");
 }
 const classContent = classData.data;
 
-const heroBg1 = typeof classContent.heroPhoto?.[0] === 'string' ? classContent.heroPhoto[0] : (classContent.heroPhoto?.[0] as any)?.src || '';
-const heroBg2 = typeof classContent.heroPhoto?.[1] === 'string' ? classContent.heroPhoto[1] : (classContent.heroPhoto?.[1] as any)?.src || '';
-const walasPic = typeof classContent.walasPhoto === 'string' ? classContent.walasPhoto : (classContent.walasPhoto as any)?.src || '';
+const heroBg1 =
+  typeof classContent.heroPhoto?.[0] === "string"
+    ? classContent.heroPhoto[0]
+    : (classContent.heroPhoto?.[0] as any)?.src || "";
+const heroBg2 =
+  typeof classContent.heroPhoto?.[1] === "string"
+    ? classContent.heroPhoto[1]
+    : (classContent.heroPhoto?.[1] as any)?.src || "";
+const walasPic =
+  typeof classContent.walasPhoto === "string"
+    ? classContent.walasPhoto
+    : (classContent.walasPhoto as any)?.src || "";
 
 // Ambil semua siswa kelas A PPLG dari collection
-const allStudents = await getCollection('students', ({ data }) => data.kelas === 'A PPLG');
+const allStudents = await getCollection(
+  "students",
+  ({ data }) => data.kelas === "A PPLG",
+);
 // Urutkan berdasarkan nama
 allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
@@ -64,7 +76,7 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 
   <section
     id="tefa-group-a-pplg"
-    class="tefa-group relative z-0 flex w-screen h-screen min-h-screen overflow-hidden justify-center items-center"
+    class="tefa-group relative z-0 flex w-screen h-dvh min-h-dvh overflow-hidden justify-center items-center"
   >
     <div
       class="tefa-group-container -z-10 flex flex-col justify-end items-center relative w-screen h-full max-h-216"
@@ -130,7 +142,9 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 w-screen h-fit absolute z-10">
-        <div class="relative w-full h-full hidden lg:block quote-reveal will-animate z-10">
+        <div
+          class="relative w-full h-full hidden lg:block quote-reveal will-animate z-10"
+        >
           <TextCustom
             maxWidth="clamp(18rem, 25vw, 38rem)"
             font="poppins"
@@ -175,10 +189,7 @@ class _splash_pageState extends State<splash_page> {
         <div
           class="anchor relative flex justify-center tefa-group-content will-animate z-20 col-span-1 w-full mx-auto"
         >
-          <TefatieText
-            width="150%"
-            className="absolute flex h-fit top-[6%]"
-          />
+          <TefatieText width="150%" className="absolute flex h-fit top-[6%]" />
         </div>
         <div class="w-full h-full hidden lg:block will-animate z-10">
           <TextCustom
@@ -235,16 +246,22 @@ const { kelas } = Astro.params;
     </div>
   </section>
 
-  <FadeOverlay/>
+  <FadeOverlay />
 
-  <div id="group-wrapper-a-pplg" class="group-wrapper w-screen h-screen overflow-hidden relative" style="clip-path: inset(0);">
+  <div
+    id="group-wrapper-a-pplg"
+    class="group-wrapper w-screen h-dvh overflow-hidden relative"
+    style="clip-path: inset(0);"
+  >
     <div
       class="draw-svg-container absolute top-0 left-0 w-full h-[250vh] -z-10 pointer-events-none opacity-40 will-animate"
-      set:html={aPplgPattern.replace("<svg ", "<svg preserveAspectRatio=\"xMidYMid slice\" ")}
-    >
-    </div>
+      set:html={aPplgPattern.replace(
+        "<svg ",
+        '<svg preserveAspectRatio="xMidYMid slice" ',
+      )}
+    />
     <section
-      class="first-group absolute inset-0 flex flex-row gap-6 items-center justify-center w-screen h-screen p-8 mt-8 will-animate"
+      class="first-group absolute inset-0 flex flex-row gap-6 items-center justify-center w-screen h-dvh p-8 mt-8 will-animate"
     >
       <div class="laptop-wrapper relative w-3/5">
         <img src={laptop.src} alt="Laptop" class="laptop-svg" />
@@ -314,7 +331,7 @@ const { kelas } = Astro.params;
     </section>
 
     <section
-      class="second-group absolute top-[150vh] left-0 flex items-center justify-center w-screen h-screen will-animate"
+      class="second-group absolute top-[150vh] left-0 flex items-center justify-center w-screen h-dvh will-animate"
     >
       <div
         class="relative flex items-center justify-center w-[90%] md:w-[70%] max-w-4xl z-10 p-8"
@@ -369,35 +386,43 @@ const { kelas } = Astro.params;
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
-
       <!-- Heading -->
       <div class="students-heading mb-16 text-center">
-        <p class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label">
+        <p
+          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label"
+        >
           Keluarga
         </p>
-        <h2 class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title">
+        <h2
+          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title"
+        >
           {classContent.className}
         </h2>
-        <p class="text-base text-gray-400 mt-4 opacity-0 students-heading-count">
+        <p
+          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count"
+        >
           {allStudents.length} orang yang membentuk cerita ini
         </p>
       </div>
 
       <!-- Grid siswa: 2 kolom mobile, 3 tablet, 4 desktop -->
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {allStudents.map((student) => (
-          <div class="student-card-wrapper opacity-0">
-            <StudentCard
-              name={student.data.name}
-              slug={student.slug}
-              photo={student.data.photo}
-              quote={student.data.quote}
-              class={student.data.kelas ?? ''}
-            />
-          </div>
-        ))}
+      <div
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+      >
+        {
+          allStudents.map((student) => (
+            <div class="student-card-wrapper opacity-0">
+              <StudentCard
+                name={student.data.name}
+                slug={student.slug}
+                photo={student.data.photo}
+                quote={student.data.quote}
+                class={student.data.kelas ?? ""}
+              />
+            </div>
+          ))
+        }
       </div>
-
     </div>
   </section>
 
@@ -441,10 +466,6 @@ const { kelas } = Astro.params;
     .animate-float-4 {
       animation: float 5.5s ease-in-out infinite 1.5s;
     }
-
-    
-
-    
 
     .greeting-text p {
       font-family: "Poppins", sans-serif;
@@ -511,7 +532,6 @@ const { kelas } = Astro.params;
       stroke: currentColor;
       stroke-width: 8;
     }
-
 
     /* Kunci presisi ada di sini */
     .laptop-wrapper {
@@ -779,7 +799,7 @@ const { kelas } = Astro.params;
 
       const tefaContainer = document.getElementById("tefa-group-a-pplg");
       const laptopContainer = document.getElementById("group-wrapper-a-pplg");
-      
+
       if (!tefaContainer || !laptopContainer) return;
 
       let ctx = gsap.context(() => {
@@ -795,35 +815,79 @@ const { kelas } = Astro.params;
             pin: true,
             scrub: 1,
             anticipatePin: 1,
-          }
+          },
         });
 
         tefaTl.from(qTefa(".tefa-group-img"), {
-          opacity: 0, y: 150, duration: 1.5, ease: "power2.out"
+          opacity: 0,
+          y: 150,
+          duration: 1.5,
+          ease: "power2.out",
         });
 
-        tefaTl.from(qTefa(".tefa-group-content"), {
-          opacity: 0, y: 50, duration: 1, stagger: 0.15, ease: "power3.out"
-        }, "-=0.5");
+        tefaTl.from(
+          qTefa(".tefa-group-content"),
+          {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.15,
+            ease: "power3.out",
+          },
+          "-=0.5",
+        );
 
-        const quoteSplit = new SplitText(qTefa(".quote-reveal"), { type: "words" });
-        tefaTl.from(quoteSplit.words, {
-          opacity: 0, y: 20, duration: 0.8, stagger: 0.05, ease: "power2.out"
-        }, "-=0.5");
+        const quoteSplit = new SplitText(qTefa(".quote-reveal"), {
+          type: "words",
+        });
+        tefaTl.from(
+          quoteSplit.words,
+          {
+            opacity: 0,
+            y: 20,
+            duration: 0.8,
+            stagger: 0.05,
+            ease: "power2.out",
+          },
+          "-=0.5",
+        );
 
-        const parallaxWraps = gsap.utils.toArray<HTMLElement>(qTefa(".parallax-wrap"));
-        const iconImages = parallaxWraps.map(wrap => wrap.querySelector("img")).filter(img => img);
-        tefaTl.from(iconImages, {
-          opacity: 0, scale: 0.2, rotation: () => gsap.utils.random(-45, 45), duration: 1.2, stagger: 0.15, ease: "back.out(1.5)"
-        }, "-=0.5");
+        const parallaxWraps = gsap.utils.toArray<HTMLElement>(
+          qTefa(".parallax-wrap"),
+        );
+        const iconImages = parallaxWraps
+          .map((wrap) => wrap.querySelector("img"))
+          .filter((img) => img);
+        tefaTl.from(
+          iconImages,
+          {
+            opacity: 0,
+            scale: 0.2,
+            rotation: () => gsap.utils.random(-45, 45),
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "back.out(1.5)",
+          },
+          "-=0.5",
+        );
 
-        const codeTargets = gsap.utils.toArray<HTMLElement>(qTefa(".code-ani-target"));
+        const codeTargets = gsap.utils.toArray<HTMLElement>(
+          qTefa(".code-ani-target"),
+        );
         codeTargets.forEach((target) => {
           const lines = target.querySelectorAll(".code-line");
           if (lines.length > 0) {
-            tefaTl.from(lines, {
-              opacity: 0, y: 10, stagger: 0.2, duration: 0.5, ease: "power2.out"
-            }, "-=1.0");
+            tefaTl.from(
+              lines,
+              {
+                opacity: 0,
+                y: 10,
+                stagger: 0.2,
+                duration: 0.5,
+                ease: "power2.out",
+              },
+              "-=1.0",
+            );
           }
         });
 
@@ -834,7 +898,10 @@ const { kelas } = Astro.params;
         });
 
         gsap.set(qLaptop(".screen-layer"), { visibility: "visible" });
-        gsap.set(qLaptop("#welcome-screen, #desktop-screen, #xp-notification"), { autoAlpha: 0 });
+        gsap.set(
+          qLaptop("#welcome-screen, #desktop-screen, #xp-notification"),
+          { autoAlpha: 0 },
+        );
         gsap.set(qLaptop(".xp-notification"), { scale: 0.8, y: 10 });
         gsap.set(qLaptop("#grup-anomali img"), { y: "100%", autoAlpha: 0 });
 
@@ -846,107 +913,240 @@ const { kelas } = Astro.params;
             pin: true,
             scrub: 1,
             anticipatePin: 1,
-          }
+          },
         });
 
         storyTl
-          .to(qLaptop(".laptop-wrapper"), { transform: "translateX(0)", duration: 1.5, ease: "power2.out" })
+          .to(qLaptop(".laptop-wrapper"), {
+            transform: "translateX(0)",
+            duration: 1.5,
+            ease: "power2.out",
+          })
           .to(qLaptop("#boot-screen"), { autoAlpha: 1, duration: 0.8 })
           .to(qLaptop(".loading-bar"), { x: 120, duration: 1, ease: "linear" })
-          .to(qLaptop("#boot-screen"), { autoAlpha: 0, duration: 0.4, display: "none" })
+          .to(qLaptop("#boot-screen"), {
+            autoAlpha: 0,
+            duration: 0.4,
+            display: "none",
+          })
           .to(qLaptop("#welcome-screen"), { autoAlpha: 1, duration: 0.4 }, "<")
           .to(qLaptop("#welcome-screen"), { autoAlpha: 1, duration: 1.0 })
-          .to(qLaptop("#welcome-screen"), { autoAlpha: 0, duration: 0.4, display: "none" })
+          .to(qLaptop("#welcome-screen"), {
+            autoAlpha: 0,
+            duration: 0.4,
+            display: "none",
+          })
           .to(qLaptop("#desktop-screen"), { autoAlpha: 1, duration: 0.4 });
 
-        storyTl.to(qLaptop("#grup-anomali img"), { y: 0, autoAlpha: 1, duration: 1.2, ease: "power2.out" });
-        storyTl.from(qLaptop(".first-quote-wrapper"), { y: 30, opacity: 0, duration: 1, ease: "power2.out" });
+        storyTl.to(qLaptop("#grup-anomali img"), {
+          y: 0,
+          autoAlpha: 1,
+          duration: 1.2,
+          ease: "power2.out",
+        });
+        storyTl.from(qLaptop(".first-quote-wrapper"), {
+          y: 30,
+          opacity: 0,
+          duration: 1,
+          ease: "power2.out",
+        });
 
-        const firstQuoteLines = qLaptop(".first-quote-reveal .split-line-inner");
+        const firstQuoteLines = qLaptop(
+          ".first-quote-reveal .split-line-inner",
+        );
         if (firstQuoteLines.length > 0) {
-          storyTl.to(firstQuoteLines, {
-            y: "0%", autoAlpha: 1, duration: 1.2, stagger: 0.15, ease: "power4.out"
-          }, "-=0.6");
+          storyTl.to(
+            firstQuoteLines,
+            {
+              y: "0%",
+              autoAlpha: 1,
+              duration: 1.2,
+              stagger: 0.15,
+              ease: "power4.out",
+            },
+            "-=0.6",
+          );
         }
 
-        const firstTextDuration = firstQuoteLines.length > 0 ? (1.2 + (Math.max(0, firstQuoteLines.length - 1) * 0.15)) : 1;
-        storyTl.to(qLaptop("#xp-notification"), { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=" + (firstTextDuration * 0.5));
+        const firstTextDuration =
+          firstQuoteLines.length > 0
+            ? 1.2 + Math.max(0, firstQuoteLines.length - 1) * 0.15
+            : 1;
+        storyTl.to(
+          qLaptop("#xp-notification"),
+          {
+            autoAlpha: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "back.out(1.7)",
+          },
+          "-=" + firstTextDuration * 0.5,
+        );
 
-        storyTl.to(qLaptop(".draw-svg-container, .first-group, .second-group"), {
-          y: "-=150vh", duration: 2.5, ease: "power2.inOut",
-        }, "+=0.3");
+        storyTl.to(
+          qLaptop(".draw-svg-container, .first-group, .second-group"),
+          {
+            y: "-=150vh",
+            duration: 2.5,
+            ease: "power2.inOut",
+          },
+          "+=0.3",
+        );
 
-        storyTl.from(qLaptop(".second-group .group-photo-wrapper"), { opacity: 0, y: 100, rotation: -5, duration: 1.5, ease: "power2.out" });
+        storyTl.from(qLaptop(".second-group .group-photo-wrapper"), {
+          opacity: 0,
+          y: 100,
+          rotation: -5,
+          duration: 1.5,
+          ease: "power2.out",
+        });
 
         const secondIcons = qLaptop(".second-group .second-icon");
         if (secondIcons.length > 0) {
-          storyTl.from(secondIcons, {
-            opacity: 0, scale: 0.2, rotation: () => gsap.utils.random(-45, 45), duration: 1.2, stagger: 0.2, ease: "back.out(1.5)"
-          }, "-=0.5");
+          storyTl.from(
+            secondIcons,
+            {
+              opacity: 0,
+              scale: 0.2,
+              rotation: () => gsap.utils.random(-45, 45),
+              duration: 1.2,
+              stagger: 0.2,
+              ease: "back.out(1.5)",
+            },
+            "-=0.5",
+          );
         }
 
-        storyTl.from(qLaptop(".second-quote"), { opacity: 0, y: 80, duration: 1, ease: "power3.out" });
+        storyTl.from(qLaptop(".second-quote"), {
+          opacity: 0,
+          y: 80,
+          duration: 1,
+          ease: "power3.out",
+        });
 
-        const secondQuoteSplit = new SplitText(qLaptop(".second-quote-reveal"), { type: "words" });
+        const secondQuoteSplit = new SplitText(
+          qLaptop(".second-quote-reveal"),
+          { type: "words" },
+        );
         if (secondQuoteSplit.words.length > 0) {
-          storyTl.from(secondQuoteSplit.words, { opacity: 0, y: 20, duration: 0.8, stagger: 0.05, ease: "power2.out" }, "-=0.5");
+          storyTl.from(
+            secondQuoteSplit.words,
+            {
+              opacity: 0,
+              y: 20,
+              duration: 0.8,
+              stagger: 0.05,
+              ease: "power2.out",
+            },
+            "-=0.5",
+          );
         }
 
-        const bgPaths = qLaptop(".draw-svg-container svg path, .draw-svg-container svg rect");
+        const bgPaths = qLaptop(
+          ".draw-svg-container svg path, .draw-svg-container svg rect",
+        );
         bgPaths.forEach((path) => {
           const p = path as unknown as SVGGeometryElement;
-          const length = (p instanceof SVGPathElement) ? p.getTotalLength() : 1000;
-          const originalFill = p.style.fill || window.getComputedStyle(p).fill || "#BE9E84";
+          const length =
+            p instanceof SVGPathElement ? p.getTotalLength() : 1000;
+          const originalFill =
+            p.style.fill || window.getComputedStyle(p).fill || "#BE9E84";
 
           gsap.set(p, {
-            strokeDasharray: length + 2, strokeDashoffset: length + 2, fill: "none", stroke: originalFill, strokeWidth: 5,
+            strokeDasharray: length + 2,
+            strokeDashoffset: length + 2,
+            fill: "none",
+            stroke: originalFill,
+            strokeWidth: 5,
           });
 
           const tl = gsap.timeline({
             scrollTrigger: {
-              trigger: laptopContainer, start: "top 70%", end: "bottom 30%", scrub: 1,
-            }
+              trigger: laptopContainer,
+              start: "top 70%",
+              end: "bottom 30%",
+              scrub: 1,
+            },
           });
 
-          tl.to(p, { strokeDashoffset: 0, duration: 2, ease: "none" })
-            .to(p, { fill: originalFill, duration: 1, ease: "power2.out" });
+          tl.to(p, { strokeDashoffset: 0, duration: 2, ease: "none" }).to(p, {
+            fill: originalFill,
+            duration: 1,
+            ease: "power2.out",
+          });
         });
 
         // SECTION 6: Animasi Grid Siswa
-        const studentsSection = document.querySelector('.students-section');
+        const studentsSection = document.querySelector(".students-section");
         if (studentsSection) {
           const sq = gsap.utils.selector(studentsSection);
-          gsap.set(sq('.students-heading-label, .students-heading-title, .students-heading-count'), { y: 30 });
-          gsap.to(sq('.students-heading-label'), {
-            opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-            scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+          gsap.set(
+            sq(
+              ".students-heading-label, .students-heading-title, .students-heading-count",
+            ),
+            { y: 30 },
+          );
+          gsap.to(sq(".students-heading-label"), {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".students-section",
+              start: "top 75%",
+              once: true,
+            },
           });
-          gsap.to(sq('.students-heading-title'), {
-            opacity: 1, y: 0, duration: 1.2, ease: 'power4.out', force3D: true,
-            scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+          gsap.to(sq(".students-heading-title"), {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power4.out",
+            force3D: true,
+            scrollTrigger: {
+              trigger: ".students-section",
+              start: "top 75%",
+              once: true,
+            },
             delay: 0.15,
           });
-          gsap.to(sq('.students-heading-count'), {
-            opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-            scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+          gsap.to(sq(".students-heading-count"), {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".students-section",
+              start: "top 75%",
+              once: true,
+            },
             delay: 0.3,
           });
 
-          const studentCards = sq('.student-card-wrapper');
+          const studentCards = sq(".student-card-wrapper");
           gsap.set(studentCards, { y: 50 });
           studentCards.forEach((card, i) => {
             gsap.to(card, {
-              opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', force3D: true,
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out",
+              force3D: true,
               delay: (i % 4) * 0.08,
-              scrollTrigger: { trigger: card, start: 'top 90%', once: true },
+              scrollTrigger: { trigger: card, start: "top 90%", once: true },
             });
           });
         }
       }, laptopContainer); // Parent set to the main container
 
-      document.addEventListener("astro:before-swap", () => {
-        ctx.revert();
-      }, { once: true });
+      document.addEventListener(
+        "astro:before-swap",
+        () => {
+          ctx.revert();
+        },
+        { once: true },
+      );
 
       setTimeout(() => ScrollTrigger.refresh(), 500);
     });

@@ -11,29 +11,34 @@ import { normalizePhotoPath } from "../../utils/student";
 
 // Generate static paths for ALL students (required for SSG)
 export async function getStaticPaths() {
-  const students = mapStudentCollection(await getCollection('students'));
-  
+  const students = mapStudentCollection(await getCollection("students"));
+
   // OPTIMIZATION: Only pass minimal data needed
   // Instead of passing full student objects, just pass slugs
-  const studentSlugs = students.map(s => ({
+  const studentSlugs = students.map((s) => ({
     slug: s.slug,
     name: s.name,
     jenjang: s.jenjang,
     gender: s.gender,
   }));
 
-  return students.map(s => ({
+  return students.map((s) => ({
     params: { student: s.slug },
-    props: { 
-      studentData: s,        // Current student full data
-      allSlugs: studentSlugs // Lightweight list for navigation
+    props: {
+      studentData: s, // Current student full data
+      allSlugs: studentSlugs, // Lightweight list for navigation
     },
   }));
 }
 
 interface Props {
   studentData: typeof Student;
-  allSlugs: Array<{ slug: string; name: string; jenjang: string; gender: string }>;
+  allSlugs: Array<{
+    slug: string;
+    name: string;
+    jenjang: string;
+    gender: string;
+  }>;
 }
 
 const { studentData, allSlugs } = Astro.props;
@@ -42,14 +47,14 @@ const slug = Astro.params.student!;
 // Parse URL filters
 const url = new URL(Astro.request.url);
 const filters: StudentFilters = {
-  search: url.searchParams.get('search') || undefined,
-  jenjang: url.searchParams.get('jenjang') || undefined,
-  gender: url.searchParams.get('gender') || undefined,
-  sort: (url.searchParams.get('sort') as 'a-z' | 'z-a' | undefined) || 'a-z',
+  search: url.searchParams.get("search") || undefined,
+  jenjang: url.searchParams.get("jenjang") || undefined,
+  gender: url.searchParams.get("gender") || undefined,
+  sort: (url.searchParams.get("sort") as "a-z" | "z-a" | undefined) || "a-z",
 };
 
 // Get full students data only when needed for navigation
-const allStudents = mapStudentCollection(await getCollection('students'));
+const allStudents = mapStudentCollection(await getCollection("students"));
 const navContext = getNavigationContext(allStudents, slug, filters);
 
 // If student not in filtered results, redirect or show message
@@ -68,22 +73,33 @@ function buildStudentUrl(studentSlug: string): string {
 }
 ---
 
-<MainLayout 
+<MainLayout
   title={`${studentData.name} | Profil Siswa`}
   description={`Profil lengkap ${studentData.name}, siswa ${studentData.class} angkatan 2025`}
 >
-  <div class="min-h-screen bg-gradient-to-br from-primary-500/10 to-secondary-500/5 relative overflow-hidden">
+  <div
+    class="min-h-dvh bg-gradient-to-br from-primary-500/10 to-secondary-500/5 relative overflow-hidden"
+  >
     {/* ... decorative background ... */}
 
     <div class="container mx-auto px-4 py-12 relative z-10">
       {/* Back Button */}
       <div class="mb-8 animate-on-load" style="--delay: 0s;">
-        <a 
+        <a
           href={buildBackUrl()}
           class="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 transition-colors group"
         >
-          <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          <svg
+            class="w-5 h-5 transition-transform group-hover:-translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"></path>
           </svg>
           Kembali ke Daftar Siswa
         </a>
@@ -93,193 +109,287 @@ function buildStudentUrl(studentSlug: string): string {
         {/* Student Profile Content */}
         {/* ... existing profile content ... */}
         <div
-            class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-8 mb-8 border border-gray-100 animate-on-load"
-            style="--delay: 0.1s;"
-          >
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Photo Section */}
-              <div class="md:col-span-1">
-                <div class="relative aspect-square rounded-lg overflow-hidden border-4 border-primary-500 shadow-lg mb-4">
-                  {
-                    typeof studentData.photo === "string" && studentData.photo.includes("res.cloudinary.com") ? (
-                      <CloudinaryImage
-                        src={studentData.photo}
-                        alt={`Foto ${studentData.name}`}
-                        class="w-full h-full object-cover"
-                        widths={[720, 1080]}
-                        loading="eager"
-                      />
-                    ) : (
-                      <Image
-                        src={studentData.photo}
-                        width={720}
-                        height={1080}
-                        alt={`Foto ${studentData.name}`}
-                        class="w-full h-full object-cover"
-                        loading="eager"
-                      />
-                    )
-                  }
-                </div>
-
-                {/* Download Button */}
-                <button
-                  id="downloadButton"
-                  data-photo-url={normalizePhotoPath(studentData.photo)}
-                  data-student-name={studentData.name}
-                  data-password={studentData.downloadPassword}
-                  class="w-full px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors font-medium focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
-                  aria-label={`Download foto ${studentData.name}`}>
-                  <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Download Foto
-                </button>
-                <p class="text-xs text-gray-500 mt-2 text-center">
-                  Password: <span id="passwordDisplay" class="font-mono font-semibold">{studentData.downloadPassword}</span>
-                </p>
+          class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-8 mb-8 border border-gray-100 animate-on-load"
+          style="--delay: 0.1s;"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Photo Section */}
+            <div class="md:col-span-1">
+              <div
+                class="relative aspect-square rounded-lg overflow-hidden border-4 border-primary-500 shadow-lg mb-4"
+              >
+                {
+                  typeof studentData.photo === "string" &&
+                  studentData.photo.includes("res.cloudinary.com") ? (
+                    <CloudinaryImage
+                      src={studentData.photo}
+                      alt={`Foto ${studentData.name}`}
+                      class="w-full h-full object-cover"
+                      widths={[720, 1080]}
+                      loading="eager"
+                    />
+                  ) : (
+                    <Image
+                      src={studentData.photo}
+                      width={720}
+                      height={1080}
+                      alt={`Foto ${studentData.name}`}
+                      class="w-full h-full object-cover"
+                      loading="eager"
+                    />
+                  )
+                }
               </div>
 
-              {/* Info Section */}
-              <div class="md:col-span-2">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                  {studentData.name}
-                </h1>
-                <p class="text-xl text-gray-600 mb-6">{studentData.class}</p>
+              {/* Download Button */}
+              <button
+                id="downloadButton"
+                data-photo-url={normalizePhotoPath(studentData.photo)}
+                data-student-name={studentData.name}
+                data-password={studentData.downloadPassword}
+                class="w-full px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors font-medium focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
+                aria-label={`Download foto ${studentData.name}`}
+              >
+                <svg
+                  class="w-5 h-5 inline-block mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  ></path>
+                </svg>
+                Download Foto
+              </button>
+              <p class="text-xs text-gray-500 mt-2 text-center">
+                Password: <span
+                  id="passwordDisplay"
+                  class="font-mono font-semibold"
+                  >{studentData.downloadPassword}</span
+                >
+              </p>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div class="bg-primary-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Jenis Kelamin</p>
-                    <p class="font-medium text-gray-900">{studentData.gender}</p>
-                  </div>
-                  <div class="bg-secondary-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Jenjang</p>
-                    <p class="font-medium text-gray-900">{studentData.jenjang}</p>
-                  </div>
+            {/* Info Section */}
+            <div class="md:col-span-2">
+              <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                {studentData.name}
+              </h1>
+              <p class="text-xl text-gray-600 mb-6">{studentData.class}</p>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="bg-primary-50 rounded-lg p-4">
+                  <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                    Jenis Kelamin
+                  </p>
+                  <p class="font-medium text-gray-900">{studentData.gender}</p>
                 </div>
+                <div class="bg-secondary-50 rounded-lg p-4">
+                  <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                    Jenjang
+                  </p>
+                  <p class="font-medium text-gray-900">{studentData.jenjang}</p>
+                </div>
+              </div>
 
-                {(studentData.alamat) && (
+              {
+                studentData.alamat && (
                   <div class="mb-4 bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Alamat</p>
-                    <p class="font-medium text-gray-900">{ studentData.alamat}</p>
+                    <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                      Alamat
+                    </p>
+                    <p class="font-medium text-gray-900">
+                      {studentData.alamat}
+                    </p>
                   </div>
-                )}
+                )
+              }
 
-                {studentData.instagram && (
+              {
+                studentData.instagram && (
                   <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">Instagram</p>
+                    <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
+                      Instagram
+                    </p>
                     <a
-                      href={`https://instagram.com/${studentData.instagram.replace('@', '')}`}
+                      href={`https://instagram.com/${studentData.instagram.replace("@", "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       class="font-medium text-purple-600 hover:text-purple-700 transition-colors inline-flex items-center gap-1"
                     >
-                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      <svg
+                        class="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                       </svg>
-                      @{studentData.instagram.replace('@', '')}
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      @{studentData.instagram.replace("@", "")}
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
                       </svg>
                     </a>
                   </div>
-                )}
-              </div>
+                )
+              }
             </div>
           </div>
+        </div>
 
-          {/* Quote Section */}
-          {studentData.quote && (
+        {/* Quote Section */}
+        {
+          studentData.quote && (
             <div
               class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8 border border-gray-100 animate-on-load"
               style="--delay: 0.2s;"
             >
               <div class="flex items-start gap-4">
-                <svg class="w-8 h-8 text-primary-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                <svg
+                  class="w-8 h-8 text-primary-500 flex-shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
                 <blockquote class="text-lg italic text-gray-700 flex-1">
                   "{studentData.quote}"
                 </blockquote>
               </div>
             </div>
-          )}
+          )
+        }
 
         {/* OPTIMIZED NAVIGATION */}
-        <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-100 animate-on-load" style="--delay: 0.4s;">
+        <div
+          class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-100 animate-on-load"
+          style="--delay: 0.4s;"
+        >
           {/* Filter Info Badge */}
-          {(filters.search || filters.jenjang || filters.gender || filters.sort !== 'a-z') && (
-            <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p class="text-sm text-blue-800">
-                🔍 Navigasi berdasarkan filter: 
-                {filters.jenjang && <span class="font-semibold ml-1">{filters.jenjang}</span>}
-                {filters.gender && <span class="font-semibold ml-1">{filters.gender}</span>}
-                {filters.search && <span class="font-semibold ml-1">"{filters.search}"</span>}
-                {filters.sort === 'z-a' && <span class="font-semibold ml-1">Z-A</span>}
-              </p>
-            </div>
-          )}
+          {
+            (filters.search ||
+              filters.jenjang ||
+              filters.gender ||
+              filters.sort !== "a-z") && (
+              <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p class="text-sm text-blue-800">
+                  🔍 Navigasi berdasarkan filter:
+                  {filters.jenjang && (
+                    <span class="font-semibold ml-1">{filters.jenjang}</span>
+                  )}
+                  {filters.gender && (
+                    <span class="font-semibold ml-1">{filters.gender}</span>
+                  )}
+                  {filters.search && (
+                    <span class="font-semibold ml-1">"{filters.search}"</span>
+                  )}
+                  {filters.sort === "z-a" && (
+                    <span class="font-semibold ml-1">Z-A</span>
+                  )}
+                </p>
+              </div>
+            )
+          }
 
           <div class="flex justify-between items-center gap-4">
             {/* Previous Button */}
             <div class="flex-1">
-              {prev ? (
-                <a
-                  href={buildStudentUrl(prev.slug)}
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors group"
-                  title={`Sebelumnya: ${prev.name}`}
-                >
-                  <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  <span class="hidden sm:inline">Sebelumnya</span>
-                  <span class="sm:hidden">Prev</span>
-                </a>
-              ) : (
-                <div class="text-gray-400 text-sm">
-                  {/* Show reason why no prev */}
-                  {filters.search || filters.jenjang || filters.gender 
-                    ? 'Siswa pertama dalam filter' 
-                    : 'Siswa pertama'
-                  }
-                </div>
-              )}
+              {
+                prev ? (
+                  <a
+                    href={buildStudentUrl(prev.slug)}
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors group"
+                    title={`Sebelumnya: ${prev.name}`}
+                  >
+                    <svg
+                      class="w-5 h-5 transition-transform group-hover:-translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                    <span class="hidden sm:inline">Sebelumnya</span>
+                    <span class="sm:hidden">Prev</span>
+                  </a>
+                ) : (
+                  <div class="text-gray-400 text-sm">
+                    {/* Show reason why no prev */}
+                    {filters.search || filters.jenjang || filters.gender
+                      ? "Siswa pertama dalam filter"
+                      : "Siswa pertama"}
+                  </div>
+                )
+              }
             </div>
 
             {/* Position Indicator */}
             <div class="text-center px-4 py-2 bg-gray-100 rounded-lg">
               <span class="text-sm text-gray-600">
-                <span class="font-semibold text-gray-900">{currentIndex + 1}</span>
+                <span class="font-semibold text-gray-900"
+                  >{currentIndex + 1}</span
+                >
                 <span class="mx-1">/</span>
                 <span class="font-semibold text-gray-900">{total}</span>
               </span>
-              {(filters.search || filters.jenjang || filters.gender) && (
-                <p class="text-xs text-gray-500 mt-1">filtered</p>
-              )}
+              {
+                (filters.search || filters.jenjang || filters.gender) && (
+                  <p class="text-xs text-gray-500 mt-1">filtered</p>
+                )
+              }
             </div>
 
             {/* Next Button */}
             <div class="flex-1 text-right">
-              {next ? (
-                <a
-                  href={buildStudentUrl(next.slug)}
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors group"
-                  title={`Selanjutnya: ${next.name}`}
-                >
-                  <span class="hidden sm:inline">Selanjutnya</span>
-                  <span class="sm:hidden">Next</span>
-                  <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-              ) : (
-                <div class="text-gray-400 text-sm">
-                  {filters.search || filters.jenjang || filters.gender 
-                    ? 'Siswa terakhir dalam filter' 
-                    : 'Siswa terakhir'
-                  }
-                </div>
-              )}
+              {
+                next ? (
+                  <a
+                    href={buildStudentUrl(next.slug)}
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors group"
+                    title={`Selanjutnya: ${next.name}`}
+                  >
+                    <span class="hidden sm:inline">Selanjutnya</span>
+                    <span class="sm:hidden">Next</span>
+                    <svg
+                      class="w-5 h-5 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </a>
+                ) : (
+                  <div class="text-gray-400 text-sm">
+                    {filters.search || filters.jenjang || filters.gender
+                      ? "Siswa terakhir dalam filter"
+                      : "Siswa terakhir"}
+                  </div>
+                )
+              }
             </div>
           </div>
 
@@ -325,24 +435,24 @@ function buildStudentUrl(studentSlug: string): string {
 
 <script>
   // ==================== PHOTO DOWNLOAD WITH PASSWORD ====================
-  document.addEventListener('DOMContentLoaded', () => {
-    const downloadButton = document.getElementById('downloadButton');
-    
+  document.addEventListener("DOMContentLoaded", () => {
+    const downloadButton = document.getElementById("downloadButton");
+
     if (!downloadButton) return;
 
-    downloadButton.addEventListener('click', async () => {
+    downloadButton.addEventListener("click", async () => {
       const photoUrl = downloadButton.dataset.photoUrl;
       const studentName = downloadButton.dataset.studentName;
       const correctPassword = downloadButton.dataset.password;
 
       if (!photoUrl || !correctPassword) {
-        alert('Error: Data tidak lengkap');
+        alert("Error: Data tidak lengkap");
         return;
       }
 
       // Prompt for password
       const userPassword = prompt(
-        `Masukkan password untuk download foto ${studentName}:\n\nHint: Password tertera di bawah tombol download`
+        `Masukkan password untuk download foto ${studentName}:\n\nHint: Password tertera di bawah tombol download`,
       );
 
       if (!userPassword) {
@@ -351,7 +461,9 @@ function buildStudentUrl(studentSlug: string): string {
       }
 
       if (userPassword.trim().toUpperCase() !== correctPassword.toUpperCase()) {
-        alert('❌ Password salah! Silakan coba lagi.\n\nPassword dapat dilihat di bawah tombol download.');
+        alert(
+          "❌ Password salah! Silakan coba lagi.\n\nPassword dapat dilihat di bawah tombol download.",
+        );
         return;
       }
 
@@ -369,64 +481,66 @@ function buildStudentUrl(studentSlug: string): string {
 
         // Fetch image as blob
         const response = await fetch(photoUrl);
-        if (!response.ok) throw new Error('Failed to fetch image');
-        
+        if (!response.ok) throw new Error("Failed to fetch image");
+
         const blob = await response.blob();
-        
+
         // Create download link
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        
+
         // Generate filename: StudentName-Photo.jpg
-        const filename = `${studentName ? studentName.replace(/\s+/g, '-') : 'Student'}-Photo.jpg`;
+        const filename = `${studentName ? studentName.replace(/\s+/g, "-") : "Student"}-Photo.jpg`;
         link.download = filename;
-        
+
         // Trigger download
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Cleanup
         window.URL.revokeObjectURL(url);
-        
+
         // Success message
         alert(`✅ Foto ${studentName} berhasil didownload!`);
-        
+
         // Restore button
         downloadButton.innerHTML = originalText;
         (downloadButton as HTMLButtonElement).disabled = false;
       } catch (error) {
-        console.error('Download error:', error);
-        alert('❌ Gagal mendownload foto. Silakan coba lagi.');
-        
-      // Restore button
-      downloadButton.innerHTML = `
+        console.error("Download error:", error);
+        alert("❌ Gagal mendownload foto. Silakan coba lagi.");
+
+        // Restore button
+        downloadButton.innerHTML = `
         <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
         Download Foto
       `;
-      (downloadButton as HTMLButtonElement).disabled = false;
+        (downloadButton as HTMLButtonElement).disabled = false;
       }
     });
   });
 
   // ==================== KEYBOARD NAVIGATION ====================
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener("keydown", (e) => {
     // Left arrow = previous student
-    if (e.key === 'ArrowLeft') {
-      const prevLink = document.querySelector('a[href*="students/"]') as HTMLAnchorElement;
-      if (prevLink && prevLink.textContent?.includes('Sebelumnya')) {
+    if (e.key === "ArrowLeft") {
+      const prevLink = document.querySelector(
+        'a[href*="students/"]',
+      ) as HTMLAnchorElement;
+      if (prevLink && prevLink.textContent?.includes("Sebelumnya")) {
         prevLink.click();
       }
     }
-    
+
     // Right arrow = next student
-    if (e.key === 'ArrowRight') {
+    if (e.key === "ArrowRight") {
       const links = document.querySelectorAll('a[href*="students/"]');
-      const nextLink = Array.from(links).find(link => 
-        link.textContent?.includes('Selanjutnya')
+      const nextLink = Array.from(links).find((link) =>
+        link.textContent?.includes("Selanjutnya"),
       ) as HTMLAnchorElement;
       if (nextLink) {
         nextLink.click();
@@ -435,10 +549,10 @@ function buildStudentUrl(studentSlug: string): string {
   });
 
   // Respect reduced motion
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.querySelectorAll('.animate-on-load').forEach(el => {
-      (el as HTMLElement).style.animation = 'none';
-      el.classList.add('is-visible');
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll(".animate-on-load").forEach((el) => {
+      (el as HTMLElement).style.animation = "none";
+      el.classList.add("is-visible");
     });
   }
 </script>

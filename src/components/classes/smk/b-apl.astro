@@ -65,15 +65,20 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
   <FadeOverlay connectorHeight="200" />
 
   <div
-    class="groups bg-slate-950 text-cyan-400 min-h-screen font-sans overflow-x-hidden relative selection:bg-cyan-500 selection:text-slate-900"
+    class="groups bg-slate-950 text-cyan-400 min-h-dvh font-sans overflow-x-hidden relative selection:bg-cyan-500 selection:text-slate-900"
   >
-    <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-slate-950">
+    <div
+      class="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-slate-950"
+    >
       <!-- Cyber-Lab Pattern from inline SVG -->
-      <div 
-        class="absolute top-0 left-0 w-full h-full opacity-20 text-cyan-600 mix-blend-screen lab-pattern" 
-        aria-hidden="true" 
-        set:html={bgPattern.replace("<svg ", "<svg preserveAspectRatio=\"xMidYMid slice\" ")}
-      ></div>
+      <div
+        class="absolute top-0 left-0 w-full h-full opacity-20 text-cyan-600 mix-blend-screen lab-pattern"
+        aria-hidden="true"
+        set:html={bgPattern.replace(
+          "<svg ",
+          '<svg preserveAspectRatio="xMidYMid slice" ',
+        )}
+      />
       <div
         class="absolute inset-0 bg-linear-to-b from-slate-950/90 via-slate-950/40 to-slate-950/80"
       >
@@ -101,7 +106,7 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     </div>
 
     <div
-      class="relative z-10 w-screen h-screen flex flex-col justify-center items-center text-center px-4 gsap-header overflow-hidden"
+      class="relative z-10 w-screen h-dvh flex flex-col justify-center items-center text-center px-4 gsap-header overflow-hidden"
     >
       <h1
         class="text-5xl md:text-7xl font-bold tracking-widest mb-2 text-transparent bg-clip-text bg-linear-to-r from-cyan-400 via-lime-400 to-blue-600 gsap-fade-up will-animate opacity-0 text-shadow-[0_0_20px_rgba(6,182,212,0.5)]"
@@ -121,31 +126,48 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
         class="max-w-4xl w-full border-t-12 border-x border-b border-cyan-800/80 rounded-sm p-8 md:p-12 bg-slate-950/80 backdrop-blur-xl relative gsap-fade-up will-animate opacity-0 shadow-[0_0_30px_rgba(6,182,212,0.15)] overflow-hidden"
       >
         <!-- Dashboard Top Bar -->
-        <div class="absolute -top-[12px] left-4 bg-slate-900 border-x border-cyan-700/50 px-4 py-0.5 rounded-b-sm flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            <span class="text-[10px] text-cyan-400 font-mono tracking-widest">RECORDING</span>
+        <div
+          class="absolute -top-[12px] left-4 bg-slate-900 border-x border-cyan-700/50 px-4 py-0.5 rounded-b-sm flex items-center gap-2"
+        >
+          <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+          <span class="text-[10px] text-cyan-400 font-mono tracking-widest"
+            >RECORDING</span
+          >
         </div>
-        <div class="absolute -top-[12px] right-4 bg-cyan-800 text-[10px] px-3 py-0.5 font-mono text-cyan-100 uppercase tracking-widest rounded-b-sm">
-            DOC_ID: APL_B_99
+        <div
+          class="absolute -top-[12px] right-4 bg-cyan-800 text-[10px] px-3 py-0.5 font-mono text-cyan-100 uppercase tracking-widest rounded-b-sm"
+        >
+          DOC_ID: APL_B_99
         </div>
 
-        <div class="absolute bottom-4 left-4 opacity-15 w-32 h-32 pointer-events-none z-0 rotate-[-15deg]">
-            <img src={reportSvg.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+        <div
+          class="absolute bottom-4 left-4 opacity-15 w-32 h-32 pointer-events-none z-0 rotate-[-15deg]"
+        >
+          <img
+            src={reportSvg.src}
+            alt=""
+            class="w-full h-full object-contain mix-blend-screen"
+          />
         </div>
-        
+
         <div class="relative z-10 w-full text-center md:text-left">
-            <p class="text-xl md:text-2xl mb-4 font-light italic text-cyan-50">
+          <p class="text-xl md:text-2xl mb-4 font-light italic text-cyan-50">
             "No amount of experimentation can ever prove me right; a single
             experiment can prove me wrong."
-            </p>
-            <p class="text-right font-bold tracking-widest text-sm text-lime-400 font-mono">
+          </p>
+          <p
+            class="text-right font-bold tracking-widest text-sm text-lime-400 font-mono"
+          >
             - Albert Einstein
-            </p>
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="groups-wrapper relative z-10 w-screen h-screen overflow-hidden block" style="clip-path: inset(0);">
+    <div
+      class="groups-wrapper relative z-10 w-screen h-dvh overflow-hidden block"
+      style="clip-path: inset(0);"
+    >
       <section
         class="absolute inset-0 flex items-center justify-center py-24 px-4 gsap-section first-group will-animate"
         id="group-1"
@@ -186,17 +208,30 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
                   </li>
                 </ul>
               </div>
-
             </div>
 
-            <div class="lg:col-span-8 relative gsap-photo will-animate opacity-0">
+            <div
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0"
+            >
               <!-- Floating Decoration for Group 1 -->
-              <div class="absolute -top-12 -left-12 opacity-100 w-24 h-24 pointer-events-none gsap-float-slow z-20">
-                <img src={atomSvg.src} alt="" class="w-full h-full object-contain" />
+              <div
+                class="absolute -top-12 -left-12 opacity-100 w-24 h-24 pointer-events-none gsap-float-slow z-20"
+              >
+                <img
+                  src={atomSvg.src}
+                  alt=""
+                  class="w-full h-full object-contain"
+                />
               </div>
 
-              <div class="absolute -bottom-8 -right-8 opacity-100 w-20 h-20 pointer-events-none gsap-float-fast z-20">
-                <img src={breakerSvg1.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+              <div
+                class="absolute -bottom-8 -right-8 opacity-100 w-20 h-20 pointer-events-none gsap-float-fast z-20"
+              >
+                <img
+                  src={breakerSvg1.src}
+                  alt=""
+                  class="w-full h-full object-contain mix-blend-screen"
+                />
               </div>
 
               <!-- Cyber-Lab Duotone Wrapper -->
@@ -221,10 +256,10 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
                 <div
                   class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-lime-500/30 rounded-full pointer-events-none opacity-50 transition-opacity duration-500 group-hover:opacity-0 flex items-center justify-center"
                 >
-                   <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
-                   <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
-                   <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
-                   <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
+                  <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
+                  <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
                 </div>
               </div>
             </div>
@@ -233,21 +268,35 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
       </section>
 
       <section
-        class="absolute top-[150vh] left-0 w-full h-screen flex items-center justify-center py-24 px-4 gsap-section second-group will-animate"
+        class="absolute top-[150vh] left-0 w-full h-dvh flex items-center justify-center py-24 px-4 gsap-section second-group will-animate"
         id="group-2"
       >
         <div
           class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
         >
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
-            <div class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1">
+            <div
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1"
+            >
               <!-- Floating Decoration for Group 2 -->
-              <div class="absolute -bottom-10 -right-10 opacity-100 w-28 h-28 pointer-events-none gsap-float-fast z-20">
-                <img src={radioactiveSvg.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+              <div
+                class="absolute -bottom-10 -right-10 opacity-100 w-28 h-28 pointer-events-none gsap-float-fast z-20"
+              >
+                <img
+                  src={radioactiveSvg.src}
+                  alt=""
+                  class="w-full h-full object-contain mix-blend-screen"
+                />
               </div>
 
-              <div class="absolute -top-8 -left-8 opacity-100 w-16 h-16 pointer-events-none gsap-float-slow z-20">
-                <img src={breakerSvg2.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+              <div
+                class="absolute -top-8 -left-8 opacity-100 w-16 h-16 pointer-events-none gsap-float-slow z-20"
+              >
+                <img
+                  src={breakerSvg2.src}
+                  alt=""
+                  class="w-full h-full object-contain mix-blend-screen"
+                />
               </div>
 
               <!-- Cyber-Lab Duotone Wrapper -->
@@ -272,10 +321,10 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
                 <div
                   class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-lime-500/30 rounded-full pointer-events-none opacity-50 transition-opacity duration-500 group-hover:opacity-0 flex items-center justify-center"
                 >
-                   <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
-                   <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
-                   <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
-                   <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
+                  <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
+                  <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
                 </div>
               </div>
             </div>
@@ -283,7 +332,9 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
             <div
               class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0 order-1 lg:order-2"
             >
-              <div class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]">
+              <div
+                class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]"
+              >
                 <h3
                   class="text-sm tracking-widest text-lime-400 mb-3 border-b border-cyan-500/30 pb-2"
                 >
@@ -310,21 +361,35 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
       </section>
 
       <section
-        class="absolute top-[300vh] left-0 w-full h-screen flex items-center justify-center py-24 px-4 gsap-section third-group will-animate"
+        class="absolute top-[300vh] left-0 w-full h-dvh flex items-center justify-center py-24 px-4 gsap-section third-group will-animate"
         id="group-3"
       >
-      <div
+        <div
           class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
         >
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
-            <div class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1">
+            <div
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1"
+            >
               <!-- Floating Decoration for Group 3 -->
-              <div class="absolute -top-10 right-10 opacity-100 w-20 h-20 pointer-events-none gsap-float-alt z-20">
-                <img src={microscopeSvg.src} alt="" class="w-full h-full object-contain" />
+              <div
+                class="absolute -top-10 right-10 opacity-100 w-20 h-20 pointer-events-none gsap-float-alt z-20"
+              >
+                <img
+                  src={microscopeSvg.src}
+                  alt=""
+                  class="w-full h-full object-contain"
+                />
               </div>
-              
-              <div class="absolute bottom-4 left-4 opacity-100 w-14 h-14 pointer-events-none gsap-float-slow z-20">
-                <img src={breakerSvg3.src} alt="" class="w-full h-full object-contain mix-blend-screen" />
+
+              <div
+                class="absolute bottom-4 left-4 opacity-100 w-14 h-14 pointer-events-none gsap-float-slow z-20"
+              >
+                <img
+                  src={breakerSvg3.src}
+                  alt=""
+                  class="w-full h-full object-contain mix-blend-screen"
+                />
               </div>
 
               <!-- Cyber-Lab Duotone Wrapper -->
@@ -349,10 +414,10 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
                 <div
                   class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-lime-500/30 rounded-full pointer-events-none opacity-50 transition-opacity duration-500 group-hover:opacity-0 flex items-center justify-center"
                 >
-                   <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
-                   <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
-                   <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
-                   <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
+                  <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
+                  <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
                 </div>
               </div>
             </div>
@@ -360,7 +425,9 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
             <div
               class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0 order-1 lg:order-2"
             >
-              <div class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]">
+              <div
+                class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]"
+              >
                 <h3
                   class="text-sm tracking-widest text-lime-400 mb-3 border-b border-cyan-500/30 pb-2"
                 >
@@ -381,7 +448,6 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
                   </li>
                 </ul>
               </div>
-
             </div>
           </div>
         </div>
@@ -448,8 +514,6 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
       @apply bg-[#f5f0eaff];
     }
 
-    
-
     /* Cyber-Lab floating/glowing animations are handled by GSAP and Tailwind classes */
 
     .lab-pattern svg {
@@ -472,7 +536,7 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
       await waitForLoading();
 
       // --- STORYTELLING ANIMATIONS ---
-      
+
       // 1. Header & Dashboard Orchestration
       const tlHeader = gsap.timeline({
         scrollTrigger: {
@@ -481,12 +545,20 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           end: "+=150%",
           pin: true,
           scrub: 1,
-          anticipatePin: 1
-        }
+          anticipatePin: 1,
+        },
       });
-      tlHeader.fromTo(".gsap-header .gsap-fade-up",
+      tlHeader.fromTo(
+        ".gsap-header .gsap-fade-up",
         { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 1.2, stagger: 0.2, ease: "power3.out", force3D: true }
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.2,
+          ease: "power3.out",
+          force3D: true,
+        },
       );
 
       // 2. Storytelling Setup for Group Sections
@@ -494,96 +566,163 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
         scrollTrigger: {
           trigger: ".groups-wrapper",
           start: "top top",
-          end: "+=500%", 
-          pin: true,     
-          scrub: 1.5,   
+          end: "+=500%",
+          pin: true,
+          scrub: 1.5,
           anticipatePin: 1,
-        }
+        },
       });
 
       // --- SVG Reveal Animation for Background ---
       // Since the SVG pattern uses 'fill' instead of strokes, drawing individual paths strips their visibility.
       // Instead, we use a single GPU accelerated clip-path to reveal the entire background progressively.
-      const bgContainer = document.querySelector('.lab-pattern') as HTMLElement | null;
+      const bgContainer = document.querySelector(
+        ".lab-pattern",
+      ) as HTMLElement | null;
       if (bgContainer) {
         gsap.set(bgContainer, {
-          clipPath: 'inset(0 0 100% 0)', // Hidden from the bottom
-          opacity: 0.1 // Resetting to slightly lower opacity for a subtle look
+          clipPath: "inset(0 0 100% 0)", // Hidden from the bottom
+          opacity: 0.1, // Resetting to slightly lower opacity for a subtle look
         });
-        
-        groupsTl.to(bgContainer, {
-          clipPath: 'inset(0 0 0% 0)', // Fully revealed
-          duration: 4, 
-          ease: "none",
-        }, 0);
+
+        groupsTl.to(
+          bgContainer,
+          {
+            clipPath: "inset(0 0 0% 0)", // Fully revealed
+            duration: 4,
+            ease: "none",
+          },
+          0,
+        );
       }
 
       // Group 1 Entrance
-      groupsTl.fromTo("#group-1 .gsap-data-panel", 
-        { x: -40, opacity: 0 }, 
-        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true }
+      groupsTl.fromTo(
+        "#group-1 .gsap-data-panel",
+        { x: -40, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true },
       );
-      groupsTl.fromTo("#group-1 .gsap-photo", 
-        { y: 60, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", force3D: true }, 
-        "-=0.6"
+      groupsTl.fromTo(
+        "#group-1 .gsap-photo",
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1.5, ease: "power4.out", force3D: true },
+        "-=0.6",
       );
-      
-      const g1Icons = document.querySelectorAll("#group-1 .gsap-float-slow, #group-1 .gsap-float-fast, #group-1 .gsap-float-alt");
-      groupsTl.fromTo(g1Icons, 
-        { scale: 0, opacity: 0, rotation: -90 }, 
-        { scale: 1, opacity: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "back.out(1.5)", force3D: true }, 
-        "-=1.0"
+
+      const g1Icons = document.querySelectorAll(
+        "#group-1 .gsap-float-slow, #group-1 .gsap-float-fast, #group-1 .gsap-float-alt",
+      );
+      groupsTl.fromTo(
+        g1Icons,
+        { scale: 0, opacity: 0, rotation: -90 },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "back.out(1.5)",
+          force3D: true,
+        },
+        "-=1.0",
       );
 
       // Transition Scroll 1 -> 2
-      groupsTl.to([".groups-wrapper .gsap-section", ".falling-lines-wrapper"], {
-        y: "-150vh",
-        duration: 2.5,
-        ease: "power2.inOut"
-      }, "+=0.3");
+      groupsTl.to(
+        [".groups-wrapper .gsap-section", ".falling-lines-wrapper"],
+        {
+          y: "-150vh",
+          duration: 2.5,
+          ease: "power2.inOut",
+        },
+        "+=0.3",
+      );
 
       // Animate Group 2
-      groupsTl.fromTo("#group-2 .gsap-data-panel", 
-        { x: 40, opacity: 0 }, 
-        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true }
+      groupsTl.fromTo(
+        "#group-2 .gsap-data-panel",
+        { x: 40, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true },
       );
-      groupsTl.fromTo("#group-2 .gsap-photo", 
-        { y: 80, opacity: 0, rotation: -2 }, 
-        { y: 0, opacity: 1, duration: 1.5, rotation: 0, ease: "power4.out", force3D: true }, 
-        "-=0.6"
+      groupsTl.fromTo(
+        "#group-2 .gsap-photo",
+        { y: 80, opacity: 0, rotation: -2 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          rotation: 0,
+          ease: "power4.out",
+          force3D: true,
+        },
+        "-=0.6",
       );
 
-      const g2Icons = document.querySelectorAll("#group-2 .gsap-float-slow, #group-2 .gsap-float-fast, #group-2 .gsap-float-alt");
-      groupsTl.fromTo(g2Icons, 
-        { scale: 0, opacity: 0, rotation: -90 }, 
-        { scale: 1, opacity: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "back.out(1.5)", force3D: true }, 
-        "-=1.0"
+      const g2Icons = document.querySelectorAll(
+        "#group-2 .gsap-float-slow, #group-2 .gsap-float-fast, #group-2 .gsap-float-alt",
+      );
+      groupsTl.fromTo(
+        g2Icons,
+        { scale: 0, opacity: 0, rotation: -90 },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "back.out(1.5)",
+          force3D: true,
+        },
+        "-=1.0",
       );
 
       // Transition Scroll 2 -> 3
-      groupsTl.to([".groups-wrapper .gsap-section", ".falling-lines-wrapper"], {
-        y: "-300vh",
-        duration: 2.5,
-        ease: "power2.inOut"
-      }, "+=0.3");
+      groupsTl.to(
+        [".groups-wrapper .gsap-section", ".falling-lines-wrapper"],
+        {
+          y: "-300vh",
+          duration: 2.5,
+          ease: "power2.inOut",
+        },
+        "+=0.3",
+      );
 
       // Animate Group 3
-      groupsTl.fromTo("#group-3 .gsap-data-panel", 
-        { x: -40, opacity: 0 }, 
-        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true }
+      groupsTl.fromTo(
+        "#group-3 .gsap-data-panel",
+        { x: -40, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true },
       );
-      groupsTl.fromTo("#group-3 .gsap-photo", 
-        { y: 60, opacity: 0, rotation: 2 }, 
-        { y: 0, opacity: 1, duration: 1.5, rotation: 0, ease: "power4.out", force3D: true }, 
-        "-=0.6"
+      groupsTl.fromTo(
+        "#group-3 .gsap-photo",
+        { y: 60, opacity: 0, rotation: 2 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          rotation: 0,
+          ease: "power4.out",
+          force3D: true,
+        },
+        "-=0.6",
       );
 
-      const g3Icons = document.querySelectorAll("#group-3 .gsap-float-slow, #group-3 .gsap-float-fast, #group-3 .gsap-float-alt");
-      groupsTl.fromTo(g3Icons, 
-        { scale: 0, opacity: 0, rotation: 90 }, 
-        { scale: 1, opacity: 1, rotation: 0, duration: 1.2, stagger: 0.15, ease: "back.out(1.5)", force3D: true }, 
-        "-=1.0"
+      const g3Icons = document.querySelectorAll(
+        "#group-3 .gsap-float-slow, #group-3 .gsap-float-fast, #group-3 .gsap-float-alt",
+      );
+      groupsTl.fromTo(
+        g3Icons,
+        { scale: 0, opacity: 0, rotation: 90 },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "back.out(1.5)",
+          force3D: true,
+        },
+        "-=1.0",
       );
       // --- END STORYTELLING ANIMATIONS ---
 

@@ -13,7 +13,7 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 
 <section
   id="hero-section"
-  class="relative min-h-screen flex items-center justify-center overflow-hidden"
+  class="relative min-h-dvh flex items-center justify-center overflow-hidden"
 >
   <!-- Background Image -->
   {
@@ -522,19 +522,27 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 
     await waitForLoading();
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     gsap.set(wrapper, { opacity: 1 });
 
     const targets = Array.from(svg.querySelectorAll(".svg-path"));
-    
+
     function makeOutline(el: Element) {
       const clone = el.cloneNode(true) as Element;
-      clone.setAttribute("class", (clone.getAttribute("class") || "") + " gsap-outline");
+      clone.setAttribute(
+        "class",
+        (clone.getAttribute("class") || "") + " gsap-outline",
+      );
       clone.removeAttribute("style");
       clone.setAttribute("fill", "none");
-      
-      const fill = el.getAttribute("fill") || window.getComputedStyle(el).fill || "#ffffff";
+
+      const fill =
+        el.getAttribute("fill") ||
+        window.getComputedStyle(el).fill ||
+        "#ffffff";
       let strokeColor = "#ffffff";
       try {
         if (fill && fill !== "none" && fill.startsWith("#")) {
@@ -583,26 +591,45 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
     }
 
     // Entry Animations
-    tl.fromTo(svg, 
-      { scale: 0.86, rotation: -2, opacity: 0 }, 
-      { scale: 1, rotation: 0, opacity: 1, duration: 0.9, ease: "back.out(1.4)" }, 0
+    tl.fromTo(
+      svg,
+      { scale: 0.86, rotation: -2, opacity: 0 },
+      {
+        scale: 1,
+        rotation: 0,
+        opacity: 1,
+        duration: 0.9,
+        ease: "back.out(1.4)",
+      },
+      0,
     );
 
     const sorted = outlines.slice().sort((a, b) => b.len - a.len);
     const drawStagger = 0.06;
     sorted.forEach((o, i) => {
-      tl.to(o.outline.style, { strokeDashoffset: 0, duration: Math.min(0.9 + o.len / 2500, 1.8) }, i * drawStagger + 0.12);
+      tl.to(
+        o.outline.style,
+        { strokeDashoffset: 0, duration: Math.min(0.9 + o.len / 2500, 1.8) },
+        i * drawStagger + 0.12,
+      );
       tl.to(o.el, { opacity: 1, duration: 0.45 }, i * drawStagger + 0.35);
-      tl.to(o.outline, { opacity: 0, duration: 0.6, ease: "power2.inOut" }, i * drawStagger + Math.min(0.7 + o.len / 3000, 1.2));
+      tl.to(
+        o.outline,
+        { opacity: 0, duration: 0.6, ease: "power2.inOut" },
+        i * drawStagger + Math.min(0.7 + o.len / 3000, 1.2),
+      );
     });
 
-    tl.to(svg, { y: -6, duration: 0.25, ease: "power1.out" }, "-=0.2")
-      .to(svg, { y: 0, duration: 0.6, ease: "elastic.out(1, 0.6)" });
+    tl.to(svg, { y: -6, duration: 0.25, ease: "power1.out" }, "-=0.2").to(svg, {
+      y: 0,
+      duration: 0.6,
+      ease: "elastic.out(1, 0.6)",
+    });
 
     if (txtAngkatan && !reduceMotion) {
       const text = txtAngkatan.textContent?.trim() || "AZ24RQO";
       txtAngkatan.innerHTML = ""; // Use innerHTML to clear
-      
+
       const fragment = document.createDocumentFragment();
       const chars = text.split("").map((char) => {
         const span = document.createElement("span");
@@ -617,13 +644,17 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
       txtAngkatan.appendChild(fragment);
       gsap.set(txtAngkatan, { opacity: 1, filter: "none" });
 
-      tl.to(chars, {
-        opacity: 1,
-        filter: "blur(0px)",
-        duration: 1.2,
-        ease: "power2.out",
-        stagger: 0.15,
-      }, 1);
+      tl.to(
+        chars,
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 1.2,
+          ease: "power2.out",
+          stagger: 0.15,
+        },
+        1,
+      );
     }
 
     // Infinite float with cleanup
@@ -634,41 +665,62 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
       yoyo: true,
       ease: "sine.inOut",
       delay: 0.6,
-      force3D: true
+      force3D: true,
     });
 
     // Mouse parallax with AbortSignal
     wrapper.style.transformStyle = "preserve-3d";
-    wrapper.addEventListener("pointermove", (e) => {
-      const rect = wrapper.getBoundingClientRect();
-      const dx = (e.clientX - (rect.left + rect.width / 2)) / rect.width;
-      const dy = (e.clientY - (rect.top + rect.height / 2)) / rect.height;
-      gsap.to(svg, {
-        rotationX: -dy * 6,
-        rotationY: dx * 6,
-        x: dx * 8,
-        y: dy * 8,
-        transformPerspective: 1200,
-        duration: 0.6,
-        ease: "power3.out",
-      });
-    }, { signal });
+    wrapper.addEventListener(
+      "pointermove",
+      (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        const dx = (e.clientX - (rect.left + rect.width / 2)) / rect.width;
+        const dy = (e.clientY - (rect.top + rect.height / 2)) / rect.height;
+        gsap.to(svg, {
+          rotationX: -dy * 6,
+          rotationY: dx * 6,
+          x: dx * 8,
+          y: dy * 8,
+          transformPerspective: 1200,
+          duration: 0.6,
+          ease: "power3.out",
+        });
+      },
+      { signal },
+    );
 
-    wrapper.addEventListener("pointerleave", () => {
-      gsap.to(svg, { rotationX: 0, rotationY: 0, x: 0, y: 0, duration: 0.8, ease: "power3.out" });
-    }, { signal });
+    wrapper.addEventListener(
+      "pointerleave",
+      () => {
+        gsap.to(svg, {
+          rotationX: 0,
+          rotationY: 0,
+          x: 0,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+        });
+      },
+      { signal },
+    );
 
     // Exit Animations linked to Scroll
     const parentStack = document.querySelector("[data-parallax-stack]");
     if (parentStack && !reduceMotion) {
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: parentStack,
-          start: "top top",
-          end: `+=${window.innerHeight * 1.5}`,
-          scrub: 1,
-        },
-      }).to(txtAngkatan, { opacity: 0, filter: "blur(10px)", y: -20, duration: 0.5 }, 0)
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: parentStack,
+            start: "top top",
+            end: `+=${window.innerHeight * 1.5}`,
+            scrub: 1,
+          },
+        })
+        .to(
+          txtAngkatan,
+          { opacity: 0, filter: "blur(10px)", y: -20, duration: 0.5 },
+          0,
+        )
         .to(svg, { scale: 0.9, rotation: -2, duration: 1 }, 0);
     }
   }

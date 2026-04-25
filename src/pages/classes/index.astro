@@ -8,31 +8,44 @@ import { getCollection } from "astro:content";
 const allClasses = await getCollection("classes");
 
 // Gambar fallback jika foto kelas belum tersedia
-const FALLBACK_IMG = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
+const FALLBACK_IMG =
+  "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775110405/l-banyakan.webp";
 
 // Peta: slug content → slug URL halaman kelas
 // (karena nama file MDX seperti "a-pplg" sedangkan slug URL-nya "xii-a-pplg")
 const CONTENT_TO_URL_SLUG: Record<string, string> = {
-  "a-pplg":  "xii-a-pplg",
-  "b-apl":   "xii-b-apl",
-  "c-apl":   "xii-c-apl",
-  "d-mplb":  "xii-d-mplb",
-  "ipa1":    "xii-ipa-1",
-  "ipa2":    "xii-ipa-2",
-  "ipa3":    "xii-ipa-3",
-  "ipa4":    "xii-ipa-4",
-  "ips1":    "xii-ips-1",
-  "ips2":    "xii-ips-2",
-  "ips3":    "xii-ips-3",
+  "a-pplg": "xii-a-pplg",
+  "b-apl": "xii-b-apl",
+  "c-apl": "xii-c-apl",
+  "d-mplb": "xii-d-mplb",
+  ipa1: "xii-ipa-1",
+  ipa2: "xii-ipa-2",
+  ipa3: "xii-ipa-3",
+  ipa4: "xii-ipa-4",
+  ips1: "xii-ips-1",
+  ips2: "xii-ips-2",
+  ips3: "xii-ips-3",
 };
 
 // Urutan tampilan yang diinginkan
-const DISPLAY_ORDER = ["a-pplg","b-apl","c-apl","d-mplb","ipa1","ipa2","ipa3","ipa4","ips1","ips2","ips3"];
+const DISPLAY_ORDER = [
+  "a-pplg",
+  "b-apl",
+  "c-apl",
+  "d-mplb",
+  "ipa1",
+  "ipa2",
+  "ipa3",
+  "ipa4",
+  "ips1",
+  "ips2",
+  "ips3",
+];
 
 // Bangun array kelas dalam urutan yang benar
-const classesEntry = DISPLAY_ORDER
-  .map((contentSlug) => allClasses.find((c) => c.slug === contentSlug))
-  .filter(Boolean) as typeof allClasses;
+const classesEntry = DISPLAY_ORDER.map((contentSlug) =>
+  allClasses.find((c) => c.slug === contentSlug),
+).filter(Boolean) as typeof allClasses;
 
 interface Classes {
   name: string;
@@ -48,7 +61,7 @@ const classes: Classes[] = classesEntry.map((entry) => {
   const img =
     typeof heroPhoto0 === "string"
       ? heroPhoto0
-      : (heroPhoto0 as any)?.src ?? FALLBACK_IMG;
+      : ((heroPhoto0 as any)?.src ?? FALLBACK_IMG);
 
   return {
     name: `XII ${entry.data.className}`,
@@ -61,9 +74,14 @@ const classes: Classes[] = classesEntry.map((entry) => {
 });
 ---
 
-<MainLayout title="Semua Kelas — Yearbook 2025" description="Jelajahi kenangan setiap kelas angkatan 2025.">
-  <section class="flex flex-col bg-[#f5f0ea] min-h-screen min-w-screen justify-center items-center w-full pt-40 bg-cover">
-    <PageTitle/>
-    <ClassesCard classes={classes}/>
+<MainLayout
+  title="Semua Kelas — Yearbook 2025"
+  description="Jelajahi kenangan setiap kelas angkatan 2025."
+>
+  <section
+    class="flex flex-col bg-[#f5f0ea] min-h-dvh min-w-screen justify-center items-center w-full pt-40 bg-cover"
+  >
+    <PageTitle />
+    <ClassesCard classes={classes} />
   </section>
 </MainLayout>

@@ -1,41 +1,46 @@
 ---
-import MainLayout from '../layouts/MainLayout.astro';
-import TeacherHero from '../components/teacher/TeacherHero.astro';
-import TeacherGrid from '../components/teacher/TeacherGrid.astro';
-import TeacherQuote from '../components/teacher/TeacherQuote.astro';
-import TeacherModal from '../components/teacher/TeacherModal';
+import MainLayout from "../layouts/MainLayout.astro";
+import TeacherHero from "../components/teacher/TeacherHero.astro";
+import TeacherGrid from "../components/teacher/TeacherGrid.astro";
+import TeacherQuote from "../components/teacher/TeacherQuote.astro";
+import TeacherModal from "../components/teacher/TeacherModal";
 
 const pageTitle = "Our Beloved Teachers";
-const pageDescription = "Mengenang kembali guru-guru tercinta yang telah membimbing kita dengan penuh kesabaran dan cinta selayaknya tinta yang mengukir sejarah.";
+const pageDescription =
+  "Mengenang kembali guru-guru tercinta yang telah membimbing kita dengan penuh kesabaran dan cinta selayaknya tinta yang mengukir sejarah.";
 ---
 
 <MainLayout title={pageTitle} description={pageDescription}>
   <!-- Storyboarding: Hook (Hero) -> Body (Content) -> Tail (Bottom) -->
-  <main class="w-full bg-[var(--color-primary)] overflow-hidden min-h-screen relative text-secondary">
+  <main
+    class="w-full bg-[var(--color-primary)] overflow-hidden min-h-dvh relative text-secondary"
+  >
     <!-- 1. Top Quote (Hero) -->
-    <TeacherQuote 
-      label="The Guidance" 
-      quote="“A great teacher is like a candle—it consumes itself to light the way for others.”" 
-      isHero={true} 
+    <TeacherQuote
+      label="The Guidance"
+      quote="“A great teacher is like a candle—it consumes itself to light the way for others.”"
+      isHero={true}
     />
-    
+
     <TeacherHero />
 
     <!-- 2. Mid Quote -->
-    <TeacherQuote 
-      quote="“The art of teaching is the art of assisting discovery.”" 
-      isMid={true} 
+    <TeacherQuote
+      quote="“The art of teaching is the art of assisting discovery.”"
+      isMid={true}
     />
 
     <TeacherGrid />
 
     <!-- 3. Bottom Quote -->
-    <TeacherQuote 
-      quote="“Education is not the filling of a pail, but the lighting of a fire.”" 
-      isBottom={true} 
+    <TeacherQuote
+      quote="“Education is not the filling of a pail, but the lighting of a fire.”"
+      isBottom={true}
     />
   </main>
-  
-  {/* React Modal di-load client-side sejak awal agar event listener global (openTeacherModal) langsung aktif */}
+
+  {
+    /* React Modal di-load client-side sejak awal agar event listener global (openTeacherModal) langsung aktif */
+  }
   <TeacherModal client:load />
 </MainLayout>

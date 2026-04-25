@@ -18,7 +18,7 @@ const { id = "horizontal-carousel" } = Astro.props;
     id={id}
 >
     <div
-        class="horizontal-scroll-wrapper relative h-screen w-screen overflow-hidden"
+        class="horizontal-scroll-wrapper relative h-dvh w-screen overflow-hidden"
     >
         <slot />
     </div>
@@ -60,7 +60,9 @@ const { id = "horizontal-carousel" } = Astro.props;
                 }
 
                 // Prepare text elements inside slides
-                const textContents = slide.querySelectorAll(".greeting-text-content");
+                const textContents = slide.querySelectorAll(
+                    ".greeting-text-content",
+                );
                 textContents.forEach((txt) => {
                     (txt as HTMLElement).style.overflowY = "hidden";
                     (txt as HTMLElement).scrollTop = 0;
@@ -69,7 +71,9 @@ const { id = "horizontal-carousel" } = Astro.props;
                 // Ensure hint is visible initially if overflow exists
                 const hints = slide.querySelectorAll(".scroll-hint");
                 hints.forEach((hint) => {
-                    const txt = slide.querySelector(".greeting-text-content") as HTMLElement;
+                    const txt = slide.querySelector(
+                        ".greeting-text-content",
+                    ) as HTMLElement;
                     if (txt && txt.scrollHeight > txt.clientHeight) {
                         (hint as HTMLElement).style.display = "flex";
                         (hint as HTMLElement).style.opacity = "1";
@@ -84,9 +88,14 @@ const { id = "horizontal-carousel" } = Astro.props;
                 let dist = (slides.length - 1) * window.innerWidth;
 
                 slides.forEach((slide) => {
-                    const txt = slide.querySelector(".greeting-text-content") as HTMLElement;
+                    const txt = slide.querySelector(
+                        ".greeting-text-content",
+                    ) as HTMLElement;
                     if (txt) {
-                        const overflow = Math.max(0, txt.scrollHeight - txt.clientHeight);
+                        const overflow = Math.max(
+                            0,
+                            txt.scrollHeight - txt.clientHeight,
+                        );
                         // Multiply by 3 to make text scrolling slower and easier to read
                         dist += overflow * 3;
                     }
@@ -115,25 +124,35 @@ const { id = "horizontal-carousel" } = Astro.props;
                     tl.addLabel(slideLabel);
 
                     // Bring current slide in from right
-                    tl.to(slide, {
-                        xPercent: 0,
-                        ease: "none",
-                        duration: () => window.innerWidth,
-                        force3D: true,
-                    }, slideLabel);
+                    tl.to(
+                        slide,
+                        {
+                            xPercent: 0,
+                            ease: "none",
+                            duration: () => window.innerWidth,
+                            force3D: true,
+                        },
+                        slideLabel,
+                    );
 
                     // Push the immediately preceding slide back
-                    tl.to(slides[i - 1], {
-                        scale: 0.92,
-                        opacity: 0,
-                        ease: "none",
-                        duration: () => window.innerWidth,
-                        force3D: true,
-                    }, slideLabel);
+                    tl.to(
+                        slides[i - 1],
+                        {
+                            scale: 0.92,
+                            opacity: 0,
+                            ease: "none",
+                            duration: () => window.innerWidth,
+                            force3D: true,
+                        },
+                        slideLabel,
+                    );
                 }
 
                 // 2. Scroll the text vertically while paused horizontally
-                const txt = slide.querySelector(".greeting-text-content") as HTMLElement;
+                const txt = slide.querySelector(
+                    ".greeting-text-content",
+                ) as HTMLElement;
                 const hint = slide.querySelector(".scroll-hint") as HTMLElement;
 
                 if (txt && txt.scrollHeight > txt.clientHeight) {
@@ -141,18 +160,26 @@ const { id = "horizontal-carousel" } = Astro.props;
                     const durationVal = Math.max(1, scrollAmount * 3);
 
                     const syncLabel = `scrollSlide-${i}`;
-                    tl.to(txt, {
-                        scrollTop: scrollAmount,
-                        ease: "none",
-                        duration: durationVal,
-                    }, syncLabel);
+                    tl.to(
+                        txt,
+                        {
+                            scrollTop: scrollAmount,
+                            ease: "none",
+                            duration: durationVal,
+                        },
+                        syncLabel,
+                    );
 
                     if (hint) {
-                        tl.to(hint, {
-                            opacity: 0,
-                            ease: "power1.inOut",
-                            duration: durationVal * 0.8,
-                        }, syncLabel);
+                        tl.to(
+                            hint,
+                            {
+                                opacity: 0,
+                                ease: "power1.inOut",
+                                duration: durationVal * 0.8,
+                            },
+                            syncLabel,
+                        );
                     }
                 }
             });
