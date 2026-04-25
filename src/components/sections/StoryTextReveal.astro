@@ -42,10 +42,7 @@ const optimizedImage = bgImage.includes("cloudinary.com")
   : bgImage;
 ---
 
-<section
-  class="story-reveal-section relative"
-  data-story-reveal
->
+<section class="story-reveal-section relative" data-story-reveal>
   <div
     class="sticky-inner sticky top-0 h-screen w-full overflow-hidden flex flex-col items-center justify-between py-16 md:py-24"
   >
@@ -216,7 +213,7 @@ const optimizedImage = bgImage.includes("cloudinary.com")
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=" + dynamicScroll + "vh", // GSAP mengkalkulasi panjang scroll berdasarkan BANYAKNYA TULISAN secara dinamis!
+          end: "+=" + dynamicScroll + "dvh", // GSAP mengkalkulasi panjang scroll berdasarkan BANYAKNYA TULISAN secara dinamis!
           scrub: 2, // Smooth scrubbing
           pin: true, // GSAP menahan parent dan otomatis menambah pinSpacing (bantalan padding ideal)
           anticipatePin: 1,

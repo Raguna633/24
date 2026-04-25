@@ -59,7 +59,7 @@ const forceDesktopViewData = forceDesktopView;
           const scale = deviceWidth / desktopWidth;
           
           viewport.setAttribute('content', 
-            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=no`
           );
           
           // Save to sessionStorage so toggle knows this page is forced
