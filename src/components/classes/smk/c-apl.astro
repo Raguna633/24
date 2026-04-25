@@ -1,23 +1,50 @@
 ---
+import { Image } from "astro:assets";
+import groupPhoto from "../../../assets/apl-c-group-nobg.webp";
+import rectPattern from "../../../assets/rectangle-pattern.svg?raw";
+
+import hexagonDecoration from "../../../assets/hexagon.svg?raw";
+import magnifyIcon from "../../../assets/magnify.svg?raw";
+import plant1 from "../../../assets/plant1.svg?raw";
+import plant2 from "../../../assets/plant2.svg?raw";
+import plant3 from "../../../assets/plant3.svg?raw";
+import molecule1 from "../../../assets/molecule1.svg?raw";
+import molecule2 from "../../../assets/molecule2.svg?raw";
+import molecule3 from "../../../assets/molecule3.svg?raw";
+import molecule4 from "../../../assets/molecule4.svg?raw";
+
 import { getEntry, getCollection } from "astro:content";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
 import FadeOverlay from "../../FadeOverlay.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
+import TextReveal from "../../animations/TextReveal.astro";
 
-const classData = await getEntry('classes', 'c-apl');
+const classData = await getEntry("classes", "c-apl");
 if (!classData) {
   throw new Error("Data kelas c-apl tidak ditemukan di collection");
 }
 const classContent = classData.data;
 
-const heroBg1 = typeof classContent.heroPhoto?.[0] === 'string' ? classContent.heroPhoto[0] : (classContent.heroPhoto?.[0] as any)?.src || '';
-const heroBg2 = typeof classContent.heroPhoto?.[1] === 'string' ? classContent.heroPhoto[1] : (classContent.heroPhoto?.[1] as any)?.src || '';
-const walasPic = typeof classContent.walasPhoto === 'string' ? classContent.walasPhoto : (classContent.walasPhoto as any)?.src || '';
+const heroBg1 =
+  typeof classContent.heroPhoto?.[0] === "string"
+    ? classContent.heroPhoto[0]
+    : (classContent.heroPhoto?.[0] as any)?.src || "";
+const heroBg2 =
+  typeof classContent.heroPhoto?.[1] === "string"
+    ? classContent.heroPhoto[1]
+    : (classContent.heroPhoto?.[1] as any)?.src || "";
+const walasPic =
+  typeof classContent.walasPhoto === "string"
+    ? classContent.walasPhoto
+    : (classContent.walasPhoto as any)?.src || "";
 
 // Ambil semua siswa kelas C APL dari collection
-const allStudents = await getCollection('students', ({ data }) => data.kelas === 'C APL');
+const allStudents = await getCollection(
+  "students",
+  ({ data }) => data.kelas === "C APL",
+);
 // Urutkan berdasarkan nama
 allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
@@ -37,86 +64,501 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     textColor="#2A358F"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay />
 
-  <!-- Placeholder for Group Photos -->
-  <section class="w-screen h-screen flex justify-center items-center bg-[#f5f0ea]">
-    <h2 class="text-3xl md:text-5xl text-gray-500 font-bold opacity-60 text-center tracking-widest">Foto group kelas akan berada di sini</h2>
+  <!-- Group Photo Section -->
+  <section
+    class="group-section relative w-full min-h-[160vh] flex flex-col items-center justify-center overflow-hidden z-0 py-20"
+  >
+    <div
+      id="group-wrapper-c-apl"
+      class="group-wrapper h-screen w-full px-4 flex flex-col items-center justify-center relative"
+    >
+      <!-- Organic Blotch Background (Moved inside wrapper) -->
+      <div
+        class="absolute -top-[30vh] -bottom-[30vh] left-0 right-0 pointer-events-none z-[-2]"
+        style="background: 
+          radial-gradient(circle at 100% 0%, #CDF0E0 5%, transparent 40%), 
+          radial-gradient(circle at 80% 10%, #C9E5F1 5%, transparent 30%), 
+          radial-gradient(circle at 0% 100%, #CDF0E0 5%, transparent 40%), 
+          radial-gradient(circle at 20% 90%, #C9E5F1 5%, transparent 30%);"
+      >
+      </div>
+
+      <!-- Pattern Overlay (Moved inside wrapper) -->
+      <div
+        class="absolute -top-[30vh] -bottom-[30vh] left-0 right-0 z-[-1] opacity-40 pointer-events-none mix-blend-multiply group-background-pattern"
+        set:html={rectPattern.replace(
+          "<svg ",
+          '<svg preserveAspectRatio="xMidYMid slice" class="w-full h-full opacity-0" ',
+        )}
+      />
+
+      <!-- Header (Higher Z-Index) -->
+      <div
+        class="relative z-50 font-bold text-center uppercase mt-4 translate-y-4"
+      >
+        <h2
+          class="text-6xl text-[#6dbb8b] tracking-wider font-extrabold drop-shadow-sm translate-y-full opacity-0 group-header-title"
+          style="font-family: system-ui, -apple-system, sans-serif;"
+        >
+          PROJECT: AESTHETIC BOTANICA
+        </h2>
+      </div>
+
+      <div
+        class="relative z-10 w-full max-w-[1400px] flex flex-col lg:flex-row items-center lg:items-stretch justify-between gap-8 lg:gap-4 h-full"
+      >
+        <!-- Left: Quote Box (Slimmer, proper z-index) -->
+        <div
+          class="lg:w-1/4 w-full flex flex-col items-center lg:items-start shrink-0 group-photo-left z-30 lg:translate-x-8 xl:translate-x-12 justify-center group-quote-box"
+        >
+          <div
+            class="bg-white p-6 md:p-8 rounded-xl border border-white/50 shadow-xl relative group w-full max-w-[300px]"
+          >
+            <div
+              class="group-quote-icon w-12 h-12 md:w-16 md:h-16 mb-4 text-[#2A358F] opacity-70"
+              set:html={magnifyIcon}
+            />
+            <div
+              class="group-quote-text text-lg md:text-xl font-serif text-gray-800 leading-relaxed mb-6"
+            >
+              <TextReveal manualControl={true}>
+                “Where chemistry meets artistry. Each reaction a beautiful
+                discovery.”
+              </TextReveal>
+            </div>
+            <div
+              class="group-quote-footer text-[10px] md:text-xs tracking-widest text-gray-400 uppercase font-bold"
+            >
+              <TextReveal manualControl={true}> // APL C12C APL </TextReveal>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Photo & Hexagon (Hexagon z-index < Header z-index) -->
+        <div
+          class="w-2/4 p-8 flex justify-center items-center relative shrink-0 group-photo-center h-full min-h-[400px] z-20"
+        >
+          <!-- SVG Hexagon -->
+          <div
+            class="absolute z-10 w-[110%] h-auto opacity-0 drop-shadow-md text-[#cde7d8] group-hexagon"
+            style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
+            set:html={hexagonDecoration}
+          />
+
+          <!-- Group Photo -->
+          <div
+            class="relative z-30 w-full flex justify-center mt-6 px-12 pb-8 opacity-0 translate-y-10 group-main-image"
+          >
+            <Image
+              src={groupPhoto}
+              alt="C APL Group Photo"
+              class="w-full max-w-[650px] h-auto drop-shadow-2xl object-contain relative z-30"
+            />
+          </div>
+        </div>
+
+        <!-- Right: Decorations (Scattered Layout) -->
+        <div
+          class="lg:w-1/4 w-full relative min-h-[300px] lg:min-h-full shrink-0 group-photo-right z-30 lg:-translate-x-8"
+        >
+          <div
+            class="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <!-- Plants (Clustered randomly) -->
+            <div
+              class="absolute w-20 md:w-24 lg:w-32 right-12 lg:right-16 top-[15%] lg:top-[20%] -translate-y-8 lg:-translate-y-12 rotate-[-15deg] opacity-0 drop-shadow-sm z-0 botanica-item"
+              data-speed="40"
+              set:html={plant1}
+            />
+            <div
+              class="absolute w-24 md:w-32 lg:w-40 right-24 lg:right-32 top-[20%] lg:top-[25%] translate-y-4 rotate-[8deg] opacity-0 drop-shadow-md z-10 botanica-item"
+              data-speed="-60"
+              set:html={plant2}
+            />
+            <!-- Right: Decorations -->
+            <div
+              class="w-full lg:w-1/4 flex flex-col gap-12 relative h-full min-h-[400px]"
+            >
+              <div
+                class="botanica-item absolute top-0 -right-10 w-48 h-48 text-[#6dbb8b]/40 opacity-0 scale-50"
+                data-speed="40"
+                set:html={plant1.replace(
+                  "<svg ",
+                  "<svg class='w-full h-full' ",
+                )}
+              />
+              <div
+                class="botanica-item absolute bottom-0 left-0 w-40 h-40 text-[#2A358F]/30 opacity-0 scale-50"
+                data-speed="60"
+                set:html={molecule1.replace(
+                  "<svg ",
+                  "<svg class='w-full h-full rotate-45' ",
+                )}
+              />
+              <div
+                class="botanica-item absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 text-[#6dbb8b]/20 opacity-0 scale-50"
+                data-speed="20"
+                set:html={plant2.replace(
+                  "<svg ",
+                  "<svg class='w-full h-full -rotate-12' ",
+                )}
+              />
+            </div>
+          </div>
+        </div>
+    </div>
   </section>
 
   <FadeOverlay />
 
-  <section class="students-section py-24 px-6 bg-[#f5f0ea]" aria-label={`Daftar siswa kelas ${classContent.className}`}>
-    <div class="max-w-7xl mx-auto">
-      <div class="students-heading mb-16 text-center">
-        <p class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label">Keluarga</p>
-        <h2 class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title">{classContent.className}</h2>
-        <p class="text-base text-gray-400 mt-4 opacity-0 students-heading-count">{allStudents.length} orang yang membentuk cerita ini</p>
-      </div>
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {allStudents.map((student) => (
-          <div class="student-card-wrapper opacity-0">
-            <StudentCard name={student.data.name} slug={student.slug} photo={student.data.photo} quote={student.data.quote} class={student.data.kelas ?? ''} />
+      <!-- Students Roster Section -->
+      <section
+        class="students-section relative pt-24 pb-44 px-4 sm:px-6 lg:px-8 z-10 bg-[#f5f0ea]"
+      >
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Heading -->
+          <div class="mb-20 text-center">
+            <span
+              class="students-heading-label inline-block text-[#2A358F]/50 text-xs tracking-[0.4em] uppercase mb-4 opacity-0"
+            >
+              The Students
+            </span>
+            <h2
+              class="students-heading-title text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0"
+            >
+              C APL
+            </h2>
+            <div
+              class="students-heading-count mt-6 text-[#2A358F]/40 font-mono text-sm opacity-0"
+            >
+              DATASET: {allStudents.length} ENTRIES FOUND
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
-  <NextClassesCTA prevClass={classContent.prevClass} nextClass={classContent.nextClass} />
+          <!-- Student Grid -->
+          <div
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12"
+          >
+            {
+              allStudents.map((student) => (
+                <div class="student-card-wrapper opacity-0">
+                  <StudentCard
+                    name={student.data.name}
+                    slug={student.slug}
+                    photo={student.data.photo}
+                    quote={student.data.quote}
+                    class={student.data.kelas ?? ""}
+                  />
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
 
-  <style>
-    body, html { overflow-x: hidden; max-width: 100vw; }
-    body { @apply bg-[#f5f0eaff]; }
-    
-  </style>
+      <NextClassesCTA
+        prevClass={classContent.prevClass}
+        nextClass={classContent.nextClass}
+      />
 
-  <script>
-    import { gsap } from "gsap";
-    import { ScrollTrigger } from "gsap/ScrollTrigger";
-    import { waitForLoading } from "../../../utils/loadingState";
+      <style>
+        body,
+        html {
+          overflow-x: hidden;
+          max-width: 100vw;
+        }
+        body {
+          @apply bg-[#f5f0eaff];
+        }
+      </style>
 
-    gsap.registerPlugin(ScrollTrigger);
+      <script>
+        import { gsap } from "gsap";
+        import { ScrollTrigger } from "gsap/ScrollTrigger";
+        import { CSSPlugin } from "gsap/CSSPlugin";
+        import { waitForLoading } from "../../../utils/loadingState";
 
-    document.addEventListener("astro:page-load", async () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-      await waitForLoading();
+        gsap.registerPlugin(ScrollTrigger, CSSPlugin);
 
-      // Heading siswa
-      gsap.set('.students-heading-label, .students-heading-title, .students-heading-count', { y: 30 });
-      gsap.to('.students-heading-label', {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
-      });
-      gsap.to('.students-heading-title', {
-        opacity: 1, y: 0, duration: 1.2, ease: 'power4.out', force3D: true,
-        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
-        delay: 0.15,
-      });
-      gsap.to('.students-heading-count', {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
-        delay: 0.3,
-      });
+        document.addEventListener("astro:page-load", async () => {
+          await waitForLoading();
 
-      // Student cards
-      const studentCards = gsap.utils.toArray<HTMLElement>('.student-card-wrapper');
-      gsap.set(studentCards, { y: 50 });
-      studentCards.forEach((card, i) => {
-        gsap.to(card, {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
-          force3D: true,
-          delay: (i % 4) * 0.08,
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 90%',
-            once: true,
-          },
+          const container = document.getElementById("group-wrapper-c-apl");
+          if (!container) return;
+
+          let ctx = gsap.context(() => {
+            const q = gsap.utils.selector(container);
+
+            // Initial set to ensure hidden state before GSAP takes over
+            gsap.set(q(".group-quote-box"), { opacity: 0, x: -50 });
+            gsap.set(q(".group-quote-icon"), { opacity: 0 });
+            // The .split-line-inner elements are handled by TextReveal set initial state (y: 150%)
+            gsap.set(q(".group-quote-text, .group-quote-footer"), {
+              opacity: 1,
+            });
+            gsap.set(q(".group-header-title"), { opacity: 0, y: 50 });
+            gsap.set(q(".group-main-image"), {
+              opacity: 0,
+              y: 20,
+              scale: 0.95,
+            });
+            gsap.set(q(".group-hexagon, .botanica-item"), { opacity: 0 });
+
+            const masterTl = gsap.timeline({
+              scrollTrigger: {
+                trigger: container,
+                start: "top top",
+                end: "+=150%",
+                pin: true,
+                scrub: 1.5,
+                anticipatePin: 1,
+                pinSpacing: true,
+              },
+            });
+
+            const bgPaths = q(
+              ".group-background-pattern svg path, .group-background-pattern svg rect",
+            );
+            bgPaths.forEach((path) => {
+              const p = path as unknown as SVGPathElement;
+              const length =
+                p instanceof SVGPathElement ? p.getTotalLength() : 1000;
+              gsap.set(p, {
+                strokeDasharray: length,
+                strokeDashoffset: length,
+                opacity: 0,
+                fill: "transparent",
+                stroke: "#6dbb8b",
+                strokeWidth: 1,
+              });
+              masterTl.to(
+                p,
+                {
+                  strokeDashoffset: 0,
+                  opacity: 0.3,
+                  duration: 1,
+                  ease: "none",
+                },
+                0,
+              );
+            });
+            masterTl.to(
+              q(".group-background-pattern svg"),
+              { opacity: 1, duration: 0.5 },
+              0,
+            );
+
+            masterTl.to(
+              q(".group-header-title"),
+              { y: 0, opacity: 1, duration: 1.2, ease: "power4.out" },
+              0.2,
+            );
+
+            masterTl.to(
+              q(".group-quote-box"),
+              { x: 0, opacity: 1, duration: 1, ease: "power3.out" },
+              0.5,
+            );
+
+            // Draw animation for Quote Icon
+            const quoteIconPaths = q(".group-quote-icon svg path");
+            quoteIconPaths.forEach((path) => {
+              const p = path as unknown as SVGPathElement;
+              const length = p.getTotalLength();
+              gsap.set(p, {
+                strokeDasharray: length,
+                strokeDashoffset: length,
+                opacity: 0,
+              });
+              masterTl.to(
+                p,
+                {
+                  strokeDashoffset: 0,
+                  opacity: 1,
+                  duration: 1.5,
+                  ease: "power2.inOut",
+                },
+                0.7,
+              );
+            });
+            masterTl.to(q(".group-quote-icon"), { opacity: 1, duration: 0.2 }, 0.7);
+
+            // Animate the masked lines inside TextReveal (Quote & Footer)
+            const quoteLines = q(
+              ".group-quote-text .split-line-inner, .group-quote-footer .split-line-inner",
+            );
+            if (quoteLines.length > 0) {
+              masterTl.to(
+                quoteLines,
+                {
+                  y: "0%",
+                  autoAlpha: 1,
+                  duration: 1.2,
+                  stagger: 0.1,
+                  ease: "power4.out",
+                },
+                0.8,
+              );
+            }
+
+            const hexPaths = q(".group-hexagon svg path");
+            hexPaths.forEach((path) => {
+              const p = path as unknown as SVGPathElement;
+              const length = p.getTotalLength();
+              gsap.set(p, {
+                strokeDasharray: length,
+                strokeDashoffset: length,
+              });
+              masterTl.to(
+                p,
+                { strokeDashoffset: 0, duration: 1.5, ease: "power2.inOut" },
+                0.6,
+              );
+            });
+            masterTl.to(
+              q(".group-hexagon"),
+              { opacity: 1, duration: 0.5 },
+              0.6,
+            );
+            masterTl.to(
+              q(".group-main-image"),
+              { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: "power2.out" },
+              1.0,
+            );
+
+            const botanicaItems = q(".botanica-item");
+            masterTl.to(
+              botanicaItems,
+              {
+                opacity: 0.9,
+                scale: 1,
+                stagger: 0.1,
+                duration: 1,
+                ease: "back.out(1.7)",
+              },
+              1.2,
+            );
+            botanicaItems.forEach((item) => {
+              const speed = parseFloat(
+                (item as HTMLElement).dataset.speed || "0",
+              );
+              masterTl.to(
+                item,
+                {
+                  y: `-=${speed}`,
+                  ease: "none",
+                  duration: masterTl.duration(),
+                },
+                0,
+              );
+            });
+
+            // Floating loop
+            gsap.to(q(".group-hexagon svg"), {
+              rotation: 360,
+              duration: 30,
+              repeat: -1,
+              ease: "none",
+            });
+            gsap.to(q(".group-quote-icon"), {
+              y: "+=12",
+              x: "+=8",
+              rotation: "+=3",
+              duration: 4,
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+            });
+            botanicaItems.forEach((item, i) => {
+              gsap.to(item, {
+                y: "+=15",
+                x: "+=10",
+                rotation: "+=5",
+                duration: 3 + i,
+                repeat: -1,
+                yoyo: true,
+                ease: "sine.inOut",
+              });
+            });
+
+            // Student Grid
+            const studentsContainer =
+              document.querySelector(".students-section");
+            if (studentsContainer) {
+              const sq = gsap.utils.selector(studentsContainer);
+              gsap.set(
+                sq(
+                  ".students-heading-label, .students-heading-title, .students-heading-count",
+                ),
+                { y: 30 },
+              );
+              gsap.to(sq(".students-heading-label"), {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: studentsContainer,
+                  start: "top 75%",
+                  once: true,
+                },
+              });
+              gsap.to(sq(".students-heading-title"), {
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power4.out",
+                force3D: true,
+                scrollTrigger: {
+                  trigger: studentsContainer,
+                  start: "top 75%",
+                  once: true,
+                },
+                delay: 0.15,
+              });
+              gsap.to(sq(".students-heading-count"), {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: studentsContainer,
+                  start: "top 75%",
+                  once: true,
+                },
+                delay: 0.3,
+              });
+              const studentCards = sq(".student-card-wrapper");
+              gsap.set(studentCards, { y: 50 });
+              studentCards.forEach((card, i) => {
+                gsap.to(card, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.7,
+                  ease: "power3.out",
+                  force3D: true,
+                  delay: (i % 4) * 0.08,
+                  scrollTrigger: {
+                    trigger: card,
+                    start: "top 90%",
+                    once: true,
+                  },
+                });
+              });
+            }
+          }, container);
+
+          document.addEventListener(
+            "astro:before-swap",
+            () => {
+              ctx.revert();
+            },
+            { once: true },
+          );
+
+          setTimeout(() => ScrollTrigger.refresh(), 1000);
         });
-      });
-    });
-  </script>
+      </script>
 </div>

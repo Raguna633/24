@@ -60,9 +60,10 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     textColor="#2A358F"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay />
 
   <section
+    id="tefa-group-a-pplg"
     class="tefa-group relative z-0 flex w-screen h-screen min-h-screen overflow-hidden justify-center items-center"
   >
     <div
@@ -234,10 +235,9 @@ const { kelas } = Astro.params;
     </div>
   </section>
 
-  
-  <FadeOverlay showTop={false} showBottom={false} connectorHeight="80"/>
-  <FadeOverlay showTop={false} translateY="0%%"/>
-  <div class="group-wrapper w-screen h-screen overflow-hidden relative" style="clip-path: inset(0);">
+  <FadeOverlay/>
+
+  <div id="group-wrapper-a-pplg" class="group-wrapper w-screen h-screen overflow-hidden relative" style="clip-path: inset(0);">
     <div
       class="draw-svg-container absolute top-0 left-0 w-full h-[250vh] -z-10 pointer-events-none opacity-40 will-animate"
       set:html={aPplgPattern.replace("<svg ", "<svg preserveAspectRatio=\"xMidYMid slice\" ")}
@@ -769,258 +769,186 @@ const { kelas } = Astro.params;
     import { gsap } from "gsap";
     import { ScrollTrigger } from "gsap/ScrollTrigger";
     import { SplitText } from "gsap/SplitText";
+    import { CSSPlugin } from "gsap/CSSPlugin";
     import { waitForLoading } from "../../../utils/loadingState";
 
-    gsap.registerPlugin(ScrollTrigger, SplitText);
+    gsap.registerPlugin(ScrollTrigger, SplitText, CSSPlugin);
 
     document.addEventListener("astro:page-load", async () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-
       await waitForLoading();
 
-      // Master Timeline for .tefa-group (Sequential & Pinned)
-      const tefaTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".tefa-group",
-          start: "top top",
-          end: "+=200%", // Memberikan ruang scroll ekstra
-          pin: true,     // Pin layar saat animasi berjalan berurutan
-          scrub: 1,      // Animasi maju/mundur sesuai scroll
-        }
-      });
-
-      // 1. Main Group Image Entrance (meluncur dari bawah)
-      tefaTl.from(".tefa-group-img", {
-        opacity: 0,
-        y: 150,
-        duration: 1.5,
-        ease: "power2.out",
-        force3D: true,
-      });
-
-      // 2. Content Fade Up (Logo dan Teks)
-      tefaTl.from(".tefa-group-content", {
-        opacity: 0,
-        y: 50,
-        duration: 1,
-        stagger: 0.15,
-        ease: "power3.out",
-        force3D: true,
-      }, "-=0.5");
-
-      // 2.5 Quote Word-by-Word Reveal
-      const quoteSplit = new SplitText(".quote-reveal", { type: "words" });
-      tefaTl.from(quoteSplit.words, {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.05,
-        ease: "power2.out",
-        force3D: true,
-      }, "-=0.5");
-
-      // 3. Floating Icons Pop In
-      const parallaxWraps = gsap.utils.toArray<HTMLElement>(".parallax-wrap");
-      const iconImages = parallaxWraps.map(wrap => wrap.querySelector("img")).filter(img => img);
+      const tefaContainer = document.getElementById("tefa-group-a-pplg");
+      const laptopContainer = document.getElementById("group-wrapper-a-pplg");
       
-      tefaTl.from(iconImages, {
-        opacity: 0,
-        scale: 0.2,
-        rotation: () => gsap.utils.random(-45, 45),
-        duration: 1.2,
-        stagger: 0.15,
-        ease: "back.out(1.5)",
-        force3D: true,
-      }, "-=0.5");
+      if (!tefaContainer || !laptopContainer) return;
 
-      // 4. Code Snippet Reveal
-      const codeTargets = gsap.utils.toArray<HTMLElement>(".code-ani-target");
-      codeTargets.forEach((target) => {
-        const lines = target.querySelectorAll(".code-line");
-        if (lines.length > 0) {
-          tefaTl.from(lines, {
-            opacity: 0,
-            y: 10,
-            stagger: 0.2,
-            duration: 0.5,
-            ease: "power2.out",
-            force3D: true,
-          }, "-=1.0");
-        }
-      });
+      let ctx = gsap.context(() => {
+        const qTefa = gsap.utils.selector(tefaContainer);
+        const qLaptop = gsap.utils.selector(laptopContainer);
 
-      // 5. Parallax effect integrated into timeline
-      // Ikon floating bergerak berdasarkan atribut speed sepanjang durasi timeline bergulir
-      const totalDur = tefaTl.duration() || 4;
-      parallaxWraps.forEach((wrap) => {
-        const speed = parseFloat(wrap.dataset.speed || "-50");
-        tefaTl.to(wrap, { y: speed, ease: "none", duration: totalDur, force3D: true }, 0);
-      });
-
-      // Initial State - Set everything to hidden
-      gsap.set(".screen-layer", { visibility: "visible" });
-      gsap.set("#welcome-screen, #desktop-screen, #xp-notification", {
-        autoAlpha: 0,
-      });
-      gsap.set(".xp-notification", { scale: 0.8, y: 10 });
-      gsap.set("#grup-anomali img", { y: "100%", autoAlpha: 0 });
-
-      // --- TIMELINES ---
-
-      // Unified Master Timeline for the entire Story Sequence
-      const storyTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".group-wrapper",
-          start: "top top",
-          end: "+=500%", // Scroll distance
-          pin: true,     // Pin layar utuh
-          scrub: 1,      // Ikat semua animasi ke scroll
-        }
-      });
-
-      // 1. Pemasangan Layout Komputer 
-      storyTl
-        .to(".laptop-wrapper", { transform: "translateX(0)", duration: 1.5, ease: "power2.out" })
-        .to("#boot-screen", { autoAlpha: 1, duration: 0.8 })
-        .to(".loading-bar", { x: 120, duration: 1, ease: "linear" })
-        .to("#boot-screen", { autoAlpha: 0, duration: 0.4, display: "none" })
-        .to("#welcome-screen", { autoAlpha: 1, duration: 0.4 }, "<")
-        .to("#welcome-screen", { autoAlpha: 1, duration: 1.0 })
-        .to("#welcome-screen", { autoAlpha: 0, duration: 0.4, display: "none" })
-        .to("#desktop-screen", { autoAlpha: 1, duration: 0.4 });
-
-      // 2. Transisi Gambar (Grup Anomali muncul)
-      storyTl.to("#grup-anomali img", { y: 0, autoAlpha: 1, duration: 1.2, ease: "power2.out" });
-
-      // 3. Teks Kutipan (Muncul Box + Baris per baris)
-      // Animasi masuk untuk container kutipan
-      storyTl.from(".first-quote-wrapper", { y: 30, opacity: 0, duration: 1, ease: "power2.out" });
-
-      // Target baris teks yang sudah diprepare oleh <TextReveal />
-      const firstQuoteLines = document.querySelectorAll(".first-quote-reveal .split-line-inner");
-      if (firstQuoteLines.length > 0) {
-        storyTl.to(firstQuoteLines, {
-          y: "0%", 
-          autoAlpha: 1, 
-          duration: 1.2, 
-          stagger: 0.15, 
-          ease: "power4.out", 
-          force3D: true,
-        }, "-=0.6");
-      }
-
-      // 4. Pop up Notifikasi XP
-      const firstTextDuration = firstQuoteLines.length > 0 ? (1.2 + (Math.max(0, firstQuoteLines.length - 1) * 0.15)) : 1;
-      storyTl.to("#xp-notification", { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=" + (firstTextDuration * 0.5));
-
-      // 5. THE SCROLL TRANSITION
-      // Simulasi scrolling secara terarah menuju .second-group dengan menggeser Y bersamaan
-      storyTl.to([".draw-svg-container", ".first-group", ".second-group"], {
-        y: "-=150vh",
-        duration: 2.5,
-        ease: "power2.inOut",
-      }, "+=0.3");
-
-      // 6. Photo Utama Group 2
-      storyTl.from(".second-group .group-photo-wrapper", { opacity: 0, y: 100, rotation: -5, duration: 1.5, ease: "power2.out", force3D: true });
-
-      // 7. Decorative Icons Pop In berurutan
-      const secondIcons = window.document.querySelectorAll(".second-group .second-icon");
-      if (secondIcons.length > 0) {
-        storyTl.from(secondIcons, {
-          opacity: 0, scale: 0.2, rotation: () => gsap.utils.random(-45, 45), duration: 1.2, stagger: 0.2, ease: "back.out(1.5)", force3D: true,
-        }, "-=0.5");
-      }
-
-      // 8. Teks Kutipan Quotes Kedua
-      storyTl.from(".second-quote", { opacity: 0, y: 80, duration: 1, ease: "power3.out", force3D: true });
-
-      const secondQuoteSplit = new SplitText(".second-quote-reveal", { type: "words" });
-      if (secondQuoteSplit.words.length > 0) {
-        storyTl.from(secondQuoteSplit.words, { opacity: 0, y: 20, duration: 0.8, stagger: 0.05, ease: "power2.out", force3D: true }, "-=0.5");
-      }
-
-      // SVG Draw Animation for Background
-      const svgPaths = document.querySelectorAll(".draw-svg-container svg path");
-      svgPaths.forEach((path) => {
-        const p = path as SVGPathElement;
-        const length = p.getTotalLength();
-        const originalFill = p.style.fill || window.getComputedStyle(p).fill || "#BE9E84";
-
-        // Initial State: hide fill, make stroke visible
-        gsap.set(p, {
-          strokeDasharray: length + 2,
-          strokeDashoffset: length + 2,
-          fill: "none",
-          stroke: originalFill,
-          strokeWidth: 5, // make stroke thicker since viewBox is huge
-        });
-
-        const tl = gsap.timeline({
+        // Timeline for .tefa-group (Pinned)
+        const tefaTl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".group-wrapper",
-            start: "top 70%",
-            end: "bottom 30%",
+            trigger: tefaContainer,
+            start: "top top",
+            end: "+=150%",
+            pin: true,
             scrub: 1,
+            anticipatePin: 1,
           }
         });
 
-        // 1. Draw stroke
-        tl.to(p, {
-          strokeDashoffset: 0,
-          duration: 2,
-          ease: "none",
-        })
-        // 2. Fade in fill
-        .to(p, {
-          fill: originalFill,
-          duration: 1,
-          ease: "power2.out",
+        tefaTl.from(qTefa(".tefa-group-img"), {
+          opacity: 0, y: 150, duration: 1.5, ease: "power2.out"
         });
-      });
 
-      // Safety refresh
-      setTimeout(() => ScrollTrigger.refresh(), 500);
+        tefaTl.from(qTefa(".tefa-group-content"), {
+          opacity: 0, y: 50, duration: 1, stagger: 0.15, ease: "power3.out"
+        }, "-=0.5");
 
-      // ============================================================
-      // SECTION 6: Animasi Grid Siswa
-      // ============================================================
+        const quoteSplit = new SplitText(qTefa(".quote-reveal"), { type: "words" });
+        tefaTl.from(quoteSplit.words, {
+          opacity: 0, y: 20, duration: 0.8, stagger: 0.05, ease: "power2.out"
+        }, "-=0.5");
 
-      // Heading siswa: munculkan label, judul, dan count secara berurutan
-      gsap.set('.students-heading-label, .students-heading-title, .students-heading-count', { y: 30 });
-      gsap.to('.students-heading-label', {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
-      });
-      gsap.to('.students-heading-title', {
-        opacity: 1, y: 0, duration: 1.2, ease: 'power4.out', force3D: true,
-        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
-        delay: 0.15,
-      });
-      gsap.to('.students-heading-count', {
-        opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-        scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
-        delay: 0.3,
-      });
+        const parallaxWraps = gsap.utils.toArray<HTMLElement>(qTefa(".parallax-wrap"));
+        const iconImages = parallaxWraps.map(wrap => wrap.querySelector("img")).filter(img => img);
+        tefaTl.from(iconImages, {
+          opacity: 0, scale: 0.2, rotation: () => gsap.utils.random(-45, 45), duration: 1.2, stagger: 0.15, ease: "back.out(1.5)"
+        }, "-=0.5");
 
-      // Student cards: stagger muncul dari bawah saat di-scroll
-      const studentCards = gsap.utils.toArray<HTMLElement>('.student-card-wrapper');
-      gsap.set(studentCards, { y: 50 });
-      studentCards.forEach((card, i) => {
-        gsap.to(card, {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: 'power3.out',
-          force3D: true,
-          delay: (i % 4) * 0.08, // stagger berdasarkan posisi kolom
+        const codeTargets = gsap.utils.toArray<HTMLElement>(qTefa(".code-ani-target"));
+        codeTargets.forEach((target) => {
+          const lines = target.querySelectorAll(".code-line");
+          if (lines.length > 0) {
+            tefaTl.from(lines, {
+              opacity: 0, y: 10, stagger: 0.2, duration: 0.5, ease: "power2.out"
+            }, "-=1.0");
+          }
+        });
+
+        const totalDur = tefaTl.duration() || 4;
+        parallaxWraps.forEach((wrap) => {
+          const speed = parseFloat(wrap.dataset.speed || "-50");
+          tefaTl.to(wrap, { y: speed, ease: "none", duration: totalDur }, 0);
+        });
+
+        gsap.set(qLaptop(".screen-layer"), { visibility: "visible" });
+        gsap.set(qLaptop("#welcome-screen, #desktop-screen, #xp-notification"), { autoAlpha: 0 });
+        gsap.set(qLaptop(".xp-notification"), { scale: 0.8, y: 10 });
+        gsap.set(qLaptop("#grup-anomali img"), { y: "100%", autoAlpha: 0 });
+
+        const storyTl = gsap.timeline({
           scrollTrigger: {
-            trigger: card,
-            start: 'top 90%',
-            once: true,
-          },
+            trigger: laptopContainer,
+            start: "top top",
+            end: "+=150%",
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+          }
         });
-      });
+
+        storyTl
+          .to(qLaptop(".laptop-wrapper"), { transform: "translateX(0)", duration: 1.5, ease: "power2.out" })
+          .to(qLaptop("#boot-screen"), { autoAlpha: 1, duration: 0.8 })
+          .to(qLaptop(".loading-bar"), { x: 120, duration: 1, ease: "linear" })
+          .to(qLaptop("#boot-screen"), { autoAlpha: 0, duration: 0.4, display: "none" })
+          .to(qLaptop("#welcome-screen"), { autoAlpha: 1, duration: 0.4 }, "<")
+          .to(qLaptop("#welcome-screen"), { autoAlpha: 1, duration: 1.0 })
+          .to(qLaptop("#welcome-screen"), { autoAlpha: 0, duration: 0.4, display: "none" })
+          .to(qLaptop("#desktop-screen"), { autoAlpha: 1, duration: 0.4 });
+
+        storyTl.to(qLaptop("#grup-anomali img"), { y: 0, autoAlpha: 1, duration: 1.2, ease: "power2.out" });
+        storyTl.from(qLaptop(".first-quote-wrapper"), { y: 30, opacity: 0, duration: 1, ease: "power2.out" });
+
+        const firstQuoteLines = qLaptop(".first-quote-reveal .split-line-inner");
+        if (firstQuoteLines.length > 0) {
+          storyTl.to(firstQuoteLines, {
+            y: "0%", autoAlpha: 1, duration: 1.2, stagger: 0.15, ease: "power4.out"
+          }, "-=0.6");
+        }
+
+        const firstTextDuration = firstQuoteLines.length > 0 ? (1.2 + (Math.max(0, firstQuoteLines.length - 1) * 0.15)) : 1;
+        storyTl.to(qLaptop("#xp-notification"), { autoAlpha: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" }, "-=" + (firstTextDuration * 0.5));
+
+        storyTl.to(qLaptop(".draw-svg-container, .first-group, .second-group"), {
+          y: "-=150vh", duration: 2.5, ease: "power2.inOut",
+        }, "+=0.3");
+
+        storyTl.from(qLaptop(".second-group .group-photo-wrapper"), { opacity: 0, y: 100, rotation: -5, duration: 1.5, ease: "power2.out" });
+
+        const secondIcons = qLaptop(".second-group .second-icon");
+        if (secondIcons.length > 0) {
+          storyTl.from(secondIcons, {
+            opacity: 0, scale: 0.2, rotation: () => gsap.utils.random(-45, 45), duration: 1.2, stagger: 0.2, ease: "back.out(1.5)"
+          }, "-=0.5");
+        }
+
+        storyTl.from(qLaptop(".second-quote"), { opacity: 0, y: 80, duration: 1, ease: "power3.out" });
+
+        const secondQuoteSplit = new SplitText(qLaptop(".second-quote-reveal"), { type: "words" });
+        if (secondQuoteSplit.words.length > 0) {
+          storyTl.from(secondQuoteSplit.words, { opacity: 0, y: 20, duration: 0.8, stagger: 0.05, ease: "power2.out" }, "-=0.5");
+        }
+
+        const bgPaths = qLaptop(".draw-svg-container svg path, .draw-svg-container svg rect");
+        bgPaths.forEach((path) => {
+          const p = path as unknown as SVGGeometryElement;
+          const length = (p instanceof SVGPathElement) ? p.getTotalLength() : 1000;
+          const originalFill = p.style.fill || window.getComputedStyle(p).fill || "#BE9E84";
+
+          gsap.set(p, {
+            strokeDasharray: length + 2, strokeDashoffset: length + 2, fill: "none", stroke: originalFill, strokeWidth: 5,
+          });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: laptopContainer, start: "top 70%", end: "bottom 30%", scrub: 1,
+            }
+          });
+
+          tl.to(p, { strokeDashoffset: 0, duration: 2, ease: "none" })
+            .to(p, { fill: originalFill, duration: 1, ease: "power2.out" });
+        });
+
+        // SECTION 6: Animasi Grid Siswa
+        const studentsSection = document.querySelector('.students-section');
+        if (studentsSection) {
+          const sq = gsap.utils.selector(studentsSection);
+          gsap.set(sq('.students-heading-label, .students-heading-title, .students-heading-count'), { y: 30 });
+          gsap.to(sq('.students-heading-label'), {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+            scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+          });
+          gsap.to(sq('.students-heading-title'), {
+            opacity: 1, y: 0, duration: 1.2, ease: 'power4.out', force3D: true,
+            scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+            delay: 0.15,
+          });
+          gsap.to(sq('.students-heading-count'), {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+            scrollTrigger: { trigger: '.students-section', start: 'top 75%', once: true },
+            delay: 0.3,
+          });
+
+          const studentCards = sq('.student-card-wrapper');
+          gsap.set(studentCards, { y: 50 });
+          studentCards.forEach((card, i) => {
+            gsap.to(card, {
+              opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', force3D: true,
+              delay: (i % 4) * 0.08,
+              scrollTrigger: { trigger: card, start: 'top 90%', once: true },
+            });
+          });
+        }
+      }, laptopContainer); // Parent set to the main container
+
+      document.addEventListener("astro:before-swap", () => {
+        ctx.revert();
+      }, { once: true });
+
+      setTimeout(() => ScrollTrigger.refresh(), 500);
     });
   </script>
 </div>
