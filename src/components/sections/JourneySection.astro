@@ -18,7 +18,7 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
     />
   </div>
   <div
-    class="absolute z-10 inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20"
+    class="absolute z-10 inset-0 bg-linear-to-b from-black/50 via-black/30 to-black/20"
   >
   </div>
 
@@ -44,7 +44,7 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 
     <!-- Gradient mesh effect -->
     <div
-      class="absolute inset-0 bg-gradient-to-br from-accent-500/10 via-transparent to-primary-500/10"
+      class="absolute inset-0 bg-linear-to-br from-accent-500/10 via-transparent to-primary-500/10"
     >
     </div>
   </div>
@@ -97,7 +97,7 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
       >
         <!-- Button background effect -->
         <div
-          class="absolute inset-0 bg-gradient-to-r from-accent-400 to-accent-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          class="absolute inset-0 bg-linear-to-r from-accent-400 to-accent-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         >
         </div>
 
@@ -246,12 +246,14 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 
 <script>
   import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { waitForLoading } from "../../utils/loadingState";
 
   document.addEventListener("astro:page-load", async () => {
     await waitForLoading();
-    // Optimized selector: find the journey section regardless of current index state
-    const journeySection = document.querySelector(".section-reveal:has(.gsap-journey-text)");
+    
+    const controller = new AbortController();
+    const journeySection = document.querySelector(".section-reveal:has(.gsap-journey-text)") as HTMLElement;
     if (!journeySection) return;
 
     // Element selections
@@ -266,16 +268,16 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
     gsap.set(ctas, { opacity: 0, scale: 0.9, y: 20 });
     gsap.set(cards, { opacity: 0, y: 50, rotationX: 10 });
 
-    // Create Timeline
+    // 1. Entrance Timeline
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: journeySection,
         start: "top 80%",
         toggleActions: "play none none reverse",
+        id: "journey-entrance"
       },
     });
 
-    // 1. Stagger texts
     if (texts.length) {
       tl.to(texts, {
         opacity: 1,
@@ -287,81 +289,59 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
       });
     }
 
-    // 2. Continuous pulse for the dot (with IDLE optimization)
+    // 2. Continuous pulse for the dot
+    let pulseAnim: gsap.core.Tween | null = null;
     if (pulseDot) {
-      const pulseAnim = gsap.to(pulseDot, {
+      pulseAnim = gsap.to(pulseDot, {
         scale: 1.4,
         opacity: 0.6,
         duration: 1.5,
         repeat: -1,
         yoyo: true,
         ease: "power1.inOut",
-        paused: true // Start paused
-      });
-
-      // Pause/Resume based on viewport
-      gsap.to(journeySection, {
-        scrollTrigger: {
-          trigger: journeySection,
-          start: "top bottom",
-          end: "bottom top",
-          onEnter: () => pulseAnim.play(),
-          onLeave: () => pulseAnim.pause(),
-          onEnterBack: () => pulseAnim.play(),
-          onLeaveBack: () => pulseAnim.pause()
-        }
+        paused: true,
+        force3D: true
       });
     }
 
     // 3. Pop in buttons
     if (ctas.length) {
-      tl.to(
-        ctas,
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.1,
-          duration: 0.6,
-          ease: "back.out(1.5)",
-          force3D: true
-        },
-        "-=0.4",
-      );
+      tl.to(ctas, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        stagger: 0.1,
+        duration: 0.6,
+        ease: "back.out(1.5)",
+        force3D: true
+      }, "-=0.4");
     }
 
     // 4. Stagger 3D-ish cards
     if (cards.length) {
-      tl.to(
-        cards,
-        {
-          opacity: 1,
-          y: 0,
-          rotationX: 0,
-          transformPerspective: 800,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power2.out",
-          force3D: true
-        },
-        "-=0.3",
-      );
+      tl.to(cards, {
+        opacity: 1,
+        y: 0,
+        rotationX: 0,
+        transformPerspective: 800,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: "power2.out",
+        force3D: true
+      }, "-=0.3");
     }
 
-    // 5. Ambient floating blobs (with IDLE optimization)
+    // 5. Ambient floating blobs
+    let floatAnim: gsap.core.Tween | null = null;
     if (bgs.length) {
-      tl.to(
-        bgs,
-        {
-          opacity: 1,
-          duration: 1.5,
-          ease: "power2.inOut",
-          force3D: true
-        },
-        0,
-      );
+      tl.to(bgs, {
+        opacity: 1,
+        duration: 1.5,
+        ease: "power2.inOut",
+        force3D: true
+      }, 0);
 
-      const floatAnim = gsap.to(bgs, {
+      floatAnim = gsap.to(bgs, {
         y: "random(-30, 30)",
         x: "random(-30, 30)",
         rotation: "random(-15, 15)",
@@ -370,25 +350,44 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
         ease: "sine.inOut",
         yoyo: true,
         repeat: -1,
-        stagger: {
-          amount: 2,
-          from: "random",
-        },
-        paused: true
-      });
-
-      // Tie floating animation to viewport
-      gsap.to(journeySection, {
-        scrollTrigger: {
-          trigger: journeySection,
-          start: "top bottom",
-          end: "bottom top",
-          onEnter: () => floatAnim.play(),
-          onLeave: () => floatAnim.pause(),
-          onEnterBack: () => floatAnim.play(),
-          onLeaveBack: () => floatAnim.pause()
-        }
+        stagger: { amount: 2, from: "random" },
+        paused: true,
+        force3D: true
       });
     }
+
+    // ✅ CONSOLIDATED AMBIENT OPTIMIZATION
+    // Use a single ScrollTrigger to control multiple looped animations
+    ScrollTrigger.create({
+      trigger: journeySection,
+      start: "top bottom",
+      end: "bottom top",
+      id: "journey-ambient-controller",
+      onEnter: () => {
+        pulseAnim?.play();
+        floatAnim?.play();
+      },
+      onLeave: () => {
+        pulseAnim?.pause();
+        floatAnim?.pause();
+      },
+      onEnterBack: () => {
+        pulseAnim?.play();
+        floatAnim?.play();
+      },
+      onLeaveBack: () => {
+        pulseAnim?.pause();
+        floatAnim?.pause();
+      }
+    });
+
+    // Lifecycle cleanup
+    document.addEventListener("astro:before-swap", () => {
+      controller.abort();
+      pulseAnim?.kill();
+      floatAnim?.kill();
+      ScrollTrigger.getById("journey-entrance")?.kill();
+      ScrollTrigger.getById("journey-ambient-controller")?.kill();
+    }, { once: true });
   });
 </script>

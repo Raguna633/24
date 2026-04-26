@@ -29,6 +29,7 @@
 
 <script>
   import gsap from "gsap";
+  import { CSSPlugin } from "gsap/CSSPlugin";
   import { waitForLoading } from "../utils/loadingState";
 
   const EXIT_PRESETS: Record<string, gsap.TweenVars> = {
@@ -78,6 +79,8 @@
   };
 
   async function initParallaxStack() {
+    gsap.registerPlugin(CSSPlugin);
+
     const stacks = document.querySelectorAll("[data-parallax-stack]");
     const isMobile = window.innerWidth < 768;
 
@@ -92,7 +95,7 @@
     // Phase 2: Wait for Loading to start GSAP setup
     await waitForLoading();
 
-    stacks.forEach((stack) => {
+    stacks.forEach(async (stack) => {
       const stackEl = stack as HTMLElement;
       const sections = Array.from(stackEl.children) as HTMLElement[];
       if (sections.length < 2) return;
@@ -113,25 +116,81 @@
         },
       });
 
-      sections.forEach((section, index) => {
-        if (index === sections.length - 1) return;
+      // Phase 3: Content Animation Sync (Unified Timeline)
+      // We use a for...of loop to ensure sequential timeline construction
+      for (const [index, section] of sections.entries()) {
+        if (index === sections.length - 1) continue;
 
-        const exitDirection = section.dataset.exit ?? "fade";
+        const exitDirection = (section as HTMLElement).dataset.exit ?? "fade";
         const exitVars = EXIT_PRESETS[exitDirection] ?? EXIT_PRESETS.fade;
 
+        // --- SPECIFIC SECTION LOGIC ---
+        
+        // 1. HERO SECTION (Index 0) & ABOUT SECTION (Index 1) SYNC
+        if (index === 0) {
+          // Robust retrieval: wait for promises to be defined if they are late
+          let hPromise = (window as any).heroSectionPromise;
+          let aPromise = (window as any).aboutSectionPromise;
+          
+          for (let i = 0; i < 20 && (!hPromise || !aPromise); i++) {
+            await new Promise(r => setTimeout(r, 10));
+            hPromise = hPromise || (window as any).heroSectionPromise;
+            aPromise = aPromise || (window as any).aboutSectionPromise;
+          }
+
+          const heroData = await hPromise;
+          const aboutData = await aPromise;
+          
+          if (heroData?.txtAngkatan && heroData?.svg) {
+            tl.to(heroData.txtAngkatan, { 
+              opacity: 0, 
+              filter: "blur(10px)", 
+              y: -30, 
+              duration: 0.5 
+            }, 0);
+            
+            tl.to(heroData.svg, { 
+              scale: 0.85, 
+              opacity: 0, 
+              rotation: -3, 
+              duration: 0.8 
+            }, 0);
+          }
+
+          if (aboutData?.allElements && aboutData?.allElements.length > 0) {
+             tl.to(aboutData.allElements, {
+                y: 0,
+                opacity: 1,
+                rotationX: 0,
+                filter: "blur(0px)",
+                stagger: 0.08,
+                duration: 0.8,
+                ease: "power2.out"
+             }, ">-0.4");
+             
+             if (aboutData.sectionBg) {
+                tl.to(aboutData.sectionBg, {
+                  scale: 1.15,
+                  duration: 1.2
+                }, "<");
+             }
+          }
+        }
+
+        // General Exit for non-special or fallback
         tl.to(
           section,
           {
             ...exitVars,
             duration: 1,
-            force3D: true, // Enforce GPU acceleration
+            force3D: true,
           },
-          ">",
+          index === 0 ? "<+0.2" : ">",
         );
-      });
+      }
 
-      // Buffer space
-      tl.set({}, {}, "+=0.5");
+      // Buffer space at the end to prevent immediate unpin jump
+      tl.set({}, {}, "+=0.4");
     });
   }
 

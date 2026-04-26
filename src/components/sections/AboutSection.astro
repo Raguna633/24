@@ -242,7 +242,7 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
     const sectionBg = section.querySelector("img") as HTMLElement;
 
-    // 2. Create a unified Scrub timeline
+    // 2. Initial state configuration
     if (allElements.length > 0) {
       // Ensure elements are at their "from" state immediately to avoid jumps
       gsap.set(allElements, {
@@ -251,54 +251,13 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
         rotationX: 10,
         filter: "blur(8px)",
       });
-
-      gsap.to(sectionBg, {
-        scale: 1.1,
-        ease: "power2.out",
-        force3D: true,
-        scrollTrigger: {
-          trigger: isPinned
-            ? parentStack?.closest(".pin-spacer") || parentStack
-            : section,
-          // Offset start based on ParallaxStack duration (1.5 * vh)
-          start: isPinned
-            ? `top+=${window.innerHeight * 1.5} center`
-            : "top 80%",
-          end: isPinned
-            ? `bottom+=${window.innerHeight * 2.5} center`
-            : "bottom 80%",
-          scrub: 1,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      gsap.to(allElements, {
-        y: 0,
-        opacity: 1,
-        rotationX: 0,
-        filter: "blur(0px)",
-        stagger: 0.1,
-        ease: "power2.out",
-        force3D: true,
-        scrollTrigger: {
-          trigger: isPinned
-            ? parentStack?.closest(".pin-spacer") || parentStack
-            : section,
-          // Offset start based on ParallaxStack duration (1.5 * vh)
-          start: isPinned ? `top+=${window.innerHeight * 1.5} top` : "top 80%",
-          end: isPinned ? `top+=${window.innerHeight * 2.5} top` : "bottom 60%",
-          scrub: 1,
-          invalidateOnRefresh: true,
-        },
-      });
     }
+
+    return { allElements, sectionBg };
   }
 
   // Use page-load with proper lifecycle
   document.addEventListener("astro:page-load", () => {
-    // Small rAF delay ensures DOM is fully painted for measurements
-    requestAnimationFrame(() => {
-      initAboutAnimations();
-    });
+    (window as any).aboutSectionPromise = initAboutAnimations();
   });
 </script>

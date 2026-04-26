@@ -409,25 +409,7 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
         Annual Website
       </span> -->
     </h1>
-
-    <!-- Quote Angkatan -->
-    <!-- <blockquote
-      class="text-lg sm:text-xl md:text-2xl lg:text-3xl
-             text-primary-100 max-w-4xl mx-auto mb-8 sm:mb-12
-             italic font-light leading-relaxed
-             animate-slide-up"
-      style="animation-delay: 0.2s;"
-    >
-      "Tiga tahun perjalanan yang penuh cerita, tawa, dan persahabatan yang tak
-      terlupakan.
-      <span class="block mt-2 text-accent-200 font-medium not-italic">
-        Mari abadikan kenangan kita bersama."
-      </span>
-    </blockquote> -->
-
-    <!-- Decorative Elements -->
-
-    <!-- Scroll Indicator -->
+    
   </div>
 
   <!-- Floating decorative elements -->
@@ -704,28 +686,13 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
       { signal },
     );
 
-    // Exit Animations linked to Scroll
-    const parentStack = document.querySelector("[data-parallax-stack]");
-    if (parentStack && !reduceMotion) {
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: parentStack,
-            start: "top top",
-            end: `+=${window.innerHeight * 1.5}`,
-            scrub: 1,
-          },
-        })
-        .to(
-          txtAngkatan,
-          { opacity: 0, filter: "blur(10px)", y: -20, duration: 0.5 },
-          0,
-        )
-        .to(svg, { scale: 0.9, rotation: -2, duration: 1 }, 0);
-    }
+    // 3. Return data for external timeline integration
+    return { svg, txtAngkatan };
   }
 
-  document.addEventListener("astro:page-load", initHeroSection);
+  document.addEventListener("astro:page-load", () => {
+    (window as any).heroSectionPromise = initHeroSection();
+  });
   document.addEventListener("astro:before-swap", () => {
     if (heroCleanupController) heroCleanupController.abort();
   });

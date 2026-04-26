@@ -46,8 +46,8 @@ const fadeDirection = isTeacherLayout
           );`;
 
 const overlayDirection = isTeacherLayout
-  ? "bg-gradient-to-r from-black/50 via-black/30 to-black/20"
-  : "bg-gradient-to-l from-black/50 via-black/30 to-black/20";
+  ? "bg-linear-to-r from-black/50 via-black/30 to-black/20"
+  : "bg-linear-to-l from-black/50 via-black/30 to-black/20";
 ---
 
 <section
@@ -167,32 +167,34 @@ const overlayDirection = isTeacherLayout
                       overflow-y-auto lg:pr-4
                       scrollbar-custom"
           >
-            <!-- Quote Icon -->
-            <svg
-              class="w-10 h-10 md:w-12 md:h-12 text-accent-200/40 mb-4
-                     float-left mr-4 mt-2"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"
-              ></path>
-            </svg>
-
-            <!-- Full Text directly -->
-            {
-              greeting
-                .split(/\r?\n/)
-                .map((line) =>
-                  line.trim() ? (
-                    <BlockReveal
-                      blockColor="#fff"
-                      text={line}
-                      className="text-[clamp(0.8rem,2.5vw,1.5rem)] leading-relaxed text-white/90 italic text-justify mb-5 last:mb-0"
-                    />
-                  ) : null,
-                )
-            }
+            <div class="greeting-scroll-wrapper will-animate">
+              <!-- Quote Icon -->
+              <svg
+                class="w-10 h-10 md:w-12 md:h-12 text-accent-200/40 mb-4
+                       float-left mr-4 mt-2"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"
+                ></path>
+              </svg>
+  
+              <!-- Full Text directly -->
+              <div class="greeting-body-text space-y-5">
+                {
+                  greeting
+                    .split(/\r?\n/)
+                    .map((line) =>
+                      line.trim() ? (
+                        <p class="text-[clamp(0.8rem,2.5vw,1.5rem)] leading-relaxed text-white/90 italic text-justify">
+                          {line}
+                        </p>
+                      ) : null,
+                    )
+                }
+              </div>
+            </div>
 
             <!-- Scroll Hint -->
             <div class="scroll-hint">
@@ -254,167 +256,126 @@ const overlayDirection = isTeacherLayout
 
     if (prefersReducedMotion()) return;
 
-    // 2. Standalone Vertical Text Scroller (For Greetings not in a HorizontalCarousel)
-    const standaloneSections = document.querySelectorAll("[data-greeting]");
-
-    standaloneSections.forEach((sec) => {
-      // Skip if handled by Horizontal Carousel
+    const sections = document.querySelectorAll("[data-greeting]");
+    
+    sections.forEach((sec) => {
+      // 🔥 CRITICAL: Skip internal GSAP if managed by HorizontalCarousel
       if (sec.closest(".horizontal-scroll-container")) return;
 
       const txt = sec.querySelector(".greeting-text-content") as HTMLElement;
-      if (!txt) return;
+      const hint = sec.querySelector(".scroll-hint") as HTMLElement;
+      const id = sec.id || `sec-${Math.random().toString(36).substr(2, 9)}`;
+      
+      // 1. Unified Text Scroller & Hint Timeline
+      if (txt) {
+        const getOverflow = () => Math.max(0, txt.scrollHeight - txt.clientHeight);
 
-      const getOverflow = () =>
-        Math.max(0, txt.scrollHeight - txt.clientHeight);
+        if (getOverflow() > 10) {
+          txt.style.overflowY = "hidden";
+          txt.scrollTop = 0;
 
-      if (getOverflow() > 10) {
-        txt.style.overflowY = "hidden";
-        txt.scrollTop = 0;
+          if (hint) {
+            hint.style.display = "flex";
+            hint.style.opacity = "1";
+          }
 
-        const hint = sec.querySelector(".scroll-hint") as HTMLElement;
-        if (hint) {
-          hint.style.display = "flex";
-          hint.style.opacity = "1";
-        }
-
-        gsap.to(txt, {
-          scrollTop: () => getOverflow(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: sec,
-            start: "top top",
-            end: () => `+=${getOverflow() * 3}`,
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1,
-            fastScrollEnd: true,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        if (hint) {
-          gsap.to(hint, {
-            opacity: 0,
-            ease: "power1.inOut",
+          const scrollerTl = gsap.timeline({
             scrollTrigger: {
               trigger: sec,
               start: "top top",
-              end: () => `+=${getOverflow() * 1.5}`,
+              end: () => `+=${getOverflow() * 3}`,
+              pin: true,
               scrub: 1,
+              anticipatePin: 1,
               fastScrollEnd: true,
               invalidateOnRefresh: true,
+              id: `scroll-${id}`
             },
           });
+
+          scrollerTl.to(sec.querySelector(".greeting-scroll-wrapper"), {
+            y: () => -getOverflow(),
+            ease: "none",
+            force3D: true,
+          });
+
+          if (hint) {
+            scrollerTl.to(hint, {
+              opacity: 0,
+              ease: "power1.inOut",
+            }, 0); // Start fade at same time as scroll
+          }
         }
       }
-    });
 
-    // 3. ✨ AWWWARDS STYLE GSAP ENTRANCE ANIMATIONS ✨
-    const sections = document.querySelectorAll("[data-greeting]");
-
-    sections.forEach((sec) => {
-      const imageFloat = sec.querySelector(
-        ".greeting-image-float",
-      ) as HTMLElement;
+      // 2. ✨ AWWWARDS STYLE GSAP ENTRANCE ANIMATIONS ✨
+      const imageFloat = sec.querySelector(".greeting-image-float") as HTMLElement;
       const decos = sec.querySelectorAll(".gsap-greeting-deco");
-      const textHeader = sec.querySelector(
-        ".gsap-greeting-text",
-      ) as HTMLElement;
-      const textContent = sec.querySelector(
-        ".gsap-greeting-content",
-      ) as HTMLElement;
+      const textContent = sec.querySelector(".gsap-greeting-content") as HTMLElement;
       const floatingBgs = sec.querySelectorAll(".gsap-floating-bg");
 
-      // Set initial state for complex animation (unblur + rotateY)
-      gsap.set(imageFloat, {
-        filter: "blur(16px)",
-        scale: 0.8,
-        opacity: 0,
-        rotationY: 15,
-      });
+      gsap.set(imageFloat, { scale: 0.8, opacity: 0, rotationY: 15 });
 
-      const tl = gsap.timeline({
+      const entranceTl = gsap.timeline({
         scrollTrigger: {
           trigger: sec,
           start: "top 80%",
           toggleActions: "play none none reverse",
+          once: true,
+          id: `entrance-${id}`
         },
       });
 
-      // 1. Animate Hero Image (pop and unblur)
       if (imageFloat) {
-        tl.to(
-          imageFloat,
-          {
-            filter: "blur(0px)",
-            scale: 1,
-            opacity: 1,
-            rotationY: 0,
-            duration: 1.2,
-            ease: "power4.out",
-            force3D: true,
-          },
-          0.2,
-        );
+        entranceTl.to(imageFloat, {
+          scale: 1, opacity: 1, rotationY: 0,
+          duration: 1.2, ease: "power4.out", force3D: true,
+        }, 0.2);
       }
 
-      // 2. Animate small decorations around image
       if (decos.length) {
-        tl.from(
-          decos,
-          {
-            opacity: 0,
-            scale: 0,
-            stagger: 0.15,
-            duration: 0.8,
-            ease: "back.out(1.7)",
-          },
-          "-=0.8",
-        );
+        entranceTl.from(decos, {
+          opacity: 0, scale: 0, stagger: 0.1,
+          duration: 0.6, ease: "back.out(1.7)",
+        }, "-=0.8");
       }
 
-      // 3. Fade up the main reading content (Using utility for efficiency)
       if (textContent) {
-        tl.from(
-          textContent,
-          {
-            opacity: 0,
-            y: 30,
-            duration: 0.8,
-            ease: "power2.out",
-            force3D: true,
-          },
-          "-=0.6",
-        );
+        entranceTl.from(textContent, {
+          opacity: 0, y: 30, duration: 0.8,
+          ease: "power2.out", force3D: true,
+        }, "-=0.6");
       }
 
-      // 5. Ambient floating background pulses loop
-      // 🔥 OPTIMIZATION: Di-pause jika sedang tidak ada di viewport (menghemat baterai & frame budget Android)
+      // 3. Ambient floating background pulses loop
+      let pulseAnim: gsap.core.Tween | null = null;
       if (floatingBgs.length) {
-        const pulseAnim = gsap.to(floatingBgs, {
-          y: "random(-15, 15)",
-          x: "random(-15, 15)",
-          duration: 4,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-          force3D: true,
-          stagger: {
-            amount: 2,
-            from: "random",
-          },
+        pulseAnim = gsap.to(floatingBgs, {
+          y: "random(-15, 15)", x: "random(-15, 15)",
+          duration: 4, ease: "sine.inOut", yoyo: true, repeat: -1,
+          force3D: true, stagger: { amount: 2, from: "random" },
+          paused: true
         });
 
         ScrollTrigger.create({
           trigger: sec,
           start: "top bottom",
           end: "bottom top",
-          onEnter: () => pulseAnim.play(),
-          onLeave: () => pulseAnim.pause(),
-          onEnterBack: () => pulseAnim.play(),
-          onLeaveBack: () => pulseAnim.pause(),
+          id: `ambient-${id}`,
+          onEnter: () => pulseAnim?.play(),
+          onLeave: () => pulseAnim?.pause(),
+          onEnterBack: () => pulseAnim?.play(),
+          onLeaveBack: () => pulseAnim?.pause(),
         });
       }
+
+      // Lifecycle cleanup for this section
+      document.addEventListener("astro:before-swap", () => {
+        pulseAnim?.kill();
+        ScrollTrigger.getById(`scroll-${id}`)?.kill();
+        ScrollTrigger.getById(`entrance-${id}`)?.kill();
+        ScrollTrigger.getById(`ambient-${id}`)?.kill();
+      }, { once: true });
     });
   });
 </script>
