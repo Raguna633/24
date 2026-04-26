@@ -18,13 +18,13 @@ const CONTENT_TO_URL_SLUG: Record<string, string> = {
   "b-apl": "xii-b-apl",
   "c-apl": "xii-c-apl",
   "d-mplb": "xii-d-mplb",
-  ipa1: "xii-ipa-1",
-  ipa2: "xii-ipa-2",
-  ipa3: "xii-ipa-3",
-  ipa4: "xii-ipa-4",
-  ips1: "xii-ips-1",
-  ips2: "xii-ips-2",
-  ips3: "xii-ips-3",
+  "ipa1": "xii-ipa-1",
+  "ipa2": "xii-ipa-2",
+  "ipa3": "xii-ipa-3",
+  "ipa4": "xii-ipa-4",
+  "ips1": "xii-ips-1",
+  "ips2": "xii-ips-2",
+  "ips3": "xii-ips-3",
 };
 
 // Urutan tampilan yang diinginkan
@@ -44,7 +44,7 @@ const DISPLAY_ORDER = [
 
 // Bangun array kelas dalam urutan yang benar
 const classesEntry = DISPLAY_ORDER.map((contentSlug) =>
-  allClasses.find((c) => c.slug === contentSlug),
+  allClasses.find((c) => c.id === contentSlug),
 ).filter(Boolean) as typeof allClasses;
 
 interface Classes {
@@ -69,7 +69,7 @@ const classes: Classes[] = classesEntry.map((entry) => {
     width: 1920,
     height: 1080,
     alt: `Foto bersama dengan wali kelas XII ${entry.data.className}`,
-    url: `/classes/${CONTENT_TO_URL_SLUG[entry.slug] ?? entry.slug}`,
+    url: `/classes/${CONTENT_TO_URL_SLUG[entry.id] ?? entry.id}`,
   };
 });
 ---

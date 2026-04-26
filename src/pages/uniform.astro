@@ -13,8 +13,8 @@ const allUniforms = (await getCollection("uniforms")).sort((a, b) =>
 
 // Map data for ImageCard
 const uniformsData = allUniforms.map((u) => ({
-  id: u.slug,
-  img: u.data.uniformPhotos[0],
+  id: u.id,
+  img: u.data.uniformPhotos?.[0],
   alt: `Foto ${u.data.uniformName}`,
   title: u.data.uniformName,
 }));

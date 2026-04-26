@@ -56,19 +56,29 @@ export function generateStudentPassword(name: string, id: string): string {
 export function mapStudentCollection(
   students: CollectionEntry<'students'>[]
 ): Student[] {
-  return students.map(s => ({
-    slug: s.id,
-    name: s.data.name,
-    class: s.data.kelas || s.data.class || 'Unknown',
-    gender: s.data.gender as Gender,
-    jenjang: s.data.jenjang as Jenjang,
-    quote: s.data.quote,
-    alamat: s.data.alamat,
-    address: s.data.alamat,
-    instagram: s.data.instagram,
-    photo: s.data.photo,
-    downloadPassword: generateStudentPassword(s.data.name, s.id),
-  }));
+  return students.map(s => {
+    // Map gender 'L' -> 'Putra', 'P' -> 'Putri'
+    let mappedGender: Gender = 'Putra';
+    if (s.data.gender === 'P' || s.data.gender === 'Putri') {
+      mappedGender = 'Putri';
+    }
+
+    // Map jenjang to uppercase
+    let mappedJenjang: Jenjang = (s.data.jenjang?.toUpperCase() === 'SMA' ? 'SMA' : 'SMK') as Jenjang;
+
+    return {
+      slug: s.id,
+      name: s.data.name,
+      class: s.data.kelas || s.data.class || 'Unknown',
+      gender: mappedGender,
+      jenjang: mappedJenjang,
+      quote: s.data.quote,
+      alamat: s.data.alamat,
+      instagram: s.data.instagram,
+      photo: s.data.photo,
+      downloadPassword: generateStudentPassword(s.data.name, s.id),
+    };
+  });
 }
 
 export function classToSlug(className?: string): string {
