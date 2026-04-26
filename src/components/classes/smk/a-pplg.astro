@@ -228,7 +228,7 @@ const { kelas } = Astro.params;
           src={tefaGroup as ImageMetadata}
           alt={"Tim Tefa Pertama :v"}
           sizes="(max-width: 768px) 100vw, 80vw"
-          loading="lazy"
+          loading="eager"
           decoding="async"
           quality={80}
           format="webp"
@@ -250,8 +250,7 @@ const { kelas } = Astro.params;
 
   <div
     id="group-wrapper-a-pplg"
-    class="group-wrapper w-screen h-dvh overflow-hidden relative"
-    style="clip-path: inset(0);"
+    class="group-wrapper w-screen h-dvh overflow-hidden relative will-animate"
   >
     <div
       class="draw-svg-container absolute top-0 left-0 w-full h-[250vh] -z-10 pointer-events-none opacity-40 will-animate"
@@ -263,7 +262,7 @@ const { kelas } = Astro.params;
     <section
       class="first-group absolute inset-0 flex flex-row gap-6 items-center justify-center w-screen h-dvh p-8 mt-8 will-animate"
     >
-      <div class="laptop-wrapper relative w-3/5">
+      <div class="laptop-wrapper relative w-3/5 will-animate">
         <img src={laptop.src} alt="Laptop" class="laptop-svg" />
 
         <div class="screen-area">
@@ -299,6 +298,8 @@ const { kelas } = Astro.params;
                 width={480}
                 height={480}
                 alt="Bliss"
+                loading="eager"
+                decoding="async"
                 class="w-full h-full object-contain"
               />
             </div>
@@ -315,10 +316,10 @@ const { kelas } = Astro.params;
         </div>
       </div>
       <div
-        class="first-quote-wrapper quote-wrapper w-full lg:w-2/5 flex flex-col items-center gap-2 text-sm md:text-base lg:text-lg font-bold text-black tracking-wider md:tracking-widest pr-0 lg:pr-8"
+        class="first-quote-wrapper quote-wrapper w-full lg:w-2/5 flex flex-col items-center gap-2 text-sm md:text-base lg:text-lg font-bold text-black tracking-wider md:tracking-widest pr-0 lg:pr-8 will-animate"
       >
         <h2
-          class="first-quote-reveal text-xl md:text-2xl lg:text-3xl text-shadow-lg font-medium leading-[1.6] tracking-wide text-black text-right pr-0 lg:pr-12 md:pr-8"
+          class="first-quote-reveal text-xl md:text-2xl lg:text-3xl text-shadow-lg font-medium leading-[1.6] tracking-wide text-black text-right pr-0 lg:pr-12 md:pr-8 will-animate"
         >
           <TextReveal manualControl={true}>
             “We came with our own stories, brought together in one space, and
@@ -342,6 +343,8 @@ const { kelas } = Astro.params;
           <Image
             src={pplgGroup2}
             alt="Group 2"
+            loading={"eager"}
+            decoding={"async"}
             class="w-full h-auto object-cover select-none border border-gray-100"
           />
 
@@ -816,12 +819,13 @@ const { kelas } = Astro.params;
             scrub: 1,
             anticipatePin: 1,
           },
+          defaults: { force3D: true }
         });
 
         tefaTl.from(qTefa(".tefa-group-img"), {
           opacity: 0,
           y: 150,
-          duration: 1.5,
+          duration: 6,
           ease: "power2.out",
         });
 
@@ -830,8 +834,8 @@ const { kelas } = Astro.params;
           {
             opacity: 0,
             y: 50,
-            duration: 1,
-            stagger: 0.15,
+            duration: 4,
+            stagger: 0.5,
             ease: "power3.out",
           },
           "-=0.5",
@@ -845,7 +849,7 @@ const { kelas } = Astro.params;
           {
             opacity: 0,
             y: 20,
-            duration: 0.8,
+            duration: 2,
             stagger: 0.05,
             ease: "power2.out",
           },
@@ -909,46 +913,49 @@ const { kelas } = Astro.params;
           scrollTrigger: {
             trigger: laptopContainer,
             start: "top top",
-            end: "+=150%",
+            end: "+=200%", // Recalibrated distance to eliminate dead space
             pin: true,
-            scrub: 1,
+            scrub: 1.5,
             anticipatePin: 1,
           },
         });
 
         storyTl
           .to(qLaptop(".laptop-wrapper"), {
-            transform: "translateX(0)",
-            duration: 1.5,
+            x: 0, // Using GPU transform x instead of transform/translateX
+            duration: 3,
             ease: "power2.out",
+            force3D: true,
           })
           .to(qLaptop("#boot-screen"), { autoAlpha: 1, duration: 0.8 })
           .to(qLaptop(".loading-bar"), { x: 120, duration: 1, ease: "linear" })
           .to(qLaptop("#boot-screen"), {
             autoAlpha: 0,
-            duration: 0.4,
+            duration: 1,
             display: "none",
           })
-          .to(qLaptop("#welcome-screen"), { autoAlpha: 1, duration: 0.4 }, "<")
+          .to(qLaptop("#welcome-screen"), { autoAlpha: 1, duration: 1 }, "<")
           .to(qLaptop("#welcome-screen"), { autoAlpha: 1, duration: 1.0 })
           .to(qLaptop("#welcome-screen"), {
             autoAlpha: 0,
-            duration: 0.4,
+            duration: 1,
             display: "none",
           })
-          .to(qLaptop("#desktop-screen"), { autoAlpha: 1, duration: 0.4 });
+          .to(qLaptop("#desktop-screen"), { autoAlpha: 1, duration: 1, force3D: true });
 
         storyTl.to(qLaptop("#grup-anomali img"), {
           y: 0,
           autoAlpha: 1,
-          duration: 1.2,
+          duration: 2,
           ease: "power2.out",
+          force3D: true,
         });
         storyTl.from(qLaptop(".first-quote-wrapper"), {
           y: 30,
           opacity: 0,
-          duration: 1,
+          duration: 2,
           ease: "power2.out",
+          force3D: true,
         });
 
         const firstQuoteLines = qLaptop(
@@ -988,18 +995,20 @@ const { kelas } = Astro.params;
           qLaptop(".draw-svg-container, .first-group, .second-group"),
           {
             y: "-=150vh",
-            duration: 2.5,
+            duration: 6, // Even slower cinematic transition
             ease: "power2.inOut",
+            force3D: true,
           },
-          "+=0.3",
+          "+=0.4", // Reduced gap before transition for tighter flow
         );
 
         storyTl.from(qLaptop(".second-group .group-photo-wrapper"), {
           opacity: 0,
           y: 100,
           rotation: -5,
-          duration: 1.5,
+          duration: 2,
           ease: "power2.out",
+          force3D: true,
         });
 
         const secondIcons = qLaptop(".second-group .second-icon");
@@ -1013,6 +1022,7 @@ const { kelas } = Astro.params;
               duration: 1.2,
               stagger: 0.2,
               ease: "back.out(1.5)",
+              force3D: true,
             },
             "-=0.5",
           );
@@ -1023,6 +1033,7 @@ const { kelas } = Astro.params;
           y: 80,
           duration: 1,
           ease: "power3.out",
+          force3D: true,
         });
 
         const secondQuoteSplit = new SplitText(
@@ -1046,12 +1057,14 @@ const { kelas } = Astro.params;
         const bgPaths = qLaptop(
           ".draw-svg-container svg path, .draw-svg-container svg rect",
         );
+
+        // 1. Setup initial state for all paths
         bgPaths.forEach((path) => {
           const p = path as unknown as SVGGeometryElement;
           const length =
             p instanceof SVGPathElement ? p.getTotalLength() : 1000;
           const originalFill =
-            p.style.fill || window.getComputedStyle(p).fill || "#BE9E84";
+            p.style.fill || window.getComputedStyle(p).fill;
 
           gsap.set(p, {
             strokeDasharray: length + 2,
@@ -1060,21 +1073,22 @@ const { kelas } = Astro.params;
             stroke: originalFill,
             strokeWidth: 5,
           });
+        });
 
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: laptopContainer,
-              start: "top 70%",
-              end: "bottom 30%",
-              scrub: 1,
-            },
-          });
+        // 2. Integrate into storyTl (instead of separate bgTl)
+        // This ensures drawing happens throughout the entire pinned sequence
+        const storyDuration = storyTl.duration();
+        bgPaths.forEach((path) => {
+          const p = path as unknown as SVGGeometryElement;
+          const originalFill = (p as any)._gsap?.stroke;
 
-          tl.to(p, { strokeDashoffset: 0, duration: 2, ease: "none" }).to(p, {
-            fill: originalFill,
-            duration: 1,
-            ease: "power2.out",
-          });
+          storyTl
+            .to(p, { strokeDashoffset: 0, duration: storyDuration, ease: "none" }, 0)
+            .to(
+              p,
+              { fill: originalFill, duration: storyDuration * 0.1, ease: "power2.out" },
+              "-=1.0", // Sync fill with the very end of the scroll
+            );
         });
 
         // SECTION 6: Animasi Grid Siswa
@@ -1085,58 +1099,72 @@ const { kelas } = Astro.params;
             sq(
               ".students-heading-label, .students-heading-title, .students-heading-count",
             ),
-            { y: 30 },
+            { y: 30, opacity: 0 },
           );
-          gsap.to(sq(".students-heading-label"), {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
+          const headingTl = gsap.timeline({
             scrollTrigger: {
-              trigger: ".students-section",
+              trigger: studentsSection,
               start: "top 75%",
               once: true,
             },
           });
-          gsap.to(sq(".students-heading-title"), {
-            opacity: 1,
-            y: 0,
-            duration: 1.2,
-            ease: "power4.out",
-            force3D: true,
-            scrollTrigger: {
-              trigger: ".students-section",
-              start: "top 75%",
-              once: true,
-            },
-            delay: 0.15,
-          });
-          gsap.to(sq(".students-heading-count"), {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: ".students-section",
-              start: "top 75%",
-              once: true,
-            },
-            delay: 0.3,
-          });
+
+          headingTl
+            .to(sq(".students-heading-label"), {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: "power2.out",
+            })
+            .to(
+              sq(".students-heading-title"),
+              {
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power4.out",
+                force3D: true,
+              },
+              "-=0.65",
+            )
+            .to(
+              sq(".students-heading-count"),
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out",
+              },
+              "-=0.5",
+            );
 
           const studentCards = sq(".student-card-wrapper");
           gsap.set(studentCards, { y: 50 });
-          studentCards.forEach((card, i) => {
-            gsap.to(card, {
-              opacity: 1,
-              y: 0,
-              duration: 0.7,
-              ease: "power3.out",
-              force3D: true,
-              delay: (i % 4) * 0.08,
-              scrollTrigger: { trigger: card, start: "top 90%", once: true },
-            });
+          // ✅ Ganti forEach individual dengan ScrollTrigger.batch
+          // Batch mengelompokkan elemen yang masuk viewport bersamaan
+          // menjadi 1 operasi — jauh lebih ringan
+
+          ScrollTrigger.batch(sq(".student-card-wrapper"), {
+            // Dipanggil saat sekelompok card masuk viewport bersamaan
+            onEnter: (batch) => {
+              gsap.to(batch, {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: "power3.out",
+                force3D: true,
+                stagger: 0.08, // Stagger tetap ada tapi dikelola dalam 1 operasi
+              });
+            },
+
+            // Hanya 1 ScrollTrigger yang dibuat, bukan 1 per card
+            start: "top 90%",
+            once: true, // Listener mati setelah semua card teranimasikan
           });
+
+          // Hapus gsap.set(studentCards, { y: 50 }) yang lama
+          // dan ganti dengan ini (set state awal sebelum batch):
+          gsap.set(sq(".student-card-wrapper"), { y: 50, opacity: 0 });
         }
       }, laptopContainer); // Parent set to the main container
 
@@ -1148,7 +1176,13 @@ const { kelas } = Astro.params;
         { once: true },
       );
 
-      setTimeout(() => ScrollTrigger.refresh(), 500);
+      window.addEventListener(
+        "load",
+        () => {
+          ScrollTrigger.refresh();
+        },
+        { once: true },
+      ); // once: true agar listener langsung mati setelah dipanggil
     });
   </script>
 </div>
