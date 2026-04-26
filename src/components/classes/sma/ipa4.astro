@@ -20,6 +20,14 @@ const heroBg2 =
   typeof classContent.heroPhoto?.[1] === "string"
     ? classContent.heroPhoto[1]
     : (classContent.heroPhoto?.[1] as any)?.src || "";
+const heroBg3 =
+  typeof classContent.heroPhoto?.[2] === "string"
+    ? classContent.heroPhoto[2]
+    : (classContent.heroPhoto?.[2] as any)?.src || "";
+const heroBg4 =
+  typeof classContent.heroPhoto?.[3] === "string"
+    ? classContent.heroPhoto[3]
+    : (classContent.heroPhoto?.[3] as any)?.src || "";
 const walasPic =
   typeof classContent.walasPhoto === "string"
     ? classContent.walasPhoto
@@ -45,7 +53,7 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     walasTitle={`Wali Kelas XII ${classContent.className}`}
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
-    bgImage={heroBg2}
+    bgImage={heroBg4}
     textColor="#2A358F"
   />
 
