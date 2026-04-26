@@ -269,3 +269,18 @@ html.lenis {
   will-change: transform;
   z-index: 1;
 }
+
+/* ====================================================================
+   GSAP OPTIMIZATION UTILITIES (Rule 05a)
+   ==================================================================== */
+
+/**
+ * .will-animate
+ * Gunakan class ini pada elemen yang akan dianimasikan GSAP.
+ * Memindahkan elemen ke composite layer GPU sebelum animasi dimulai.
+ */
+.will-animate {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}

@@ -54,12 +54,13 @@ const forceDesktopViewData = forceDesktopView;
           const viewport = document.getElementById('viewport-meta');
           if (!viewport) return;
           
-          const deviceWidth = window.screen.width;
+          // 📐 iOS Safari Scale Correction: Use Math.max to ensure landscape dimension is used
+          const deviceWidth = Math.max(window.screen.width, window.screen.height);
           const desktopWidth = 1440;
           const scale = deviceWidth / desktopWidth;
           
           viewport.setAttribute('content', 
-            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=no`
+            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=${scale}, user-scalable=no`
           );
           
           // Save to sessionStorage so toggle knows this page is forced
@@ -78,13 +79,14 @@ const forceDesktopViewData = forceDesktopView;
         
         if (savedMode === 'desktop') {
           // Calculate perfect scale for current device
-          const deviceWidth = window.screen.width;
+          // 📐 iOS Safari Scale Correction
+          const deviceWidth = Math.max(window.screen.width, window.screen.height);
           const desktopWidth = 1440;
           const scale = deviceWidth / desktopWidth;
           
           // Apply desktop viewport with calculated scale
           viewport.setAttribute('content', 
-            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=no`
           );
         } else {
           // Mobile view (default)
