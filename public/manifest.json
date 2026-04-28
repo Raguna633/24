@@ -1,0 +1,23 @@
+{
+  "name": "Buku Kenangan",
+  "short_name": "Kenangan",
+  "description": "Buku Kenangan Digital - Zero Cost Yearbook",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f0ea",
+  "theme_color": "#2A358F",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

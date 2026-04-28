@@ -6,11 +6,11 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import {
   ClientRouter,
-  fade,
-  slide,
 } from 'astro:transitions';
 import Loading from '../components/Loading.astro';
 import Analytics from '@vercel/analytics/astro'
+import ImmersiveModePrompt from '../components/mobile/ImmersiveModePrompt.astro';
+
 
 interface Props {
   title: string;
@@ -43,7 +43,7 @@ const forceDesktopViewData = forceDesktopView;
   <head>
     <!-- Meta tags -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" id="viewport-meta" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" id="viewport-meta" viewport-fit=cover />
     <meta name="generator" content={Astro.generator} />
 
     {/* Apply saved preference BEFORE page renders */}
@@ -152,6 +152,7 @@ const forceDesktopViewData = forceDesktopView;
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
     
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -179,6 +180,14 @@ const forceDesktopViewData = forceDesktopView;
     </script>
 
     <ClientRouter transition:persist />
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
+
   </head>
   
   <body class="min-h-dvh">
@@ -256,6 +265,9 @@ const forceDesktopViewData = forceDesktopView;
       <p id="rotateMessage" class="text-gray-300 text-center max-w-sm mb-8 text-sm">Silakan putar perangkat Anda ke posisi landscape untuk beralih ke Desktop Mode.</p>
       <button id="closeRotateOverlay" class="px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">Batal</button>
     </div>
+
+    <ImmersiveModePrompt />
+
 
     <!-- ==================== DEBUGGING HELPER (Remove in production) ==================== -->
     <div 
@@ -850,6 +862,8 @@ const forceDesktopViewData = forceDesktopView;
         body {
           -webkit-text-size-adjust: 100%;
           text-size-adjust: 100%;
+          padding-top: env(safe-area-inset-top);
+          padding-bottom: env(safe-area-inset-bottom);
         }
       }
     </style>
