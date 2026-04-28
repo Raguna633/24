@@ -316,7 +316,7 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
               start: "top top",
               end: "+=150%",
               pin: true,
-              scrub: 1.5,
+              scrub: 1.0,
               anticipatePin: 1,
               pinSpacing: true,
             },
@@ -560,8 +560,6 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           },
           { once: true },
         );
-
-        setTimeout(() => ScrollTrigger.refresh(), 1000);
       });
     </script>
   </section>

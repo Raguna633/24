@@ -914,7 +914,7 @@ const { kelas } = Astro.params;
             start: "top top",
             end: "+=240%", // Tightened budget to eliminate dead space at the end
             pin: true,
-            scrub: 2.2,   // High inertia for smooth premium feeling
+            scrub: 1.0,
             anticipatePin: 1,
           },
         });
@@ -1174,14 +1174,6 @@ const { kelas } = Astro.params;
         },
         { once: true },
       );
-
-      window.addEventListener(
-        "load",
-        () => {
-          ScrollTrigger.refresh();
-        },
-        { once: true },
-      ); // once: true agar listener langsung mati setelah dipanggil
     });
   </script>
 </div>

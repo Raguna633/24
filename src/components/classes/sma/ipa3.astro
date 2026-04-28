@@ -1,10 +1,25 @@
 ---
 import { getEntry, getCollection } from "astro:content";
+import { Image } from "astro:assets";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
 import FadeOverlay from "../../FadeOverlay.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
+
+// Import Assets
+import boneCell from "../../../assets/bone-cell.svg?raw";
+import nerveCell from "../../../assets/nerve-cell.svg?raw";
+import magnify from "../../../assets/magnify.svg?raw";
+import specimenFrame from "../../../assets/specimen-frame.svg?raw";
+
+// Import Photos
+import group1 from "../../../assets/ipa3-group1.webp";
+import group2 from "../../../assets/ipa3-group2.webp";
+import group3 from "../../../assets/ipa3-group3.webp";
+import group4 from "../../../assets/ipa3-group4.webp";
+import group5 from "../../../assets/ipa3-group5.webp";
+import group6 from "../../../assets/ipa3-group6.webp";
 
 const classData = await getEntry("classes", "ipa3");
 if (!classData) {
@@ -29,16 +44,24 @@ const walasPic =
     ? classContent.walasPhoto
     : (classContent.walasPhoto as any)?.src || "";
 
-// Ambil semua siswa kelas IPA III dari collection
+// Anatomy Records
+const anatomyFiles = [
+  { image: group1, label: "CELL_FORMATION", text: "Unit terkecil dari kebersamaan kita mulai terbentuk di sini." },
+  { image: group2, label: "NERVOUS_SYSTEM", text: "Jalinan komunikasi yang menghubungkan setiap tawa dan mimpi." },
+  { image: group3, label: "SKELETAL_BASE", text: "Struktur persahabatan yang kuat, menopang setiap beban bersama." },
+  { image: group4, label: "VITAL_ORGANS", text: "Aksi-aksi vital yang menghidupkan suasana kelas setiap harinya." },
+  { image: group5, label: "CIRCULATION", text: "Irama yang sama, mengalirkan semangat ke seluruh penjuru IPA 3." },
+  { image: group6, label: "FULL_ANATOMY", text: "Kini kita adalah satu organisme yang utuh dan tak terpisahkan." },
+];
+
 const allStudents = await getCollection(
   "students",
   ({ data }) => data.kelas === "IPA III",
 );
-// Urutkan berdasarkan nama
 allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 
-<div class="overflow-x-hidden">
+<div class="overflow-x-hidden bg-[#fdfaf6]">
   <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
 
   <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
@@ -55,45 +78,86 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 
   <FadeOverlay connectorHeight="200" />
 
-  <!-- Placeholder for Group Photos -->
-  <section class="w-screen h-dvh flex justify-center items-center bg-[#f5f0ea]">
-    <h2
-      class="text-3xl md:text-5xl text-gray-500 font-bold opacity-60 text-center tracking-widest"
-    >
-      Foto group kelas akan berada di sini
-    </h2>
-  </section>
+  <!-- Anatomy Record Section -->
+  <div class="anatomy-wrap">
+    {
+      anatomyFiles.map((file, index) => (
+        <section class="min-h-screen py-24 flex items-center justify-center p-6 relative overflow-hidden anatomy-section border-b border-black/5">
+          {/* Microscopic Elements */}
+          <div 
+            class={`absolute ${index % 2 === 0 ? '-left-20' : '-right-20'} top-1/3 w-72 md:w-[500px] opacity-[0.05] pointer-events-none anatomy-bg`}
+            set:html={index % 2 === 0 ? boneCell : nerveCell}
+          />
+          
+          {/* Magnify Icon Decoration */}
+          <div class="absolute top-10 left-10 w-12 h-12 opacity-10 text-[#2A358F] hidden md:block" set:html={magnify} />
+
+          <div class="max-w-4xl w-full flex flex-col items-center z-10">
+            {/* Specimen Frame with Microscopic View */}
+            <div class="relative w-80 h-80 md:w-[450px] md:h-[450px] flex items-center justify-center group">
+               <div class="absolute inset-0 z-20 pointer-events-none scale-105 opacity-80" set:html={specimenFrame} />
+               <div class="w-[85%] h-[85%] rounded-full overflow-hidden border-4 border-gray-200 p-0.5 relative">
+                  <div class="w-full h-full rounded-full overflow-hidden bg-gray-100 reveal-mask translate-z-0">
+                    <Image 
+                      src={file.image} 
+                      alt={file.label} 
+                      class="w-full h-full object-cover filter contrast-[1.1] grayscale-[10%] group-hover:grayscale-0 transition-all duration-1000 scale-110"
+                    />
+                  </div>
+                  {/* Glass Reflection Effect */}
+                  <div class="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none z-10"></div>
+               </div>
+
+               {/* Clinical Label */}
+               <div class="absolute top-4 -left-4 bg-white border-l-4 border-[#2A358F] px-4 py-2 shadow-xl rotate-[-2deg] will-animate anatomy-label">
+                  <span class="font-mono text-[10px] text-[#2A358F] font-bold tracking-widest uppercase">REC_{index+1} // {file.label}</span>
+               </div>
+            </div>
+
+            {/* Observation Text */}
+            <div class="mt-16 text-center max-w-lg space-y-6 will-animate anatomy-text">
+               <div class="flex items-center justify-center gap-2 mb-2">
+                  <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
+                  <span class="font-mono text-[9px] uppercase tracking-widest text-red-600 font-bold">Observation in Progress</span>
+               </div>
+               <p class="text-2xl md:text-3xl font-serif text-gray-900 leading-tight">
+                 "{file.text}"
+               </p>
+               <div class="pt-6 border-t border-gray-200 inline-block w-48">
+                  <span class="text-[9px] font-mono uppercase tracking-[0.4em] text-gray-500">Department of Anatomy III</span>
+               </div>
+            </div>
+          </div>
+        </section>
+      ))
+    }
+  </div>
 
   <FadeOverlay />
 
+  <!-- Students Grid -->
   <section
-    class="students-section py-24 px-6 bg-[#f5f0ea]"
+    class="students-section py-32 px-6 bg-[#f5f0ea]"
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
-      <div class="students-heading mb-16 text-center">
-        <p
-          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label"
-        >
-          Keluarga
+      <div class="students-heading mb-24 text-center">
+        <p class="font-mono text-[#2A358F]/50 text-xs tracking-[0.5em] uppercase mb-4 opacity-0 students-heading-label will-animate">
+          Anatomical Registry
         </p>
-        <h2
-          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title"
-        >
+        <h2 class="text-6xl md:text-8xl font-bold text-[#2A358F] opacity-0 students-heading-title will-animate">
           {classContent.className}
         </h2>
-        <p
-          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count"
-        >
-          {allStudents.length} orang yang membentuk cerita ini
+        <div class="h-0.5 w-16 bg-[#2A358F]/10 mx-auto mt-6 opacity-0 students-heading-line will-animate"></div>
+        <p class="text-sm text-gray-400 mt-6 opacity-0 students-heading-count will-animate tracking-[0.2em] font-mono uppercase">
+          Total Nodes: {allStudents.length}
         </p>
       </div>
-      <div
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
-      >
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
         {
           allStudents.map((student) => (
-            <div class="student-card-wrapper opacity-0">
+            <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
                 name={student.data.name}
                 slug={student.slug}
@@ -114,13 +178,11 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
   />
 
   <style>
-    body,
-    html {
-      overflow-x: hidden;
-      max-width: 100vw;
-    }
     body {
-      @apply bg-[#f5f0eaff];
+      @apply bg-[#fdfaf6];
+    }
+    .reveal-mask {
+       clip-path: circle(0% at 50% 50%);
     }
   </style>
 
@@ -132,69 +194,98 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      const ctx = gsap.context(() => {});
+      document.addEventListener("astro:before-swap", () => {
+        ctx.revert();
+        ScrollTrigger.getAll().forEach(t => t.kill());
+      }, { once: true });
+
       await waitForLoading();
 
-      // Heading siswa
-      gsap.set(
-        ".students-heading-label, .students-heading-title, .students-heading-count",
-        { y: 30 },
-      );
-      gsap.to(".students-heading-label", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-      });
-      gsap.to(".students-heading-title", {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: "power4.out",
-        force3D: true,
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-        delay: 0.15,
-      });
-      gsap.to(".students-heading-count", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-        delay: 0.3,
-      });
+      ctx.add(() => {
+        // --- ANATOMY ANIMATIONS ---
+        const sections = gsap.utils.toArray<HTMLElement>(".anatomy-section");
+        sections.forEach((section) => {
+          const mask = section.querySelector(".reveal-mask");
+          const label = section.querySelector(".anatomy-label");
+          const text = section.querySelector(".anatomy-text");
+          const bg = section.querySelector(".anatomy-bg");
+          const img = section.querySelector("img");
 
-      // Student cards
-      const studentCards = gsap.utils.toArray<HTMLElement>(
-        ".student-card-wrapper",
-      );
-      gsap.set(studentCards, { y: 50 });
-      studentCards.forEach((card, i) => {
-        gsap.to(card, {
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: "top 60%",
+              once: true
+            }
+          });
+
+          tl.to(mask, {
+            clipPath: "circle(50% at 50% 50%)",
+            duration: 1.2,
+            ease: "expo.out"
+          })
+          .to(img, {
+            scale: 1,
+            duration: 1.5,
+            ease: "power2.out"
+          }, 0)
+          .from(bg, {
+            opacity: 0,
+            scale: 0.8,
+            duration: 1.5,
+            ease: "power1.out"
+          }, 0)
+          .from(label, {
+            opacity: 0,
+            x: -20,
+            rotation: -5,
+            duration: 0.8
+          }, "-=0.6")
+          .from(text, {
+            opacity: 0,
+            y: 30,
+            duration: 1
+          }, "-=0.8");
+        });
+
+        // --- STUDENTS HEADING ---
+        gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-          force3D: true,
-          delay: (i % 4) * 0.08,
+          duration: 1.2,
+          stagger: 0.2,
           scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            once: true,
-          },
+            trigger: ".students-section",
+            start: "top 80%",
+            once: true
+          }
+        });
+        gsap.to(".students-heading-line", {
+           opacity: 1,
+           width: 64,
+           duration: 1,
+           scrollTrigger: {
+             trigger: ".students-section",
+             start: "top 80%",
+             once: true
+           }
+        });
+
+        // --- CARDS STAGGER ---
+        const cards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
+        cards.forEach((card, i) => {
+          gsap.to(card, {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            delay: (i % 4) * 0.1,
+            scrollTrigger: {
+              trigger: card,
+              start: "top 95%",
+              once: true
+            }
+          });
         });
       });
     });

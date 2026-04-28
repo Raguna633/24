@@ -1,10 +1,21 @@
 ---
 import { getEntry, getCollection } from "astro:content";
+import { Image } from "astro:assets";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
 import FadeOverlay from "../../FadeOverlay.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
+
+// Import Assets
+// import polaroidMask from "../../../assets/polaroid-mask.svg?raw";
+import tape from "../../../assets/washi-tape-strip1.svg?raw";
+
+// Import Photos
+import group1 from "../../../assets/ips3-group1.webp";
+import group2 from "../../../assets/ips3-group2.webp";
+import group3 from "../../../assets/ips3-group3.webp";
+import group4 from "../../../assets/ips3-group4.webp";
 
 const classData = await getEntry("classes", "ips3");
 if (!classData) {
@@ -29,16 +40,22 @@ const walasPic =
     ? classContent.walasPhoto
     : (classContent.walasPhoto as any)?.src || "";
 
-// Ambil semua siswa kelas IPS III dari collection
+// Scattered Memory Collection
+const polaroidMemories = [
+  { image: group1, date: "SEPT 2023", note: "Morning Circle" },
+  { image: group2, date: "DEC 2023", note: "End of Semester" },
+  { image: group3, date: "FEB 2024", note: "Creative Session" },
+  { image: group4, date: "JUNE 2024", note: "Final Moments" },
+];
+
 const allStudents = await getCollection(
   "students",
   ({ data }) => data.kelas === "IPS III",
 );
-// Urutkan berdasarkan nama
 allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 
-<div class="overflow-x-hidden">
+<div class="overflow-x-hidden bg-[#e5e7eb]">
   <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
 
   <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
@@ -55,45 +72,74 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 
   <FadeOverlay connectorHeight="200" />
 
-  <!-- Placeholder for Group Photos -->
-  <section class="w-screen h-dvh flex justify-center items-center bg-[#f5f0ea]">
-    <h2
-      class="text-3xl md:text-5xl text-gray-500 font-bold opacity-60 text-center tracking-widest"
-    >
-      Foto group kelas akan berada di sini
-    </h2>
+  <!-- Polaroid Wall Section -->
+  <section class="min-h-screen bg-[#cecfd1] py-32 relative overflow-hidden polaroid-wall-section">
+     {/* Wall Grunge Decor */}
+     <div class="absolute inset-0 opacity-10 pointer-events-none select-none mix-blend-overlay" style="background-image: url('https://www.transparenttextures.com/patterns/p6.png');"></div>
+
+     <div class="max-w-6xl mx-auto px-6 relative h-[70vh] md:h-[90vh]">
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+           <h3 class="text-[18vw] font-black text-white/20 uppercase tracking-widest leading-none select-none italic">JOURNAL</h3>
+        </div>
+
+        <div class="relative w-full h-full polaroid-container">
+           {
+             polaroidMemories.map((memory, index) => (
+               <div 
+                 class="absolute polaroid-card will-animate opacity-0"
+                 style={`z-index: ${index + 10};`}
+               >
+                  <div class="relative bg-white p-3 pb-8 md:p-4 md:pb-12 shadow-xl transform-gpu">
+                    {/* Tape Decoration */}
+                    <div class="absolute -top-6 left-1/3 -translate-x-1/2 w-20 h-10 opacity-70 z-20 grayscale" set:html={tape} />
+                    
+                    {/* Photo Container */}
+                    <div class="relative aspect-square overflow-hidden bg-gray-100">
+                       <Image 
+                         src={memory.image} 
+                         alt={`Memory ${index+1}`} 
+                         class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" 
+                       />
+                       {/* <div class="absolute inset-0 z-10 pointer-events-none" set:html={polaroidMask} /> */}
+                    </div>
+
+                    {/* Handwritten Note */}
+                    <div class="mt-4 md:mt-6 text-center">
+                       <p class="font-serif italic text-gray-700 text-lg md:text-xl transform rotate-[1deg]">{memory.note}</p>
+                       <span class="block text-[9px] font-mono text-gray-400 mt-1 uppercase tracking-widest">{memory.date}</span>
+                    </div>
+                  </div>
+               </div>
+             ))
+           }
+        </div>
+     </div>
   </section>
 
   <FadeOverlay />
 
+  <!-- Students Grid -->
   <section
-    class="students-section py-24 px-6 bg-[#f5f0ea]"
+    class="students-section py-32 px-6 bg-[#f5f0ea]"
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
-      <div class="students-heading mb-16 text-center">
-        <p
-          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label"
-        >
-          Keluarga
+      <div class="students-heading mb-20 text-center">
+        <p class="font-mono text-[#2A358F]/50 text-xs tracking-[0.5em] uppercase mb-4 opacity-0 students-heading-label will-animate">
+          Archived Hearts
         </p>
-        <h2
-          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title"
-        >
+        <h2 class="text-6xl md:text-8xl font-bold text-[#2A358F] opacity-0 students-heading-title will-animate">
           {classContent.className}
         </h2>
-        <p
-          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count"
-        >
-          {allStudents.length} orang yang membentuk cerita ini
+        <p class="text-sm text-gray-400 mt-6 opacity-0 students-heading-count will-animate tracking-[0.3em] font-mono">
+          [ {allStudents.length} / ENTRIES ]
         </p>
       </div>
-      <div
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
-      >
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
         {
           allStudents.map((student) => (
-            <div class="student-card-wrapper opacity-0">
+            <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
                 name={student.data.name}
                 slug={student.slug}
@@ -114,13 +160,14 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
   />
 
   <style>
-    body,
-    html {
-      overflow-x: hidden;
-      max-width: 100vw;
-    }
     body {
-      @apply bg-[#f5f0eaff];
+      @apply bg-[#e5e7eb];
+    }
+    .polaroid-card {
+      width: 240px;
+      @screen md {
+        width: 300px;
+      }
     }
   </style>
 
@@ -132,69 +179,87 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      const ctx = gsap.context(() => {});
+      document.addEventListener("astro:before-swap", () => {
+        ctx.revert();
+        ScrollTrigger.getAll().forEach(t => t.kill());
+      }, { once: true });
+
       await waitForLoading();
 
-      // Heading siswa
-      gsap.set(
-        ".students-heading-label, .students-heading-title, .students-heading-count",
-        { y: 30 },
-      );
-      gsap.to(".students-heading-label", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-      });
-      gsap.to(".students-heading-title", {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: "power4.out",
-        force3D: true,
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-        delay: 0.15,
-      });
-      gsap.to(".students-heading-count", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-        delay: 0.3,
-      });
+      ctx.add(() => {
+        // --- POLAROID WALL ANIMATIONS ---
+        const cards = gsap.utils.toArray<HTMLElement>(".polaroid-card");
+        
+        // Define target positions (different from IPS 2 for variety)
+        const positions = [
+          { top: "10%", left: "15%", rotate: 5 },
+          { top: "5%", left: "55%", rotate: -10 },
+          { top: "50%", left: "20%", rotate: -12 },
+          { top: "45%", left: "60%", rotate: 8 },
+        ];
 
-      // Student cards
-      const studentCards = gsap.utils.toArray<HTMLElement>(
-        ".student-card-wrapper",
-      );
-      gsap.set(studentCards, { y: 50 });
-      studentCards.forEach((card, i) => {
-        gsap.to(card, {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".polaroid-wall-section",
+            start: "top 20%",
+            end: "+=120%",
+            pin: true,
+            scrub: 1.0,
+            anticipatePin: 1
+          }
+        });
+
+        cards.forEach((card, i) => {
+          const pos = positions[i % positions.length];
+          
+          gsap.set(card, {
+            bottom: "-100%",
+            left: "50%",
+            xPercent: -50,
+            scale: 0.8,
+            rotation: Math.random() * 90 - 45,
+            opacity: 0
+          });
+
+          tl.to(card, {
+            top: pos.top,
+            left: pos.left,
+            rotation: pos.rotate,
+            scale: 1,
+            opacity: 1,
+            duration: 1,
+            ease: "power2.out"
+          }, i * 0.5);
+        });
+
+        // --- STUDENTS HEADING ---
+        gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-          force3D: true,
-          delay: (i % 4) * 0.08,
+          duration: 1.2,
+          stagger: 0.2,
           scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            once: true,
-          },
+            trigger: ".students-section",
+            start: "top 80%",
+            once: true
+          }
+        });
+
+        // --- CARDS STAGGER ---
+        const studentCards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
+        studentCards.forEach((card, i) => {
+          gsap.to(card, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            delay: (i % 4) * 0.1,
+            scrollTrigger: {
+              trigger: card,
+              start: "top 95%",
+              once: true
+            }
+          });
         });
       });
     });

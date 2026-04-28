@@ -14,10 +14,13 @@ export function initLenis() {
 
     // 2. Create new instance
     const lenis = new Lenis({
-        duration: 1.2,
+        duration: 4,      // 💎 Increased for slower, more "majestic" feel (Rule 02)
         smoothWheel: true,
+        smoothTouch: true,  // 📱 Enable smooth touch for continuous feel on mobile
+        syncTouch: true,    // 📱 Unified finger-to-scroll response
+        touchInertiaMultiplier: 0.4, // 💎 Reduced for "heavier" feel
         wheelMultiplier: 1,
-        touchMultiplier: 2,
+        touchMultiplier: 0.8, // 💎 Reduced to make scroll feel more deliberate/heavy
         infinite: false,
     });
 
@@ -41,6 +44,7 @@ export function initLenis() {
 
     // 8. Listen for viewport changes (ONLY ONCE using a global flag)
     if (!window.lenisEventsInitialized) {
+        let lastHeight = window.innerHeight;
         const refreshScrollTrigger = () => {
             requestAnimationFrame(() => {
                 ScrollTrigger.refresh();
@@ -53,6 +57,11 @@ export function initLenis() {
 
         let resizeTimeout;
         window.addEventListener('resize', () => {
+            // 📱 Optimization: Ignore small vertical height changes (mobile URL bar)
+            const heightDiff = Math.abs(window.innerHeight - lastHeight);
+            if (heightDiff < 100) return; // Threshold for mobile UI bars
+            
+            lastHeight = window.innerHeight;
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(refreshScrollTrigger, 200);
         });

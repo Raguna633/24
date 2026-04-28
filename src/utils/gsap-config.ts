@@ -35,9 +35,9 @@ export function setupGSAP(): void {
   ScrollTrigger.config({
     // Batasi callback yang dipanggil per frame, mencegah overload di scroll cepat
     limitCallbacks: true,
- 
-    // Sync ScrollTrigger setiap 40ms, bukan setiap frame (default: setiap frame)
-    // Mengurangi CPU usage signifikan di scroll event
-    syncInterval: 40,
   });
+
+  // 📱 Normalize Scroll: Nuklir option untuk fix stuttering di mobile
+  // Mengambil alih scroll native agar sinkron dengan GSAP lerp
+  ScrollTrigger.normalizeScroll(true);
 }

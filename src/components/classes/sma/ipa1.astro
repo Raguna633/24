@@ -1,10 +1,21 @@
 ---
 import { getEntry, getCollection } from "astro:content";
+import { Image } from "astro:assets";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
 import FadeOverlay from "../../FadeOverlay.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
+
+// Import Assets
+import constellationSvg from "../../../assets/constellation-line.svg?raw";
+import starParticles from "../../../assets/star-particles.svg?raw";
+
+// Import Photos
+import group1 from "../../../assets/ipa1-group1.png";
+import group2 from "../../../assets/ipa1-group2.png";
+import group3 from "../../../assets/ipa1-group3.png";
+import group4 from "../../../assets/ipa1-group4.png";
 
 const classData = await getEntry("classes", "ipa1");
 if (!classData) {
@@ -25,16 +36,43 @@ const walasPic =
     ? classContent.walasPhoto
     : (classContent.walasPhoto as any)?.src || "";
 
-// Ambil semua siswa kelas IPA I dari collection
+// Nebula Stories
+const nebulaStories = [
+  {
+    image: group1,
+    title: "INITIATION",
+    text: "Langkah awal kita bagaikan bintang yang baru lahir, pudar namun penuh energi.",
+    color: "#4f46e5"
+  },
+  {
+    image: group2,
+    title: "COLLISION",
+    text: "Tabrakan ide dan tawa membentuk pola nebula yang semakin bercahaya.",
+    color: "#0ea5e9"
+  },
+  {
+    image: group3,
+    title: "STABILITY",
+    text: "Dalam orbit yang teratur, kita menemukan irama kebersamaan yang tak tergantikan.",
+    color: "#22d3ee"
+  },
+  {
+    image: group4,
+    title: "CONSTELATION",
+    text: "Dan kini, kita adalah satu rasi yang akan bersinar selamanya di langit kenangan.",
+    color: "#818cf8"
+  }
+];
+
+// Students data
 const allStudents = await getCollection(
   "students",
   ({ data }) => data.kelas === "IPA I",
 );
-// Urutkan berdasarkan nama
 allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 ---
 
-<div class="overflow-x-hidden">
+<div class="overflow-x-hidden bg-[#0b0d17]">
   <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
 
   <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
@@ -46,50 +84,87 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
     bgImage={heroBg2}
-    textColor="#2A358F"
+    textColor="#f5f0ea"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay connectorHeight="0" />
 
-  <!-- Placeholder for Group Photos -->
-  <section class="w-screen h-dvh flex justify-center items-center bg-[#f5f0ea]">
-    <h2
-      class="text-3xl md:text-5xl text-gray-500 font-bold opacity-60 text-center tracking-widest"
-    >
-      Foto group kelas akan berada di sini
-    </h2>
-  </section>
+  <!-- Cosmic Storytelling Section -->
+  <div class="cosmic-wrap relative">
+    {/* Dynamic Star Field Backdrop */}
+    <div class="absolute inset-0 z-0 opacity-40 pointer-events-none" set:html={starParticles} />
+    
+    {/* Constellation Draw Layer (Canvas Optimized) */}
+    <canvas 
+        id="constellationCanvas" 
+        class="absolute inset-0 z-10 pointer-events-none opacity-40"
+    ></canvas>
+
+    {/* ... rest of the stories mapping ... */}
+    {
+      nebulaStories.map((story, index) => (
+        <section class="min-h-screen flex items-center justify-center p-6 md:p-12 relative z-20 cosmic-section border-b border-white/5">
+          <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            {/* Visual Side */}
+            <div class="relative group order-2 lg:order-1">
+               <div class="absolute -inset-4 bg-indigo-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+               <div class="relative border border-white/10 p-2 bg-black/40 backdrop-blur-sm shadow-2xl will-animate cosmic-card">
+                 <Image 
+                   src={story.image} 
+                   alt={story.title} 
+                   class="w-full aspect-[4/3] object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-1000"
+                 />
+                 {/* Decorative HUD Elements */}
+                 <div class="absolute top-0 right-0 p-4 font-mono text-[10px] text-white/30 tracking-tighter uppercase">
+                    Coord_0{index+1} / 102.3
+                 </div>
+               </div>
+            </div>
+
+            {/* Content Side */}
+            <div class="space-y-6 order-1 lg:order-2">
+               <div class="inline-block px-3 py-1 border border-indigo-500/50 rounded-full">
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-indigo-400">Phase_{index + 1}</span>
+               </div>
+               <h2 class="text-4xl md:text-6xl font-bold tracking-tighter text-white will-animate cosmic-title" style="font-family: 'Orbitron', sans-serif;">
+                 {story.title}
+               </h2>
+               <p class="text-lg text-white/60 leading-relaxed max-w-md will-animate cosmic-desc">
+                 {story.text}
+               </p>
+               <div class="h-0.5 w-12 bg-indigo-500/50 will-animate cosmic-line"></div>
+            </div>
+          </div>
+        </section>
+      ))
+    }
+  </div>
 
   <FadeOverlay />
 
+  <!-- Students Grid -->
   <section
-    class="students-section py-24 px-6 bg-[#f5f0ea]"
+    class="students-section py-32 px-6 bg-[#f5f0ea]"
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
-      <div class="students-heading mb-16 text-center">
-        <p
-          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label"
-        >
-          Keluarga
+      <div class="students-heading mb-24 text-center">
+        <p class="text-[#2A358F]/50 text-xs tracking-[0.5em] uppercase mb-4 opacity-0 students-heading-label will-animate">
+          The Ensemble
         </p>
-        <h2
-          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title"
-        >
+        <h2 class="text-6xl md:text-8xl font-bold text-[#2A358F] opacity-0 students-heading-title will-animate" style="font-family: 'Orbitron', sans-serif;">
           {classContent.className}
         </h2>
-        <p
-          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count"
-        >
-          {allStudents.length} orang yang membentuk cerita ini
+        <p class="text-sm text-gray-400 mt-6 opacity-0 students-heading-count will-animate tracking-widest">
+          {allStudents.length} STARS IDENTIFIED IN THIS SECTOR
         </p>
       </div>
-      <div
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
-      >
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
         {
           allStudents.map((student) => (
-            <div class="student-card-wrapper opacity-0">
+            <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
                 name={student.data.name}
                 slug={student.slug}
@@ -110,13 +185,13 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
   />
 
   <style>
-    body,
-    html {
-      overflow-x: hidden;
-      max-width: 100vw;
-    }
     body {
-      @apply bg-[#f5f0eaff];
+      @apply bg-[#0b0d17];
+    }
+    #constellationCanvas {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
   </style>
 
@@ -124,75 +199,246 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     import { gsap } from "gsap";
     import { ScrollTrigger } from "gsap/ScrollTrigger";
     import { waitForLoading } from "../../../utils/loadingState";
+    import constellationSvgRaw from "../../../assets/constellation-line.svg?raw";
 
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      // 1. Cleanup
+      ScrollTrigger.getAll().forEach(t => t.kill());
+      
+      const canvas = document.getElementById("constellationCanvas") as HTMLCanvasElement;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d", { alpha: true });
+      if (!ctx) return;
+
       await waitForLoading();
 
-      // Heading siswa
-      gsap.set(
-        ".students-heading-label, .students-heading-title, .students-heading-count",
-        { y: 30 },
-      );
-      gsap.to(".students-heading-label", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-      });
-      gsap.to(".students-heading-title", {
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: "power4.out",
-        force3D: true,
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-        delay: 0.15,
-      });
-      gsap.to(".students-heading-count", {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: ".students-section",
-          start: "top 75%",
-          once: true,
-        },
-        delay: 0.3,
+      // --- OPTIMIZED SVG DATA EXTRACTION ---
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(constellationSvgRaw, "image/svg+xml");
+      const viewBoxStr = svgDoc.querySelector("svg")?.getAttribute("viewBox");
+      const viewBox = viewBoxStr ? viewBoxStr.split(" ").map(Number) : [0, 0, 1440, 2800];
+      const [vbW, vbH] = [viewBox[2], viewBox[3]];
+
+      interface StarElement {
+        type: "path" | "line";
+        data?: Path2D;
+        x1?: number; y1?: number; x2?: number; y2?: number;
+        opacity: number;
+        y: number;
+        color: string;
+      }
+      
+      const starElements: StarElement[] = [];
+      
+      // Batch extraction
+      svgDoc.querySelectorAll("path").forEach(path => {
+        const d = path.getAttribute("d");
+        if (d) {
+          const mMatch = d.match(/[Mm]\s*([\d.-]+)\s+([\d.-]+)/);
+          starElements.push({
+            type: "path",
+            data: new Path2D(d),
+            opacity: 0,
+            y: mMatch ? parseFloat(mMatch[2]) : 0,
+            color: "#bacfdd"
+          });
+        }
       });
 
-      // Student cards
-      const studentCards = gsap.utils.toArray<HTMLElement>(
-        ".student-card-wrapper",
-      );
-      gsap.set(studentCards, { y: 50 });
+      svgDoc.querySelectorAll("line").forEach(line => {
+        starElements.push({
+          type: "line",
+          x1: Number(line.getAttribute("x1")),
+          y1: Number(line.getAttribute("y1")),
+          x2: Number(line.getAttribute("x2")),
+          y2: Number(line.getAttribute("y2")),
+          opacity: 0,
+          y: Number(line.getAttribute("y1")),
+          color: "#bacfdd"
+        });
+      });
+
+      starElements.sort((a, b) => a.y - b.y);
+
+      // --- HIGH PERF RENDER ENGINE ---
+      let canvasW = 0; let canvasH = 0;
+      let scale = 1; let offsetX = 0; let offsetY = 0;
+      let isVisible = false;
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2); // Cap at 2x for perf
+        const rect = canvas.getBoundingClientRect();
+        canvasW = canvas.width = rect.width * dpr;
+        canvasH = canvas.height = rect.height * dpr;
+        
+        ctx?.scale(dpr, dpr);
+
+        const svgRatio = vbW / vbH;
+        const canvasRatio = rect.width / rect.height;
+
+        if (canvasRatio > svgRatio) { 
+          scale = rect.width / vbW;
+          offsetX = 0;
+          offsetY = (rect.height - vbH * scale) / 2;
+        } else { 
+          scale = rect.height / vbH;
+          offsetY = 0;
+          offsetX = (rect.width - vbW * scale) / 2;
+        }
+      }
+
+      function render() {
+        if (!ctx || !isVisible) return;
+
+        ctx.clearRect(0, 0, canvasW, canvasH);
+        ctx.save();
+        ctx.translate(offsetX, offsetY);
+        ctx.scale(scale, scale);
+
+        // Pre-set context styles for batching
+        ctx.strokeStyle = "#bacfdd";
+        ctx.fillStyle = "#bacfdd";
+        ctx.lineWidth = 1.5;
+
+        // Optimized single-pass loop
+        for (let i = 0; i < starElements.length; i++) {
+          const s = starElements[i];
+          if (s.opacity <= 0) continue;
+          
+          ctx.globalAlpha = s.opacity;
+          if (s.type === "path") {
+            ctx.fill(s.data!);
+          } else {
+            ctx.beginPath();
+            ctx.moveTo(s.x1!, s.y1!);
+            ctx.lineTo(s.x2!, s.y2!);
+            ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+
+      window.addEventListener("resize", resize);
+      resize();
+
+      // Use GSAP Ticker for smooth 60fps frame-synced render
+      const cosmicWrap = document.querySelector(".cosmic-wrap") as HTMLElement;
+      let lastScrollY = -1;
+      const renderWrapper = () => {
+        // 📱 Optimization: Only render if we points to redrawing or scroll moved
+        if (window.scrollY !== lastScrollY) {
+           // Skip rendering if the section container is not even in viewport
+           if (cosmicWrap) {
+             const rect = cosmicWrap.getBoundingClientRect();
+             if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+           }
+           
+           render();
+           lastScrollY = window.scrollY;
+        }
+      };
+      gsap.ticker.add(renderWrapper);
+
+      // --- INTERACTIVE OBSERVER ---
+      // Distribute stars per section
+      const sections = gsap.utils.toArray<HTMLElement>(".cosmic-section");
+      const elementsPerSection = Math.ceil(starElements.length / sections.length);
+
+      // --- COSMIC STORYTELLING (PINNED) ---
+      const storySections = gsap.utils.toArray<HTMLElement>(".cosmic-section");
+
+      if (cosmicWrap && storySections.length > 0) {
+        const storiesTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: cosmicWrap,
+            start: "top top",
+            end: `+=${storySections.length * 150}%`,
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+            onEnter: () => isVisible = true,
+            onLeaveBack: () => isVisible = false,
+          }
+        });
+
+        storySections.forEach((section, index) => {
+          const card = section.querySelector(".cosmic-card");
+          const title = section.querySelector(".cosmic-title");
+          const desc = section.querySelector(".cosmic-desc");
+          const hl = section.querySelector(".cosmic-line");
+          
+          const sectionStars = starElements.slice(index * elementsPerSection, (index + 1) * elementsPerSection);
+
+          // Initial state for stacking
+          if (index > 0) {
+            gsap.set(section, { position: "absolute", top: 0, left: 0, width: "100%", opacity: 0 });
+          }
+
+          const tl = gsap.timeline();
+          
+          if (index > 0) {
+            tl.to(section, { opacity: 1, duration: 1 });
+          }
+
+          // Star reveal within the timeline
+          if (sectionStars.length > 0) {
+            tl.to(sectionStars, {
+              opacity: 1,
+              duration: 1.5,
+              stagger: 0.005,
+              ease: "power2.out"
+            }, 0);
+          }
+
+          if (card) tl.from(card, { opacity: 0, y: 50, duration: 1.2, ease: "power4.out" }, 0.2);
+          if (title) tl.from(title, { opacity: 0, x: -30, duration: 1, ease: "power4.out" }, "-=0.8");
+          if (desc) tl.from(desc, { opacity: 0, y: 20, duration: 1, ease: "power4.out" }, "-=0.8");
+          if (hl) tl.from(hl, { scaleX: 0, transformOrigin: "left", duration: 0.8 }, "-=0.6");
+
+          storiesTl.add(tl, index === 0 ? 0 : ">-0.1");
+
+          if (index < storySections.length - 1) {
+            storiesTl.to(section, { opacity: 0, duration: 0.8, y: -50 }, ">0.5");
+          }
+        });
+      }
+
+      // --- STUDENTS SECTION ---
+      gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
+         opacity: 1,
+         y: 0,
+         duration: 1,
+         stagger: 0.2,
+         scrollTrigger: {
+           trigger: ".students-section",
+           start: "top 80%",
+           once: true
+         }
+      });
+
+      const studentCards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
       studentCards.forEach((card, i) => {
         gsap.to(card, {
           opacity: 1,
           y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-          force3D: true,
-          delay: (i % 4) * 0.08,
+          duration: 0.8,
+          delay: (i % 4) * 0.1,
           scrollTrigger: {
             trigger: card,
-            start: "top 90%",
-            once: true,
-          },
+            start: "top 95%",
+            once: true
+          }
         });
       });
+
+      // Cleanup
+      document.addEventListener("astro:before-swap", () => {
+        gsap.ticker.remove(renderWrapper);
+        window.removeEventListener("resize", resize);
+        ScrollTrigger.getAll().forEach(t => t.kill());
+      }, { once: true });
     });
   </script>
 </div>
