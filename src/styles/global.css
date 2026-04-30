@@ -21,6 +21,13 @@
   /* rgb(42, 53, 143) - purple */
   --color-accent-dark: 37 30 84;
   /* rgb(37, 30, 84) - dark purple */
+
+  /* Pastikan konten tidak tertutup notch di kiri atau kanan */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  
+  /* Pastikan konten tidak tertutup bar navigasi bawah */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .dark {
