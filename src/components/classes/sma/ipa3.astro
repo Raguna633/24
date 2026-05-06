@@ -73,18 +73,18 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
     bgImage={heroBg3}
-    textColor="#2A358F"
+    textColor="text-black"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay connectorHeight="40" />
 
   <!-- Anatomy Record Section -->
   <div class="anatomy-wrap">
     {
       anatomyFiles.map((file, index) => (
-        <section class="min-h-screen py-24 flex items-center justify-center p-6 relative overflow-hidden anatomy-section border-b border-black/5">
+        <section class="min-h-screen py-24 flex items-center justify-center p-6 relative  anatomy-section border-b border-black/5">
           {/* Microscopic Elements */}
-          <div 
+          <div  
             class={`absolute ${index % 2 === 0 ? '-left-20' : '-right-20'} top-1/3 w-72 md:w-[500px] opacity-[0.05] pointer-events-none anatomy-bg`}
             set:html={index % 2 === 0 ? boneCell : nerveCell}
           />
@@ -92,10 +92,10 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           {/* Magnify Icon Decoration */}
           <div class="absolute top-10 left-10 w-12 h-12 opacity-10 text-[#2A358F] hidden md:block" set:html={magnify} />
 
-          <div class="max-w-4xl w-full flex flex-col items-center z-10">
+          <div class={`max-w-5xl w-full flex flex-col md:items-center z-10 gap-12 md:gap-20 ${index % 2 === 0 ? 'md:flex-row-reverse' : 'md:flex-row'}`}>
             {/* Specimen Frame with Microscopic View */}
-            <div class="relative w-80 h-80 md:w-[450px] md:h-[450px] flex items-center justify-center group">
-               <div class="absolute inset-0 z-20 pointer-events-none scale-105 opacity-80" set:html={specimenFrame} />
+            <div class="relative w-80 h-80 md:w-112 md:h-112 flex-shrink-0 flex items-center justify-center group mx-auto md:mx-0">
+               <div class="absolute inset-0 z-20 pointer-events-none scale-105 opacity-80 specimen-frame-svg-wrapper" set:html={specimenFrame} />
                <div class="w-[85%] h-[85%] rounded-full overflow-hidden border-4 border-gray-200 p-0.5 relative">
                   <div class="w-full h-full rounded-full overflow-hidden bg-gray-100 reveal-mask translate-z-0">
                     <Image 
@@ -109,21 +109,21 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
                </div>
 
                {/* Clinical Label */}
-               <div class="absolute top-4 -left-4 bg-white border-l-4 border-[#2A358F] px-4 py-2 shadow-xl rotate-[-2deg] will-animate anatomy-label">
+               <div class={`absolute top-4 ${index % 2 === 0 ? '-left-4' : '-right-4'} bg-white border-l-4 border-[#2A358F] px-4 py-2 shadow-xl ${index % 2 === 0 ? 'rotate-[2deg]' : 'rotate-[-2deg]'} will-animate anatomy-label z-30`}>
                   <span class="font-mono text-[10px] text-[#2A358F] font-bold tracking-widest uppercase">REC_{index+1} // {file.label}</span>
                </div>
             </div>
 
             {/* Observation Text */}
-            <div class="mt-16 text-center max-w-lg space-y-6 will-animate anatomy-text">
-               <div class="flex items-center justify-center gap-2 mb-2">
+            <div class={`flex-1 space-y-6 will-animate anatomy-text text-center ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+               <div class={`flex items-center justify-center gap-2 mb-2 ${index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'}`}>
                   <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span>
                   <span class="font-mono text-[9px] uppercase tracking-widest text-red-600 font-bold">Observation in Progress</span>
                </div>
-               <p class="text-2xl md:text-3xl font-serif text-gray-900 leading-tight">
+               <p class="text-2xl md:text-4xl font-serif text-gray-900 leading-tight">
                  "{file.text}"
                </p>
-               <div class="pt-6 border-t border-gray-200 inline-block w-48">
+               <div class={`pt-6 border-t border-gray-200 inline-block w-48 ${index % 2 === 0 ? 'md:border-l-0' : ''}`}>
                   <span class="text-[9px] font-mono uppercase tracking-[0.4em] text-gray-500">Department of Anatomy III</span>
                </div>
             </div>
@@ -211,6 +211,9 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           const text = section.querySelector(".anatomy-text");
           const bg = section.querySelector(".anatomy-bg");
           const img = section.querySelector("img");
+          const isReverse = section.querySelector('.md\\:flex-row-reverse') !== null;
+          const frameWrapper = section.querySelector(".specimen-frame-svg-wrapper");
+          const frameSvg = frameWrapper?.querySelector("svg");
 
           const tl = gsap.timeline({
             scrollTrigger: {
@@ -238,15 +241,29 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           }, 0)
           .from(label, {
             opacity: 0,
-            x: -20,
-            rotation: -5,
+            x: isReverse ? 20 : -20,
+            rotation: isReverse ? 5 : -5,
             duration: 0.8
           }, "-=0.6")
           .from(text, {
             opacity: 0,
-            y: 30,
-            duration: 1
+            x: isReverse ? -30 : 30,
+            duration: 1,
+            ease: "power3.out"
           }, "-=0.8");
+
+          // --- IDLE ORGANIC FLOAT ---
+          if (frameSvg) {
+            gsap.set(frameSvg, { rotation: gsap.utils.random(-3, 3) });
+            gsap.to(frameSvg, {
+              rotation: "+=6",
+              duration: gsap.utils.random(12, 18),
+              ease: "sine.inOut",
+              repeat: -1,
+              yoyo: true,
+              force3D: true
+            });
+          }
         });
 
         // --- STUDENTS HEADING ---

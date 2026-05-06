@@ -67,13 +67,13 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
     bgImage={heroBg3}
-    textColor="#2A358F"
+    textColor="text-black"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay connectorHeight="40" />
 
   <!-- Polaroid Wall Section -->
-  <section class="min-h-screen bg-[#cecfd1] py-32 relative overflow-hidden polaroid-wall-section">
+  <section id="ips3-wall-section" class="min-h-screen bg-[#cecfd1] py-32 relative overflow-hidden polaroid-wall-section">
      {/* Wall Grunge Decor */}
      <div class="absolute inset-0 opacity-10 pointer-events-none select-none mix-blend-overlay" style="background-image: url('https://www.transparenttextures.com/patterns/p6.png');"></div>
 
@@ -124,15 +124,15 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
-      <div class="students-heading mb-20 text-center">
-        <p class="font-mono text-[#2A358F]/50 text-xs tracking-[0.5em] uppercase mb-4 opacity-0 students-heading-label will-animate">
+      <div class="students-heading mb-24 text-center">
+        <p class="font-mono text-[#2A358F]/50 text-xs tracking-[0.6em] uppercase mb-6 opacity-0 students-heading-label will-animate">
           Archived Hearts
         </p>
-        <h2 class="text-6xl md:text-8xl font-bold text-[#2A358F] opacity-0 students-heading-title will-animate">
+        <h2 class="text-7xl md:text-9xl font-black text-[#2A358F] uppercase italic tracking-tighter leading-[0.8] opacity-0 students-heading-title will-animate">
           {classContent.className}
         </h2>
-        <p class="text-sm text-gray-400 mt-6 opacity-0 students-heading-count will-animate tracking-[0.3em] font-mono">
-          [ {allStudents.length} / ENTRIES ]
+        <p class="text-xs text-gray-400 mt-8 opacity-0 students-heading-count will-animate tracking-[0.4em] font-mono">
+          [ {allStudents.length} / COLLECTIONS ]
         </p>
       </div>
 
@@ -179,89 +179,107 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      const ctx = gsap.context(() => {});
-      document.addEventListener("astro:before-swap", () => {
-        ctx.revert();
-        ScrollTrigger.getAll().forEach(t => t.kill());
-      }, { once: true });
+      // 1. Cleanup existing triggers
+      ScrollTrigger.getAll().forEach(t => t.kill());
 
       await waitForLoading();
 
-      ctx.add(() => {
+      const ctx = gsap.context(() => {
+        const section = document.querySelector("#ips3-wall-section");
+        if (!section) return;
+
         // --- POLAROID WALL ANIMATIONS ---
-        const cards = gsap.utils.toArray<HTMLElement>(".polaroid-card");
+        const cards = gsap.utils.toArray<HTMLElement>(".polaroid-card", section);
         
-        // Define target positions (different from IPS 2 for variety)
+        // Define target positions for 4 cards (Spaced proportionally)
         const positions = [
-          { top: "10%", left: "15%", rotate: 5 },
-          { top: "5%", left: "55%", rotate: -10 },
-          { top: "50%", left: "20%", rotate: -12 },
-          { top: "45%", left: "60%", rotate: 8 },
+          { top: "20%", left: "10%", rotate: -8 },   // Top Left
+          { top: "15%", left: "85%", rotate: 12 },   // Top Right
+          { top: "52%", left: "38%", rotate: 6 },    // Bottom Left
+          { top: "56%", left: "62%", rotate: -10 },  // Bottom Right
         ];
+
+        // Set static positions once (Target State)
+        cards.forEach((card, i) => {
+          const pos = positions[i % positions.length];
+          gsap.set(card, {
+            top: pos.top,
+            left: pos.left,
+            xPercent: -50,
+            yPercent: -50,
+            rotation: pos.rotate,
+            opacity: 1 // Target is visible
+          });
+        });
 
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".polaroid-wall-section",
-            start: "top 20%",
-            end: "+=120%",
+            trigger: section,
+            start: "top top",
+            end: "+=150%",
             pin: true,
-            scrub: 1.0,
+            scrub: 1.2,
             anticipatePin: 1
           }
         });
 
+        // Float in from the bottom with GPU transforms
         cards.forEach((card, i) => {
-          const pos = positions[i % positions.length];
-          
-          gsap.set(card, {
-            bottom: "-100%",
-            left: "50%",
-            xPercent: -50,
-            scale: 0.8,
-            rotation: Math.random() * 90 - 45,
-            opacity: 0
-          });
-
-          tl.to(card, {
-            top: pos.top,
-            left: pos.left,
-            rotation: pos.rotate,
-            scale: 1,
-            opacity: 1,
-            duration: 1,
-            ease: "power2.out"
-          }, i * 0.5);
+          tl.from(card, {
+            y: () => window.innerHeight, // Start from bottom of viewport
+            x: (i % 2 === 0 ? -150 : 150), // Horizontal entry
+            rotation: (Math.random() - 0.5) * 60,
+            scale: 0.7,
+            opacity: 0,
+            duration: 2,
+            ease: "power2.out",
+            force3D: true
+          }, i * 0.45);
         });
 
         // --- STUDENTS HEADING ---
-        gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: ".students-section",
-            start: "top 80%",
-            once: true
-          }
-        });
-
-        // --- CARDS STAGGER ---
-        const studentCards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
-        studentCards.forEach((card, i) => {
-          gsap.to(card, {
+        gsap.fromTo(".students-heading-label, .students-heading-title, .students-heading-count", 
+          { opacity: 0, y: 50 },
+          {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            delay: (i % 4) * 0.1,
+            duration: 1.5,
+            stagger: 0.15,
+            ease: "expo.out",
+            force3D: true,
             scrollTrigger: {
-              trigger: card,
-              start: "top 95%",
+              trigger: ".students-section",
+              start: "top 85%",
               once: true
             }
-          });
+          }
+        );
+
+        // --- CARDS STAGGER (Optimized Batch) ---
+        ScrollTrigger.batch(".student-card-wrapper", {
+          onEnter: (elements) => {
+            gsap.fromTo(elements,
+              { opacity: 0, y: 30 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                stagger: 0.1,
+                ease: "power2.out",
+                force3D: true
+              }
+            );
+          },
+          start: "top 95%",
+          once: true
         });
       });
+
+      ScrollTrigger.refresh();
+
+      document.addEventListener("astro:before-swap", () => {
+        ctx.revert();
+      }, { once: true });
     });
   </script>
 </div>

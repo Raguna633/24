@@ -9,14 +9,11 @@ import StoryTextReveal from "../../sections/StoryTextReveal.astro";
 
 // Import Assets
 import magazineBorder from "../../../assets/magazine-border.svg?raw";
-import barcode from "../../../assets/magazine-barcode.svg?raw";
-// import priceTag from "../../../assets/price-tag.svg?raw";
+// import barcode from "../../../assets/magazine-barcode.svg?raw";
+import newTag from "../../../assets/new-collection-tag.svg?raw";
 
 // Import Photos
 import group1 from "../../../assets/ips1-group1.png";
-// import group2 from "../../../assets/ips1-group2.jpg";
-// import group3 from "../../../assets/ips1-group3.jpg";
-// import group4 from "../../../assets/ips1-group4.jpg";
 
 const classData = await getEntry("classes", "ips1");
 if (!classData) {
@@ -39,10 +36,7 @@ const walasPic =
 
 // Magazine Stories
 const editorialStories = [
-  { image: group1, title: "THE ORIGIN", sub: "VOL. 25 / ISSUE 01", desc: "Titik nol ledakan kreativitas IPS 1 yang meredefinisi standar." },
-  // { image: group2, title: "URBAN PULSE", sub: "VOL. 25 / ISSUE 02", desc: "Detak solidaritas yang bergema di setiap sudut koridor sekolah." },
-  // { image: group3, title: "HYPE RADIANCE", sub: "VOL. 25 / ISSUE 03", desc: "Bukan sekadar tren, tapi identitas yang terukir dalam sejarah." },
-  // { image: group4, title: "FINAL CUT", sub: "VOL. 25 / ISSUE 04", desc: "Penutup mahakarya yang siap menggebrak panggung masa depan." },
+  { image: group1, title: "HYPE RADIANCE", sub: "VOL. 25 / ISSUE 01", desc: "Titik nol ledakan kreativitas IPS 1 yang meredefinisi standar." },
 ];
 
 const allStudents = await getCollection(
@@ -64,16 +58,19 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
     bgImage={heroBg2}
-    textColor="#f5f0ea"
+    textColor="text-black"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay connectorHeight="40" />
 
   <!-- Magazine Editorial Section -->
   <div class="magazine-wrap pb-20">
     {
       editorialStories.map((story, index) => (
-        <section class="min-h-screen py-24 flex items-center justify-center p-4 md:p-12 relative overflow-hidden editorial-section">
+        <section 
+          class="min-h-screen py-24 flex items-center justify-center p-4 md:p-12 relative overflow-hidden editorial-section"
+          data-reversed={index % 2 !== 0}
+        >
           {/* Background Text Decor */}
           <div class="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none select-none overflow-hidden">
              <span class="text-[40vw] font-black tracking-tighter leading-none">{story.title.split(' ')[0]}</span>
@@ -82,37 +79,37 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           <div class={`max-w-[1440px] w-full grid grid-cols-1 md:grid-cols-12 gap-8 items-center z-10 ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
             
             {/* Image Container */}
-            <div class={`md:col-span-7 relative group ${index % 2 !== 0 ? 'md:order-2' : ''}`}>
-               <div class="absolute -inset-4 border border-[#f5f0ea]/20 pointer-events-none z-20" set:html={magazineBorder} />
-               <div class="relative aspect-[4/5] md:aspect-auto md:h-[75vh] overflow-hidden border-[1px] border-white/10 will-animate image-reveal">
-                  <Image 
-                    src={story.image} 
-                    alt={story.title} 
-                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110"
-                  />
-                  {/* Overlay Gradient */}
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class={`md:col-span-7 p-8 relative group ${index % 2 !== 0 ? 'md:order-2' : ''}`}>
+               {/* Wrapper untuk sinkronisasi animasi gambar & border */}
+               <div class="relative will-animate image-reveal opacity-0">
+                  <div class="absolute -inset-3 pointer-events-none z-20 scale-[1.01]" set:html={magazineBorder} />
+                  <div class="relative aspect-[4/5] md:aspect-auto md:h-[75vh] overflow-hidden border-[1px] border-white/10">
+                     <Image 
+                       src={story.image} 
+                       alt={story.title} 
+                       class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-1000 scale-110 magazine-img"
+                     />
+                     {/* Overlay Gradient */}
+                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  </div>
                </div>
 
-               {/* Price Tag Decor */}
-               {/* <div class="absolute -top-6 -right-6 w-24 h-24 opacity-80 will-animate price-tag" set:html={priceTag} /> */}
+                {/* tag Tag Decor */}
+                <div class="absolute rotate-90 top-36 right-0 z-50 w-24 h-fit opacity-0 will-animate new-tag" set:html={newTag} />
             </div>
 
             {/* Content Container */}
             <div class={`md:col-span-5 px-4 md:px-12 space-y-6 ${index % 2 !== 0 ? 'md:order-1 text-right' : ''}`}>
-               <div class="space-y-2 will-animate text-reveal">
+               <div class="space-y-2 will-animate text-reveal opacity-0 translate-y-10">
                   <span class="inline-block bg-[#ccff00] text-black px-3 py-1 font-mono text-[10px] font-bold tracking-[0.2em]">{story.sub}</span>
                   <h2 class="text-6xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter italic">
                     {story.title}
                   </h2>
                </div>
                
-               <p class="text-lg md:text-xl font-light leading-relaxed text-gray-400 max-w-sm will-animate desc-reveal ml-auto mr-auto md:ml-0 md:mr-0">
+               <p class="text-lg md:text-xl font-light leading-relaxed text-gray-400 max-w-sm will-animate desc-reveal opacity-0 translate-y-10 ml-auto mr-auto md:ml-0 md:mr-0">
                  {story.desc}
                </p>
-
-               {/* Barcode Decor */}
-               <div class="w-32 opacity-30 pt-8 will-animate barcode-reveal" set:html={barcode} />
             </div>
           </div>
         </section>
@@ -131,25 +128,25 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
       <div class="students-heading mb-24 relative">
         <div class="absolute -top-10 left-0 w-full h-px bg-current opacity-10"></div>
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-           <div class="space-y-2">
-             <p class="font-mono text-xs tracking-[0.5em] uppercase opacity-0 students-heading-label will-animate">
-               Limited Edition
-             </p>
-             <h2 class="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-none opacity-0 students-heading-title will-animate">
-               {classContent.className}
-             </h2>
-           </div>
-           <div class="text-right opacity-0 students-heading-count will-animate">
-             <span class="block font-mono text-4xl font-bold leading-none">{allStudents.length}</span>
-             <span class="text-[10px] uppercase tracking-widest font-mono">Members Registered</span>
-           </div>
+            <div class="space-y-2">
+              <p class="font-mono text-xs tracking-[0.5em] uppercase opacity-0 translate-y-4 students-heading-label will-animate">
+                Limited Edition
+              </p>
+              <h2 class="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-none opacity-0 translate-y-10 students-heading-title will-animate">
+                {classContent.className}
+              </h2>
+            </div>
+            <div class="text-right opacity-0 translate-y-4 students-heading-count will-animate">
+              <span class="block font-mono text-4xl font-bold leading-none">{allStudents.length}</span>
+              <span class="text-[10px] uppercase tracking-widest font-mono">Members Registered</span>
+            </div>
         </div>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
         {
           allStudents.map((student) => (
-            <div class="student-card-wrapper opacity-0 will-animate">
+            <div class="student-card-wrapper opacity-0 translate-y-10">
               <StudentCard
                 name={student.data.name}
                 slug={student.slug}
@@ -183,100 +180,108 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      const ctx = gsap.context(() => {});
-      document.addEventListener("astro:before-swap", () => {
-        ctx.revert();
-        ScrollTrigger.getAll().forEach(t => t.kill());
-      }, { once: true });
+      // 1. Cleanup
+      ScrollTrigger.getAll().forEach(t => t.kill());
 
+      // 2. Wait for loading
       await waitForLoading();
 
-      ctx.add(() => {
+      // 3. Setup Context
+      const ctx = gsap.context(() => {
         // --- EDITORIAL ANIMATIONS ---
         const sections = gsap.utils.toArray<HTMLElement>(".editorial-section");
+        
         sections.forEach((section) => {
           const imgWrap = section.querySelector(".image-reveal");
-          const img = section.querySelector("img");
+          const img = section.querySelector(".magazine-img");
           const text = section.querySelector(".text-reveal");
           const desc = section.querySelector(".desc-reveal");
-          const barcode = section.querySelector(".barcode-reveal");
-          const price = section.querySelector(".price-tag");
+          const tag = section.querySelector(".new-tag");
 
+          const isReversed = section.dataset.reversed === "true";
+
+          // TIMELINE: Bertahap (Sequential)
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: section,
-              start: "top 60%",
+              start: "top 80%", // Mulai sedikit lebih lambat agar layer siap
               once: true
             }
           });
 
-          tl.from(imgWrap, {
-            x: section.classList.contains('md:flex-row-reverse') ? 100 : -100,
-            opacity: 0,
-            duration: 1.5,
-            ease: "expo.out"
-          })
-          .to(img, {
-            scale: 1,
-            duration: 2,
-            ease: "power2.out"
-          }, 0)
-          .from(text, {
-            y: 50,
-            opacity: 0,
+          // 1. Gambar Masuk (Gunakan pergerakan lebih kecil agar lebih ringan)
+          tl.fromTo(imgWrap, 
+            { x: isReversed ? 30 : -30, opacity: 0 },
+            { x: 0, opacity: 1, duration: 1.4, ease: "power3.out", force3D: true }
+          )
+          // 2. Image scale
+          .fromTo(img, 
+            { scale: 1.1 },
+            { scale: 1, duration: 1.8, ease: "power2.out", force3D: true }, 
+            "-=1.0"
+          )
+          // 3. Konten Teks
+          .to([text, desc], {
+            y: 0,
+            opacity: 1,
             duration: 1,
-            ease: "power4.out"
-          }, "-=1")
-          .from(desc, {
-            y: 20,
-            opacity: 0,
-            duration: 1,
-            ease: "power2.out"
-          }, "-=0.8")
-          .from(barcode, {
-            scaleX: 0,
-            transformOrigin: "left",
-            opacity: 0,
-            duration: 0.8
-          }, "-=0.5")
-          .from(price, {
-            scale: 0,
-            rotation: 45,
-            opacity: 0,
-            duration: 1,
-            ease: "back.out(1.7)"
-          }, "-=1.2");
+            stagger: 0.1,
+            ease: "power3.out"
+          }, "-=1.0")
+          // 4. Tag
+          .fromTo(tag, 
+            { scale: 0, rotation: 0, opacity: 0 },
+            { scale: 1, rotation: 90, opacity: 1, duration: 1, ease: "power2.out", force3D: true }, 
+            "-=0.6"
+          );
+
+          // PARALLAX: Ringan
+          gsap.to(img, {
+            yPercent: 5,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true
+            }
+          });
         });
 
-        // --- STUDENTS HEADING ---
+        // --- STUDENTS SECTION ---
         gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
           opacity: 1,
           y: 0,
-          duration: 1.2,
-          stagger: 0.2,
+          duration: 1.5,
+          stagger: 0.1,
+          ease: "expo.out",
           scrollTrigger: {
             trigger: ".students-section",
-            start: "top 80%",
+            start: "top 90%",
             once: true
           }
         });
 
-        // --- CARDS STAGGER ---
-        const cards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
-        cards.forEach((card, i) => {
-          gsap.to(card, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            delay: (i % 4) * 0.1,
-            scrollTrigger: {
-              trigger: card,
-              start: "top 95%",
-              once: true
-            }
-          });
+        ScrollTrigger.batch(".student-card-wrapper", {
+          onEnter: (elements) => {
+            gsap.to(elements, {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              stagger: 0.1,
+              ease: "power2.out"
+            });
+          },
+          start: "top 95%",
+          once: true
         });
       });
+
+      ScrollTrigger.refresh();
+
+      document.addEventListener("astro:before-swap", () => {
+        ctx.revert();
+      }, { once: true });
     });
   </script>
 </div>

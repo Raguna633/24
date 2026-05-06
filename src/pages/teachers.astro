@@ -12,7 +12,7 @@ const pageDescription =
 
 <MainLayout title={pageTitle} description={pageDescription}>
   <!-- Storyboarding: Hook (Hero) -> Body (Content) -> Tail (Bottom) -->
-  <main
+  <div
     class="w-full bg-[var(--color-primary)] overflow-hidden min-h-dvh relative text-secondary"
   >
     <!-- 1. Top Quote (Hero) -->
@@ -37,7 +37,7 @@ const pageDescription =
       quote="“Education is not the filling of a pail, but the lighting of a fire.”"
       isBottom={true}
     />
-  </main>
+</div>
 
   {
     /* React Modal di-load client-side sejak awal agar event listener global (openTeacherModal) langsung aktif */

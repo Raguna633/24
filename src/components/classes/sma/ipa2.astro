@@ -68,26 +68,26 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
     bgImage={heroBg2}
-    textColor="#2A358F"
+    textColor="text-black"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay connectorHeight="40" />
 
   <!-- Botanical Collection Section -->
   <div class="botanical-wrap">
     {
       botanicalSpecimens.map((specimen, index) => (
-        <section class="min-h-screen py-24 flex items-center justify-center p-6 relative overflow-hidden specimen-section border-b border-black/5">
+        <section class="min-h-screen py-24 flex items-center justify-center p-6 relative  specimen-section border-b border-black/5">
           {/* Decorative Plants */}
           <div 
             class={`absolute ${index % 2 === 0 ? '-left-10' : '-right-10'} top-1/2 -translate-y-1/2 w-64 md:w-96 opacity-[0.07] pointer-events-none rotate-[10deg] plant-bg`}
             set:html={index % 2 === 0 ? plant1 : plant2}
           />
 
-          <div class="max-w-4xl w-full flex flex-col items-center z-10">
+          <div class={`max-w-5xl w-full flex flex-col md:items-center z-10 gap-12 md:gap-20 ${index % 2 === 0 ? 'md:flex-row-reverse' : 'md:flex-row'}`}>
             {/* Specimen Frame with Circular Photo */}
-            <div class="relative w-72 h-72 md:w-[400px] md:h-[400px] flex items-center justify-center group">
-               <div class="absolute inset-0 z-20 pointer-events-none scale-105" set:html={specimenFrame} />
+            <div class="relative w-80 h-80 md:w-112 md:h-112 flex-shrink-0 flex items-center justify-center group mx-auto md:mx-0">
+               <div class="absolute inset-0 z-10 pointer-events-none scale-120 specimen-frame-svg-wrapper" set:html={specimenFrame} />
                <div class="w-[85%] h-[85%] rounded-full overflow-hidden border-2 border-dashed border-[#2A358F]/20 p-1 relative">
                   <div class="w-full h-full rounded-full overflow-hidden bg-gray-100 reveal-mask translate-z-0">
                     <Image 
@@ -99,17 +99,17 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
                </div>
 
                {/* Botanical Label */}
-               <div class="absolute bottom-4 -right-4 bg-white/80 backdrop-blur-sm border border-[#2A358F]/10 px-4 py-2 shadow-md rotate-[3deg] will-animate specimen-label">
+               <div class={`absolute bottom-4 ${index % 2 === 0 ? '-left-4' : '-right-4'} bg-white/80 backdrop-blur-sm border border-[#2A358F]/10 px-4 py-2 shadow-md ${index % 2 === 0 ? '-rotate-[3deg]' : 'rotate-[3deg]'} will-animate specimen-label z-10`}>
                   <span class="font-mono text-[10px] text-[#2A358F] font-bold tracking-tighter uppercase">No_{index+1} / {specimen.label}</span>
                </div>
             </div>
 
             {/* Description */}
-            <div class="mt-12 text-center max-w-lg space-y-4 will-animate specimen-text">
-               <p class="text-xl md:text-2xl italic font-serif text-gray-800 leading-relaxed">
+            <div class={`flex-1 space-y-6 will-animate specimen-text text-center ${index % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+               <p class="text-xl md:text-3xl italic font-serif text-gray-800 leading-relaxed">
                  "{specimen.text}"
                </p>
-               <div class="flex items-center justify-center gap-3">
+               <div class={`flex items-center gap-3 justify-center ${index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'}`}>
                   <div class="h-px w-8 bg-gray-300"></div>
                   <span class="text-[10px] font-mono uppercase tracking-[0.3em] text-gray-400">Classis Secundus</span>
                   <div class="h-px w-8 bg-gray-300"></div>
@@ -198,6 +198,8 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           const label = section.querySelector(".specimen-label");
           const text = section.querySelector(".specimen-text");
           const img = section.querySelector("img");
+          const frameWrapper = section.querySelector(".specimen-frame-svg-wrapper");
+          const frameSvg = frameWrapper?.querySelector("svg");
 
           const tl = gsap.timeline({
             scrollTrigger: {
@@ -206,6 +208,8 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
               once: true
             }
           });
+
+          const isReverse = section.querySelector('.md\\:flex-row-reverse') !== null;
 
           tl.to(mask, {
             clipPath: "circle(50% at 50% 50%)",
@@ -219,15 +223,32 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           }, 0)
           .from(label, {
             opacity: 0,
-            x: 20,
-            rotation: 10,
+            x: isReverse ? -20 : 20,
+            rotation: isReverse ? -10 : 10,
             duration: 0.8
           }, "-=0.5")
           .from(text, {
             opacity: 0,
-            y: 20,
-            duration: 1
+            x: isReverse ? -30 : 30,
+            duration: 1,
+            ease: "power3.out"
           }, "-=0.6");
+
+          // --- IDLE ORGANIC FLOAT ---
+          if (frameSvg) {
+            // Set random initial rotation to avoid synchronized start
+            gsap.set(frameSvg, { rotation: gsap.utils.random(-3, 3) });
+            
+            // Smooth, slow oscillating rotation
+            gsap.to(frameSvg, {
+              rotation: "+=6",
+              duration: gsap.utils.random(12, 18),
+              ease: "sine.inOut",
+              repeat: -1,
+              yoyo: true,
+              force3D: true
+            });
+          }
         });
 
         // --- STUDENTS HEADING ---

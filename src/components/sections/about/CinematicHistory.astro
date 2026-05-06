@@ -1,0 +1,169 @@
+---
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
+
+interface Props {
+  paragraphs: string[];
+  backgrounds: string[];
+}
+
+const { paragraphs, backgrounds } = Astro.props;
+---
+
+<section class="cinematic-history-section relative w-full bg-[#0a0a0a] text-[#f5f0ea]">
+  
+  <!-- Hook Section -->
+  <div class="hook-container w-full h-dvh flex items-center justify-center relative z-20 bg-[#0a0a0a]">
+    <div class="text-center px-6 max-w-4xl will-animate opacity-0" data-animate-hook>
+      <p class="font-serif italic text-2xl md:text-4xl text-[#f5f0ea]/80 leading-relaxed mb-6">
+        "Setiap jejak memiliki cerita. Mari kembali ke masa lalu..."
+      </p>
+      <div class="w-12 h-[1px] bg-[#f5f0ea]/50 mx-auto"></div>
+    </div>
+  </div>
+
+  <!-- Split Screen Diorama Container -->
+  <div class="diorama-container relative w-full flex flex-col md:flex-row">
+    
+    <!-- Sisi Kiri: Sticky Backgrounds (50% Width) -->
+    <div class="hidden md:block sticky-images-wrapper sticky top-0 w-1/2 h-dvh overflow-hidden z-0">
+      {backgrounds.map((bg, index) => (
+        <div 
+          class="absolute inset-0 w-full h-full will-animate transition-opacity duration-500 history-bg-item"
+          style={{ zIndex: index, opacity: index === 0 ? 1 : 0 }}
+          data-bg-index={index}
+        >
+          <CloudinaryImage
+            src={bg}
+            alt={`Sejarah ${index + 1}`}
+            class="object-cover w-full h-full filter brightness-[0.6] sepia-[0.2]"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            loading={index === 0 ? "eager" : "lazy"}
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- Sisi Kanan: Scrolling Text (50% Width on Desktop, 100% on Mobile) -->
+    <div class="scrolling-texts-wrapper w-full md:w-1/2 relative z-10">
+      {paragraphs.map((text, index) => (
+        <div 
+          class="history-paragraph-container w-full min-h-dvh flex items-center justify-center px-8 md:px-16 py-24 md:py-0 relative"
+          data-text-index={index}
+        >
+          <!-- Gambar Mobile Fallback -->
+          <div class="block md:hidden absolute inset-0 z-0 opacity-20 pointer-events-none">
+             <CloudinaryImage
+              src={backgrounds[index]}
+              alt={`Sejarah Mobile ${index + 1}`}
+              class="object-cover w-full h-full filter brightness-50"
+              sizes="100vw"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]"></div>
+          </div>
+
+          <div class="history-text max-w-xl text-left opacity-0 translate-y-12 relative z-10">
+            <span class="inline-block border border-[#f5f0ea]/30 px-3 py-1 rounded-full text-[#f5f0ea]/60 font-qontra text-xs md:text-sm tracking-[0.2em] mb-6">
+              BAGIAN 0{index + 1}
+            </span>
+            <p class="text-[#f5f0ea]/90 text-lg md:text-xl lg:text-2xl leading-relaxed md:leading-loose font-serif">
+              {text}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../../../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:page-load", async () => {
+    await waitForLoading();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const hookEl = document.querySelector('[data-animate-hook]');
+    const textContainers = document.querySelectorAll('.history-paragraph-container');
+    const bgItems = document.querySelectorAll('.history-bg-item');
+
+    if (prefersReducedMotion) {
+      if (hookEl) gsap.set(hookEl, { opacity: 1, y: 0 });
+      gsap.set('.history-text', { opacity: 1, y: 0 });
+      gsap.set(bgItems, { opacity: 1 });
+      return;
+    }
+
+    // 1. Animasi Hook
+    if (hookEl) {
+      gsap.to(hookEl, {
+        scrollTrigger: {
+          trigger: hookEl,
+          start: "top 60%",
+          once: true,
+        },
+        opacity: 1,
+        y: 0,
+        duration: 2,
+        ease: "power3.out",
+        force3D: true,
+      });
+    }
+
+    // 2. Animasi Scrubbing Teks & Crossfade Gambar
+    textContainers.forEach((container, i) => {
+      const text = container.querySelector('.history-text');
+      if (!text) return;
+
+      // Timeline untuk memudar masuk dan memudar keluar Teks
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top 70%",
+          end: "bottom 30%",
+          scrub: 1, 
+          onEnter: () => {
+            // Fade-in gambar latar belakang yang sesuai index ini
+            bgItems.forEach((bg, bgIndex) => {
+               if (bgIndex === i) {
+                 gsap.to(bg, { opacity: 1, duration: 0.8, ease: "power2.inOut", force3D: true });
+               } else if (bgIndex < i) {
+                 // Sembunyikan perlahan gambar di belakangnya agar tidak numpuk terlalu banyak render
+                 gsap.to(bg, { opacity: 0, duration: 1.2, ease: "power2.inOut", force3D: true });
+               }
+            });
+          },
+          onEnterBack: () => {
+            // Ketika scroll ke atas, tampilkan gambar ini lagi
+             bgItems.forEach((bg, bgIndex) => {
+               if (bgIndex === i) {
+                 gsap.to(bg, { opacity: 1, duration: 0.8, ease: "power2.inOut", force3D: true });
+               } else if (bgIndex > i) {
+                 gsap.to(bg, { opacity: 0, duration: 0.8, ease: "power2.inOut", force3D: true });
+               }
+            });
+          }
+        }
+      });
+
+      // Teks masuk dari bawah
+      tl.fromTo(text, 
+        { opacity: 0, y: 50 }, 
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out", force3D: true }
+      );
+      
+      // Teks diam (stay read-able)
+      tl.to(text, { opacity: 1, duration: 0.4 });
+
+      // Teks memudar keluar ke atas
+      tl.to(text, 
+        { opacity: 0, y: -50, duration: 0.3, ease: "power2.in", force3D: true }
+      );
+    });
+  });
+</script>

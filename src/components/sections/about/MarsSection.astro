@@ -1,0 +1,194 @@
+---
+import InlineAudioPlayer from "../../../components/ui/InlineAudioPlayer";
+
+interface Props {
+  marsData: any; // Data lirik dari MDX
+  youtubeUrl?: string;
+}
+
+const { marsData, youtubeUrl } = Astro.props;
+
+// Helper untuk mengonversi object lirik menjadi array baris
+const getLyrics = (langData: Record<string, string>) => {
+  return Object.values(langData);
+};
+
+const indonesianLyrics = getLyrics(marsData.indonesian);
+const englishLyrics = getLyrics(marsData.english);
+const arabicLyrics = getLyrics(marsData.arabic);
+
+// Helper untuk memecah 16 baris menjadi 2 kolom (masing-masing 8 baris)
+const splitIntoColumns = (lyrics: string[]) => {
+  const mid = Math.ceil(lyrics.length / 2);
+  return [lyrics.slice(0, mid), lyrics.slice(mid)];
+};
+
+const indonesianCols = splitIntoColumns(indonesianLyrics);
+const englishCols = splitIntoColumns(englishLyrics);
+const arabicCols = splitIntoColumns(arabicLyrics);
+---
+
+<section class="mars-section relative w-full bg-[#f5f0eaff] py-24 md:py-32 overflow-hidden">
+  <div class="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+    
+    <!-- Area Judul & Audio Player (Grid 2 Kolom) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-16 will-animate opacity-0" data-animate-mars>
+      <!-- Kiri: Judul -->
+      <div class="text-center lg:text-left">
+        <h2 class="text-[#2A358F] font-bold text-3xl md:text-5xl tracking-widest mb-4 font-qontra">
+          MARS AL-ITTIHAD
+        </h2>
+        <div class="w-24 h-1 bg-[#2A358F] mx-auto lg:mx-0 rounded-full"></div>
+      </div>
+      
+      <!-- Kanan: Inline Audio Player -->
+      <div class="w-full">
+        <InlineAudioPlayer client:idle youtubeUrl={youtubeUrl} />
+      </div>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div class="flex justify-center gap-4 mb-16 will-animate opacity-0" data-animate-mars>
+      <button 
+        class="mars-tab-btn active px-6 py-2 rounded-full border-2 border-[#2A358F] text-[#f5f0ea] bg-[#2A358F] font-bold tracking-wider transition-all duration-300 hover:scale-105"
+        data-target="indonesian"
+      >
+        INDONESIA
+      </button>
+      <button 
+        class="mars-tab-btn px-6 py-2 rounded-full border-2 border-[#2A358F] text-[#2A358F] bg-transparent font-bold tracking-wider transition-all duration-300 hover:scale-105"
+        data-target="english"
+      >
+        ENGLISH
+      </button>
+      <button 
+        class="mars-tab-btn px-6 py-2 rounded-full border-2 border-[#2A358F] text-[#2A358F] bg-transparent font-bold tracking-wider transition-all duration-300 hover:scale-105"
+        data-target="arabic"
+      >
+        العربية
+      </button>
+    </div>
+
+    <!-- Lyrics Container -->
+    <div class="lyrics-container relative min-h-[400px] text-center lg:text-left will-animate opacity-0" data-animate-mars>
+      
+      <!-- Indonesia -->
+      <div id="tab-indonesian" class="mars-tab-content absolute inset-x-0 top-0 transition-opacity duration-500 opacity-100 z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+          <div class="flex flex-col gap-3">
+            {indonesianCols[0].map((line) => (
+              <p class="text-lg md:text-xl text-[#2A358F] font-serif italic">{line}</p>
+            ))}
+          </div>
+          <div class="flex flex-col gap-3">
+            {indonesianCols[1].map((line) => (
+              <p class="text-lg md:text-xl text-[#2A358F] font-serif italic">{line}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- English -->
+      <div id="tab-english" class="mars-tab-content absolute inset-x-0 top-0 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+          <div class="flex flex-col gap-3">
+            {englishCols[0].map((line) => (
+              <p class="text-lg md:text-xl text-[#2A358F] font-serif italic">{line}</p>
+            ))}
+          </div>
+          <div class="flex flex-col gap-3">
+            {englishCols[1].map((line) => (
+              <p class="text-lg md:text-xl text-[#2A358F] font-serif italic">{line}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Arabic -->
+      <div id="tab-arabic" class="mars-tab-content absolute inset-x-0 top-0 transition-opacity duration-500 opacity-0 pointer-events-none z-0">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4" dir="rtl">
+          <div class="flex flex-col gap-4">
+            {arabicCols[0].map((line) => (
+              <p class="text-xl md:text-2xl text-[#2A358F] font-serif">{line}</p>
+            ))}
+          </div>
+          <div class="flex flex-col gap-4">
+            {arabicCols[1].map((line) => (
+              <p class="text-xl md:text-2xl text-[#2A358F] font-serif">{line}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../../../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:page-load", async () => {
+    // 1. Logika Tab Vanilla JS
+    const buttons = document.querySelectorAll('.mars-tab-btn');
+    const contents = document.querySelectorAll('.mars-tab-content');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetId = button.getAttribute('data-target');
+        
+        // Reset buttons
+        buttons.forEach(btn => {
+          btn.classList.remove('text-[#f5f0ea]', 'bg-[#2A358F]', 'active');
+          btn.classList.add('text-[#2A358F]', 'bg-transparent');
+        });
+        
+        // Active button
+        button.classList.add('text-[#f5f0ea]', 'bg-[#2A358F]', 'active');
+        button.classList.remove('text-[#2A358F]', 'bg-transparent');
+
+        // Ganti konten dengan efek fade
+        contents.forEach(content => {
+          if (content.id === `tab-${targetId}`) {
+            content.classList.remove('opacity-0', 'pointer-events-none', 'z-0');
+            content.classList.add('opacity-100', 'z-10');
+          } else {
+            content.classList.remove('opacity-100', 'z-10');
+            content.classList.add('opacity-0', 'pointer-events-none', 'z-0');
+          }
+        });
+      });
+    });
+
+    // 2. Animasi Masuk (GSAP)
+    await waitForLoading();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const animateElements = document.querySelectorAll('.mars-section [data-animate-mars]');
+
+    if (prefersReducedMotion) {
+      gsap.set(animateElements, { opacity: 1, y: 0 });
+      return;
+    }
+
+    gsap.set(animateElements, { opacity: 0, y: 30 });
+
+    ScrollTrigger.batch(animateElements, {
+      start: "top 85%",
+      once: true,
+      onEnter: (batch) => {
+        gsap.to(batch, {
+          opacity: 1,
+          y: 0,
+          duration: 1.0,
+          ease: "power2.out",
+          stagger: 0.2,
+          force3D: true,
+        });
+      }
+    });
+  });
+</script>

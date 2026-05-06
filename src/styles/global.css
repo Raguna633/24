@@ -22,13 +22,23 @@
   --color-accent-dark: 37 30 84;
   /* rgb(37, 30, 84) - dark purple */
 
-  /* Pastikan konten tidak tertutup notch di kiri atau kanan */
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-  
-  /* Pastikan konten tidak tertutup bar navigasi bawah */
-  padding-bottom: env(safe-area-inset-bottom);
+  /*
+    Safe Area Variables — Nilai diisi oleh JavaScript di MainLayout.astro
+    SEBELUM viewport dimanipulasi ke width=1440 (Desktop Mode).
+    Jangan gunakan env() di sini karena akan bernilai 0 saat Desktop Mode aktif.
+    Default 0px aman karena JS akan selalu mengisinya di HEAD.
+  */
+  --app-safe-left: 0px;
+  --app-safe-right: 0px;
+  --app-safe-top: 0px;
+  --app-safe-bottom: 0px;
 }
+
+/*
+   html.force-safe-area tidak lagi digunakan.
+   Safe area kini diukur via DOM probe di HEAD MainLayout.astro
+   dan diaplikasikan sebagai inline style pada <html>.
+*/
 
 .dark {
   --color-primary: 37 30 84;
@@ -60,7 +70,16 @@ body {
   background-color: var(--color-primary);
   -ms-overflow-style: none;
   user-select: none;
+  /*
+    Safe area right ditangani di sini — BUKAN di level komponen individual.
+    Dengan ini, Tailwind px-* classes di setiap komponen TIDAK ditimpa,
+    dan area nav bar Android (landscape Desktop Mode) otomatis dikecualikan.
+    Komponen tidak perlu lagi inline style="padding-right: var(--app-safe-right)".
+  */
+  padding-right: var(--app-safe-right, 0px);
+  overflow-x: hidden;
 }
+
 
 html.lenis {
   height: auto;

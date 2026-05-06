@@ -43,59 +43,150 @@ const forceDesktopViewData = forceDesktopView;
   <head>
     <!-- Meta tags -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" id="viewport-meta" viewport-fit=cover />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" id="viewport-meta" />
     <meta name="generator" content={Astro.generator} />
 
     {/* Apply saved preference BEFORE page renders */}
     <script is:inline define:vars={{ forceDesktopView: forceDesktopViewData }}>
       (function() {
-        // 🔒 IMPORTANT: If page forces desktop view, ALWAYS use desktop
-        if (forceDesktopView) {
-          const viewport = document.getElementById('viewport-meta');
-          if (!viewport) return;
-          
-          // 📐 iOS Safari Scale Correction: Use Math.max to ensure landscape dimension is used
-          const deviceWidth = Math.max(window.screen.width, window.screen.height);
-          const desktopWidth = 1440;
-          const scale = deviceWidth / desktopWidth;
-          
-          viewport.setAttribute('content', 
-            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=${scale}, user-scalable=no`
-          );
-          
-          // Save to sessionStorage so toggle knows this page is forced
-          sessionStorage.setItem('forced-desktop-view', 'true');
-          return; // Exit early, don't check saved preference
-        }
-        
-        // Remove forced flag if not forced anymore
-        sessionStorage.removeItem('forced-desktop-view');
-        
-        // Get saved preference (normal behavior)
-        const savedMode = localStorage.getItem('view-mode');
+        const desktopWidth = 1440;
+        const physicalWidth = Math.max(window.screen.width, window.screen.height);
+        const zoomRatio = physicalWidth / desktopWidth;
         const viewport = document.getElementById('viewport-meta');
-        
         if (!viewport) return;
-        
-        if (savedMode === 'desktop') {
-          // Calculate perfect scale for current device
-          // 📐 iOS Safari Scale Correction
-          const deviceWidth = Math.max(window.screen.width, window.screen.height);
-          const desktopWidth = 1440;
-          const scale = deviceWidth / desktopWidth;
-          
-          // Apply desktop viewport with calculated scale
-          viewport.setAttribute('content', 
-            `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=no`
+
+        // ================================================================
+        // LANGKAH 1: Ubah viewport SEGERA (sebelum render) agar tidak FOUC.
+        // viewport-fit=cover WAJIB ada di dalam content= string — bukan sebagai
+        // HTML attribute terpisah — agar browser mengaktifkan safe-area env vars.
+        // ================================================================
+        function setDesktopViewport(userScalable) {
+          const maxScale = userScalable ? '3.0' : zoomRatio;
+          const scalable = userScalable ? 'yes' : 'no';
+          viewport.setAttribute('content',
+            `width=${desktopWidth}, initial-scale=${zoomRatio}, minimum-scale=${zoomRatio}, maximum-scale=${maxScale}, user-scalable=${scalable}, viewport-fit=cover`
           );
+        }
+
+        function setMobileViewport() {
+          viewport.setAttribute('content',
+            'width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover'
+          );
+        }
+
+        if (forceDesktopView) {
+          setDesktopViewport(false);
+          sessionStorage.setItem('forced-desktop-view', 'true');
         } else {
-          // Mobile view (default)
-          viewport.setAttribute('content', 
-            'width=device-width, initial-scale=1.0, user-scalable=yes'
-          );
+          sessionStorage.removeItem('forced-desktop-view');
+          const savedMode = localStorage.getItem('view-mode');
+          if (savedMode === 'desktop') {
+            setDesktopViewport(true);
+          } else {
+            setMobileViewport();
+          }
+        }
+
+        // ================================================================
+        // LANGKAH 2: Ukur safe area SETELAH layout tersedia (DOMContentLoaded).
+        //
+        // MENGAPA TIDAK BISA DI HEAD:
+        // env(safe-area-inset-*) dievaluasi saat browser melakukan layout/paint.
+        // Di HEAD script, <body> belum diparse dan layout belum terjadi —
+        // akibatnya getBoundingClientRect() selalu mengembalikan 0.
+        //
+        // DOMContentLoaded = HTML sudah diparse, layout sudah ada, env() akurat.
+        // Viewport sudah diubah di Langkah 1 — TAPI probe mengukur SESUDAH
+        // width=1440 diset, jadi env() akan 0. Solusinya: untuk Desktop Mode,
+        // kita perlu mengambil nilai dari sessionStorage hasil pengukuran mode mobile.
+        //
+        // STRATEGI:
+        // - Mode Mobile: ukur langsung (viewport masih device-width → env() akurat)
+        // - Mode Desktop: gunakan nilai dari sessionStorage reload mobile sebelumnya
+        //   (saat user switch dari mobile ke desktop, mobile reload dulu, ukur, simpan)
+        // ================================================================
+        function measureAndApply() {
+          const savedMode = localStorage.getItem('view-mode');
+          const isDesktopMode = forceDesktopView || savedMode === 'desktop';
+
+          function applySafeVars(right, top, bottom, ratio) {
+            const r = ratio > 0 && right  > 0 ? right  / ratio : right;
+            const t = ratio > 0 && top    > 0 ? top    / ratio : top;
+            const b = ratio > 0 && bottom > 0 ? bottom / ratio : bottom;
+            document.documentElement.style.setProperty('--app-safe-right',  r + 'px');
+            document.documentElement.style.setProperty('--app-safe-top',    t + 'px');
+            document.documentElement.style.setProperty('--app-safe-bottom', b + 'px');
+            sessionStorage.setItem('applied-safe-right',  String(r));
+            sessionStorage.setItem('applied-safe-top',    String(t));
+            sessionStorage.setItem('applied-safe-bottom', String(b));
+          }
+
+          if (!isDesktopMode) {
+            // === MODE MOBILE ===
+            // env() di Android Chrome selalu 0 untuk navigation bar.
+            // Browser sudah mengecualikan nav bar dari window.innerWidth secara internal.
+            // Kita hanya perlu menyimpan innerWidth saat landscape untuk referensi Desktop Mode.
+            // Untuk notch (iPhone), env() tetap bisa bekerja.
+            const pT = document.createElement('div');
+            pT.style.cssText = 'position:fixed;top:0;left:0;height:env(safe-area-inset-top,0px);width:1px;visibility:hidden;pointer-events:none;z-index:-9999;';
+            document.body.appendChild(pT);
+            const t = pT.getBoundingClientRect().height;
+            document.body.removeChild(pT);
+
+            const pB = document.createElement('div');
+            pB.style.cssText = 'position:fixed;bottom:0;left:0;height:env(safe-area-inset-bottom,0px);width:1px;visibility:hidden;pointer-events:none;z-index:-9999;';
+            document.body.appendChild(pB);
+            const b = pB.getBoundingClientRect().height;
+            document.body.removeChild(pB);
+
+            // Simpan safe-area vertikal (tetap berguna untuk iPhone notch)
+            sessionStorage.setItem('measured-safe-top',    String(t));
+            sessionStorage.setItem('measured-safe-bottom', String(b));
+
+            // Simpan innerWidth portrait — untuk hitung nav bar saat landscape Desktop Mode
+            // Catatan: pengukuran landscape yang akurat disimpan oleh switchToMode()
+            sessionStorage.setItem('measured-safe-right', '0'); // Android nav bar via innerWidth, bukan env()
+            applySafeVars(0, t, b, 0);
+
+          } else {
+            // === MODE DESKTOP ===
+            // env() tidak berfungsi saat viewport=1440. Gunakan pengukuran innerWidth.
+            //
+            // CARA KERJA:
+            // Saat switchToMode('desktop') dipanggil (masih di landscape mobile),
+            // window.innerWidth sudah TIDAK termasuk navigation bar (browser excludes it).
+            // Selisih physicalWidth - innerWidth = lebar nav bar dalam CSS px.
+            // Diskalakan ke virtual 1440px space untuk jadi padding-right.
+            const mobileInnerW = parseFloat(sessionStorage.getItem('mobile-inner-width-before-switch') || '0');
+            const mobilePysicalW = parseFloat(sessionStorage.getItem('mobile-physical-width-before-switch') || String(physicalWidth));
+
+            let navBarVirtualPx = 0;
+            if (mobileInnerW > 0 && mobilePysicalW > mobileInnerW) {
+              const navBarCSSPx = mobilePysicalW - mobileInnerW;
+              // Konversi dari CSS px mobile ke virtual px 1440
+              navBarVirtualPx = navBarCSSPx * desktopWidth / mobilePysicalW;
+            }
+
+            // Safe area vertikal dari pengukuran sebelumnya (tetap via env(), berguna untuk iPhone)
+            const storedT = parseFloat(sessionStorage.getItem('measured-safe-top')    || '0');
+            const storedB = parseFloat(sessionStorage.getItem('measured-safe-bottom') || '0');
+            const scaledT = storedT > 0 ? storedT / zoomRatio : 0;
+            const scaledB = storedB > 0 ? storedB / zoomRatio : 0;
+
+            applySafeVars(navBarVirtualPx, scaledT, scaledB, 0);
+          }
+        }
+
+        // Jalankan setelah layout tersedia
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', measureAndApply, { once: true });
+        } else {
+          // Sudah DOMContentLoaded (misalnya bfcache restore)
+          measureAndApply();
         }
       })();
     </script>
+
 
     <script is:inline>
       if ("scrollRestoration" in history) {
@@ -359,6 +450,16 @@ const forceDesktopViewData = forceDesktopView;
         }
 
         function switchToMode(mode: 'mobile' | 'desktop') {
+          // 📸 CAPTURE INNER WIDTH SEBELUM RELOAD
+          // Saat switchToMode('desktop') dipanggil, kita PASTI sedang di landscape
+          // (toggleViewMode() memblokir switch ke desktop jika masih portrait).
+          // window.innerWidth di landscape mobile = usable width (nav bar sudah dikecualikan browser).
+          // Selisih physicalWidth - innerWidth = lebar navigation bar.
+          if (mode === 'desktop') {
+            sessionStorage.setItem('mobile-inner-width-before-switch',    String(window.innerWidth));
+            sessionStorage.setItem('mobile-physical-width-before-switch', String(Math.max(window.screen.width, window.screen.height)));
+          }
+
           localStorage.setItem('view-mode', mode);
           sessionStorage.setItem('pending-view-mode-toast', 
             mode === 'desktop' ? 'Desktop view activated! Pinch to zoom.' : 'Mobile view activated!'
@@ -475,6 +576,13 @@ const forceDesktopViewData = forceDesktopView;
           const isPortrait = window.matchMedia("(orientation: portrait)").matches;
           const currentMode = getCurrentMode();
           
+          // Gunakan Math.max untuk mendapat dimensi landscape yang benar.
+          // Pada Android, screen.width/height TIDAK berubah saat rotasi —
+          // keduanya selalu portrait dimensions. Math.max memberi nilai lebih besar (landscape).
+          const physicalWidth = Math.max(window.screen.width, window.screen.height);
+          const desktopWidth = 1440;
+          const scale = physicalWidth / desktopWidth;
+
           // 🔒 Handle forced desktop mode specifically
           if (isForced) {
             if (isPortrait) {
@@ -483,13 +591,10 @@ const forceDesktopViewData = forceDesktopView;
               if (rotateOverlay?.classList.contains('active-overlay')) {
                 hideRotateOverlay();
               }
-              // Force correct scaling when in landscape
+              // Recalculate scale correctly with landscape dimension
               const viewport = document.querySelector('meta[name="viewport"]');
-              const deviceWidth = window.screen.width;
-              const desktopWidth = 1440;
-              const scale = deviceWidth / desktopWidth;
-              viewport?.setAttribute('content', 
-                `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+              viewport?.setAttribute('content',
+                `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`
               );
               window.dispatchEvent(new CustomEvent('viewModeChange'));
             }
@@ -513,13 +618,10 @@ const forceDesktopViewData = forceDesktopView;
           } else if (isPortrait && currentMode !== 'mobile' && !isForced) {
             switchToMode('mobile');
           } else if (currentMode === 'desktop') {
-            // Recalculate scale if already in desktop mode
+            // Recalculate scale with correct landscape dimension
             const viewport = document.querySelector('meta[name="viewport"]');
-            const deviceWidth = window.screen.width;
-            const desktopWidth = 1440;
-            const scale = deviceWidth / desktopWidth;
-            viewport?.setAttribute('content', 
-              `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes`
+            viewport?.setAttribute('content',
+              `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`
             );
             window.dispatchEvent(new CustomEvent('viewModeChange'));
           }
@@ -862,10 +964,37 @@ const forceDesktopViewData = forceDesktopView;
         body {
           -webkit-text-size-adjust: 100%;
           text-size-adjust: 100%;
-          padding-top: env(safe-area-inset-top);
-          padding-bottom: env(safe-area-inset-bottom);
+          /*
+            Gunakan CSS custom property — diisi oleh JS di HEAD sebelum viewport
+            dimanipulasi. env() tidak berfungsi saat Desktop Mode (width=1440).
+          */
+          padding-top: var(--app-safe-top, 0px);
+          padding-bottom: var(--app-safe-bottom, 0px);
         }
       }
     </style>
+    <script is:inline>
+      /*
+        Re-apply safe area CSS custom properties setelah navigasi Astro.
+        Nilai sudah dihitung dan diskalakan oleh HEAD script, disimpan di sessionStorage.
+        Script ini hanya memastikan nilai tetap terpakai setelah astro:page-load
+        (karena Astro View Transitions mengganti seluruh <body> tanpa reload HEAD).
+      */
+      function reApplySafeArea() {
+        const right  = sessionStorage.getItem('applied-safe-right')  || '0';
+        const top    = sessionStorage.getItem('applied-safe-top')    || '0';
+        const bottom = sessionStorage.getItem('applied-safe-bottom') || '0';
+
+        document.documentElement.style.setProperty('--app-safe-right',  right  + 'px');
+        document.documentElement.style.setProperty('--app-safe-top',    top    + 'px');
+        document.documentElement.style.setProperty('--app-safe-bottom', bottom + 'px');
+      }
+
+      // Jalankan segera (saat body script di-parse, sebelum astro:page-load)
+      reApplySafeArea();
+
+      // Jalankan setelah setiap navigasi View Transitions
+      document.addEventListener('astro:page-load', reApplySafeArea);
+    </script>
   </body>
 </html>

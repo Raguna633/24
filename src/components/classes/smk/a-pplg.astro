@@ -222,7 +222,7 @@ const { kelas } = Astro.params;
         </div>
       </div>
       <div
-        class="image-wrapper relative aspect-[4/3] w-full max-w-182 bottom-0 z-20 tefa-group-img will-animate overflow-hidden"
+        class="image-wrapper relative aspect-[4/3] w-full max-w-182 bottom-0 z-20 tefa-group-img will-animate"
       >
         <Image
           src={tefaGroup as ImageMetadata}
@@ -232,7 +232,7 @@ const { kelas } = Astro.params;
           decoding="async"
           quality={80}
           format="webp"
-          class:list={"-bottom-10 relative object-cover w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"}
+          class:list={"-bottom-10 relative object-contain w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"}
         />
       </div>
       <LineDecor

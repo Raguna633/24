@@ -40,8 +40,6 @@ const polaroidMemories = [
   { image: group1, date: "AUGUST 2023", note: "The Beginning" },
   { image: group2, date: "OCTOBER 2023", note: "Class Project" },
   { image: group3, date: "JANUARY 2024", note: "Break Time" },
-  // { image: group4, date: "MARCH 2024", note: "School Fest" },
-  // { image: group5, date: "MAY 2024", note: "Last Days" },
 ];
 
 const allStudents = await getCollection(
@@ -63,13 +61,13 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
     bgImage={heroBg2}
-    textColor="#2A358F"
+    textColor="text-black"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay />
 
   <!-- Polaroid Wall Section -->
-  <section class="min-h-screen bg-[#d1d5db] py-32 relative overflow-hidden polaroid-wall-section">
+  <section id="ips2-wall-section" class="min-h-screen bg-[#d1d5db] py-16 relative polaroid-wall-section">
      {/* Wall Texture Decor */}
      <div class="absolute inset-0 opacity-[0.03] pointer-events-none select-none" style="background-image: radial-gradient(#000 1px, transparent 0); background-size: 40px 40px;"></div>
 
@@ -120,15 +118,15 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
-      <div class="students-heading mb-20 text-center">
-        <p class="font-mono text-[#2A358F]/50 text-xs tracking-[0.5em] uppercase mb-4 opacity-0 students-heading-label will-animate">
+      <div class="students-heading mb-24 text-center relative">
+        <p class="font-mono text-[#2A358F]/50 text-xs tracking-[0.6em] uppercase mb-6 opacity-0 students-heading-label will-animate">
           The Graduates
         </p>
-        <h2 class="text-6xl md:text-8xl font-bold text-[#2A358F] opacity-0 students-heading-title will-animate">
+        <h2 class="text-7xl md:text-9xl font-black text-[#2A358F] uppercase italic tracking-tighter leading-[0.8] opacity-0 students-heading-title will-animate">
           {classContent.className}
         </h2>
-        <p class="text-sm text-gray-400 mt-6 opacity-0 students-heading-count will-animate tracking-widest italic">
-          {allStudents.length} Stories Collected in this Album
+        <p class="text-sm text-gray-400 mt-8 opacity-0 students-heading-count will-animate tracking-[0.2em] font-mono italic">
+          // {allStudents.length} STORIES COLLECTED
         </p>
       </div>
 
@@ -175,93 +173,113 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      const ctx = gsap.context(() => {});
-      document.addEventListener("astro:before-swap", () => {
-        ctx.revert();
-        ScrollTrigger.getAll().forEach(t => t.kill());
-      }, { once: true });
+      // 1. Cleanup existing triggers
+      ScrollTrigger.getAll().forEach(t => t.kill());
 
       await waitForLoading();
 
-      ctx.add(() => {
+      const ctx = gsap.context(() => {
+        const section = document.querySelector("#ips2-wall-section");
+        if (!section) return;
+
         // --- POLAROID WALL ANIMATIONS ---
-        const cards = gsap.utils.toArray<HTMLElement>(".polaroid-card");
+        const cards = gsap.utils.toArray<HTMLElement>(".polaroid-card", section);
         
-        // Define target positions (randomized yet controlled)
+        // Define target positions for 3 cards (Spaced proportionally)
         const positions = [
-          { top: "5%", left: "5%", rotate: -8 },
-          { top: "15%", left: "60%", rotate: 12 },
-          { top: "45%", left: "10%", rotate: 7 },
-          { top: "55%", left: "65%", rotate: -15 },
-          { top: "30%", left: "30%", rotate: 2 },
+          { top: "20%", left: "22%", rotate: -8 },   // Top Left
+          { top: "25%", left: "75%", rotate: 12 },   // Top Right
+          { top: "65%", left: "48%", rotate: -4 },   // Bottom Center
         ];
+
+        // Set static positions once (Target State)
+        cards.forEach((card, i) => {
+          const pos = positions[i % positions.length];
+          gsap.set(card, {
+            top: pos.top,
+            left: pos.left,
+            xPercent: -50,
+            yPercent: -50,
+            rotation: pos.rotate,
+            opacity: 1 // Target is visible
+          });
+        });
 
         const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".polaroid-wall-section",
-            start: "top 20%",
+            trigger: section,
+            start: "top top",
             end: "+=150%",
             pin: true,
-            scrub: 1.0,
+            scrub: 1.2,
             anticipatePin: 1
           }
         });
 
+        // Entrance animation from center using ONLY GPU properties
         cards.forEach((card, i) => {
-          const pos = positions[i % positions.length];
-          
-          // Initial state: scattered and faded
-          gsap.set(card, {
-            top: "50%",
-            left: "50%",
-            xPercent: -50,
-            yPercent: -50,
-            scale: 0.5,
-            rotation: Math.random() * 60 - 30,
-            opacity: 0
-          });
-
-          // Animation entrance
-          tl.to(card, {
-            top: pos.top,
-            left: pos.left,
-            rotation: pos.rotate,
-            scale: 1,
-            opacity: 1,
-            duration: 1,
-            ease: "back.out(1.2)"
+          tl.from(card, {
+            // Calculate dynamic offset from viewport center
+            x: () => {
+              const rect = card.getBoundingClientRect();
+              return (window.innerWidth / 2) - (rect.left + rect.width / 2);
+            },
+            y: () => {
+              const rect = card.getBoundingClientRect();
+              return (window.innerHeight / 2) - (rect.top + rect.height / 2);
+            },
+            rotation: (Math.random() - 0.5) * 100,
+            scale: 0.2,
+            opacity: 0,
+            duration: 1.5,
+            ease: "power3.out",
+            force3D: true
           }, i * 0.4);
         });
 
         // --- STUDENTS HEADING ---
-        gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: ".students-section",
-            start: "top 80%",
-            once: true
-          }
-        });
-
-        // --- CARDS STAGGER ---
-        const studentCards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
-        studentCards.forEach((card, i) => {
-          gsap.to(card, {
+        gsap.fromTo(".students-heading-label, .students-heading-title, .students-heading-count", 
+          { opacity: 0, y: 50 },
+          {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            delay: (i % 4) * 0.1,
+            duration: 1.5,
+            stagger: 0.15,
+            ease: "expo.out",
+            force3D: true,
             scrollTrigger: {
-              trigger: card,
-              start: "top 95%",
+              trigger: ".students-section",
+              start: "top 85%",
               once: true
             }
-          });
+          }
+        );
+
+        // --- CARDS STAGGER (Optimized with Batch) ---
+        ScrollTrigger.batch(".student-card-wrapper", {
+          onEnter: (elements) => {
+            gsap.fromTo(elements, 
+              { opacity: 0, y: 30 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                stagger: 0.1,
+                ease: "power2.out",
+                force3D: true
+              }
+            );
+          },
+          start: "top 95%",
+          once: true
         });
       });
+
+      ScrollTrigger.refresh();
+
+      document.addEventListener("astro:before-swap", () => {
+        ctx.revert();
+      }, { once: true });
     });
   </script>
 </div>

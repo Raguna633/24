@@ -1,18 +1,53 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import { Image } from "astro:assets";
-import Lenis from "lenis";
-import AltieHero from "../components/about-altie/AltieHero.astro";
+import AboutHero from "../components/sections/about/AboutHero.astro";
+import FoundersSection from "../components/sections/about/FoundersSection.astro";
+import CinematicHistory from "../components/sections/about/CinematicHistory.astro";
+import MarsSection from "../components/sections/about/MarsSection.astro";
+import AboutCTA from "../components/sections/about/AboutCTA.astro";
+import AudioPlayer from "../components/ui/AudioPlayer";
+
+import * as aboutData from "../data/about/altie.mdx";
+
+const { frontmatter } = aboutData;
+
+const historyParagraphs = [
+  frontmatter.history.first_paragraph,
+  frontmatter.history.second_paragraph,
+  frontmatter.history.third_paragraph,
+  frontmatter.history.fourth_paragraph,
+  frontmatter.history.fifth_paragraph,
+  frontmatter.history.sixth_paragraph,
+  frontmatter.history.seventh_paragraph,
+  frontmatter.history.eighth_paragraph,
+];
 ---
 
-<MainLayout title="About Altie">
-  <AltieHero />
+<MainLayout title="About Altie - Pondok Pesantren Al Ittihad">
+  <div class="w-full relative bg-[#f5f0eaff]">
+    <AboutHero 
+      title={frontmatter.title}
+      imageBackgroundSrc={frontmatter.image_background}
+      visi={frontmatter.visi}
+      misi={frontmatter.misi}
+    />
+    
+    <FoundersSection 
+      kepalaPimpinan={frontmatter.kepala_pimpinan}
+      pimpinanPhoto={frontmatter.pimpinan_photo}
+      ibuPimpinan={frontmatter.ibu_pimpinan}
+      ibuPimpinanPhoto={frontmatter.ibu_pimpinan_photo}
+    />
+    
+    <CinematicHistory 
+      paragraphs={historyParagraphs}
+      backgrounds={frontmatter.history_background}
+    />
+    
+    <MarsSection marsData={frontmatter.mars} youtubeUrl={frontmatter.mars_youtube} />
+    
+    <AboutCTA />
+  </div>
+
+  <AudioPlayer client:idle src={frontmatter.mars_audio} />
 </MainLayout>
-
-<style>
-  .overlay {
-  }
-
-  .text {
-  }
-</style>

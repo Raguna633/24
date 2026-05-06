@@ -81,55 +81,57 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     topTexts={classContent.walasGreeting.topText}
     bottomTexts={classContent.walasGreeting.bottomText}
     bgImage={heroBg2}
-    textColor="#f5f0ea"
+    textColor="text-black"
   />
 
-  <FadeOverlay connectorHeight="200" />
+  <FadeOverlay connectorHeight="40" />
 
   <!-- Galaxy Storytelling Section -->
-  <div class="galaxy-wrap relative">
+  <div class="galaxy-wrap relative overflow-hidden h-dvh">
     {/* Dynamic Star Field Backdrop */}
     <div class="absolute inset-0 z-0 opacity-30 pointer-events-none" set:html={starParticles} />
     
-    {/* Constellation Draw Layer */}
+    {/* Constellation Draw Layer (Rule 05: Inline SVG for Animation) */}
     <div 
-        class="absolute inset-0 z-10 pointer-events-none opacity-40 constellation-bg-gold" 
-        set:html={constellationSvg} 
+        class="constellation-container absolute inset-0 w-full h-full -z-10 pointer-events-none opacity-40 will-animate constellation-bg-gold"
+        set:html={constellationSvg.replace("<svg ", '<svg preserveAspectRatio="xMidYMid slice" ')}
     />
 
     {
       galaxyStories.map((story, index) => (
-        <section class="min-h-screen flex items-center justify-center p-6 md:p-12 relative z-20 galaxy-section border-b border-white/5">
+        <section class="min-h-dvh flex items-center justify-center p-6 md:p-12 relative z-20 galaxy-section border-b border-white/5">
           <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             
             {/* Visual Side */}
-            <div class="relative group">
-               <div class="absolute -inset-4 bg-yellow-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-               <div class="relative border border-yellow-500/20 p-2 bg-black/50 backdrop-blur-md shadow-[0_0_50px_rgba(250,204,21,0.1)] will-animate galaxy-card">
-                 <Image 
-                   src={story.image} 
-                   alt={story.title} 
-                   class="w-full aspect-[4/3] object-cover grayscale-[40%] group-hover:grayscale-0 transition-all duration-1000"
-                 />
-                 {/* Decorative HUD Elements */}
-                 <div class="absolute bottom-0 left-0 p-4 font-mono text-[9px] text-yellow-500/40 tracking-[0.2em] uppercase">
-                    Sector_V#{index+1} // ETERNAL_LINK
-                 </div>
+            <div class={`relative group ${index % 2 === 0 ? 'order-2 lg:order-1' : 'order-2'}`}>
+                <div class="absolute -inset-4 bg-yellow-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                <div class="relative border border-yellow-500/20 bg-black/80 shadow-2xl shadow-yellow-500/5 will-animate galaxy-card overflow-hidden">
+                  <div class="overflow-hidden">
+                    <Image 
+                      src={story.image} 
+                      alt={story.title} 
+                      class="w-full aspect-4/3 object-cover grayscale-40 group-hover:grayscale-0 transition-all duration-1000 galaxy-photo opacity-0 scale-105"
+                    />
+                  </div>
+                  {/* Decorative HUD Elements */}
+                  <div class="absolute top-0 right-0 p-4 font-mono text-[9px] text-yellow-500/40 tracking-[0.2em] uppercase">
+                     Sector_V#{index+1} // ETERNAL_LINK
+                  </div>
                </div>
             </div>
 
             {/* Content Side */}
-            <div class="space-y-6">
+            <div class={`space-y-6 ${index % 2 === 0 ? 'order-1 lg:order-2' : 'order-1'}`}>
                <div class="inline-block px-3 py-1 border border-yellow-500/30 bg-yellow-500/5">
                   <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-yellow-500">Epoch_{index + 1}</span>
                </div>
-               <h2 class="text-4xl md:text-6xl font-bold tracking-[0.1em] text-white will-animate galaxy-title" style="font-family: 'Orbitron', sans-serif;">
+               <h2 class="text-4xl md:text-6xl font-bold tracking-tighter text-white will-animate galaxy-title" style="font-family: 'Orbitron', sans-serif;">
                  {story.title}
                </h2>
-               <p class="text-lg text-white/50 leading-relaxed max-w-md font-light italic will-animate galaxy-desc">
+               <p class="text-lg text-white/70 leading-relaxed max-w-md font-light italic will-animate galaxy-desc">
                  "{story.text}"
                </p>
-               <div class="h-px w-20 bg-gradient-to-r from-yellow-500/50 to-transparent will-animate galaxy-line"></div>
+               <div class="h-0.5 w-12 bg-yellow-500/50 will-animate galaxy-line"></div>
             </div>
           </div>
         </section>
@@ -188,7 +190,7 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     .constellation-bg-gold :global(path), 
     .constellation-bg-gold :global(line) {
         stroke: #facc15 !important;
-        stroke-width: 0.5px;
+        stroke-width: 1px;
     }
     .constellation-bg-gold :global(circle) {
         fill: #facc15 !important;
@@ -196,9 +198,11 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     .constellation-bg-gold svg {
         width: 100%;
         height: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
+        display: block;
+        object-fit: cover;
+    }
+    .galaxy-wrap {
+        will-change: transform;
     }
   </style>
 
@@ -218,78 +222,126 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
 
       await waitForLoading();
 
-      ctx.add(() => {
-        // --- CONSTELLATION DRAWING ---
-        const paths = document.querySelectorAll(".constellation-bg-gold path, .constellation-bg-gold line");
-        paths.forEach(path => {
-          const length = (path as SVGPathElement).getTotalLength();
-          gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
-          
-          gsap.to(path, {
-            strokeDashoffset: 0,
-            duration: 2.5,
-            ease: "power1.inOut",
-            scrollTrigger: {
-              trigger: ".galaxy-wrap",
-              start: "top 40%",
-              end: "bottom 90%",
-              scrub: 1.0,
-            }
-          });
-        });
-
-        // --- SECTION ANIMATIONS ---
-        const sections = gsap.utils.toArray<HTMLElement>(".galaxy-section");
-        sections.forEach((section) => {
-           const card = section.querySelector(".galaxy-card");
-           const title = section.querySelector(".galaxy-title");
-           const desc = section.querySelector(".galaxy-desc");
-           const line = section.querySelector(".galaxy-line");
-
-           const gtl = gsap.timeline({
+       ctx.add(() => {
+         const galaxyWrap = document.querySelector(".galaxy-wrap") as HTMLElement;
+         const storySections = gsap.utils.toArray<HTMLElement>(".galaxy-section");
+         const starPaths = gsap.utils.toArray<SVGElement>(".constellation-container svg path, .constellation-container svg line");
+ 
+         if (galaxyWrap && storySections.length > 0) {
+           // --- STORY TIMELINE (IPA 1 Standard) ---
+           const storiesTl = gsap.timeline({
              scrollTrigger: {
-               trigger: section,
-               start: "top 70%",
+               trigger: galaxyWrap,
+               start: "top top",
+               end: "+=300%", 
+               pin: true,
+               scrub: 1,
+               anticipatePin: 1,
+             }
+           });
+ 
+           storySections.forEach((section, index) => {
+             const card = section.querySelector(".galaxy-card");
+             const title = section.querySelector(".galaxy-title");
+             const desc = section.querySelector(".galaxy-desc");
+             const line = section.querySelector(".galaxy-line");
+             const photo = section.querySelector(".galaxy-photo");
+ 
+             if (index > 0) {
+               gsap.set(section, { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0 });
+             }
+ 
+             const tl = gsap.timeline();
+             
+             if (index > 0) {
+               tl.to(section, { opacity: 1, duration: 1 }, 0);
+             }
+ 
+             if (card) tl.from(card, { opacity: 0, scale: 0.95, duration: 1.5, ease: "expo.out" }, 0.2);
+             if (photo) {
+               tl.to(photo, { 
+                 opacity: 1, 
+                 scale: 1, 
+                 filter: "grayscale(30%)", 
+                 duration: 2, 
+                 ease: "power2.out" 
+               }, 0.3);
+             }
+             if (title) tl.from(title, { opacity: 0, x: -30, duration: 1, ease: "power4.out" }, "-=0.8");
+             if (desc) tl.from(desc, { opacity: 0, y: 20, duration: 1, ease: "power4.out" }, "-=0.8");
+             if (line) tl.from(line, { scaleX: 0, transformOrigin: "left", duration: 0.8 }, "-=0.6");
+ 
+             storiesTl.add(tl, index === 0 ? 0 : "-=0.5");
+ 
+             if (index < storySections.length - 1) {
+               storiesTl.to(section, { opacity: 0, duration: 0.8 }, ">0.3");
+             }
+           });
+ 
+           // --- BACKGROUND DRAWING ---
+           if (starPaths.length > 0) {
+             const totalTimelineDur = storiesTl.duration();
+             
+             starPaths.forEach((path) => {
+               const p = path as unknown as SVGGeometryElement;
+               const length = p instanceof SVGPathElement ? p.getTotalLength() : 1000;
+               const originalFill = p.style.fill || window.getComputedStyle(p).fill;
+ 
+               gsap.set(p, {
+                 strokeDasharray: length + 2,
+                 strokeDashoffset: length + 2,
+                 fill: "none",
+                 stroke: "#facc15",
+                 strokeWidth: 1,
+                 opacity: 0
+               });
+ 
+               storiesTl.to(p, { 
+                   strokeDashoffset: 0, 
+                   opacity: 1,
+                   duration: totalTimelineDur, 
+                   ease: "none" 
+               }, 0);
+ 
+               storiesTl.to(p, { 
+                   fill: originalFill, 
+                   duration: 0.5, 
+                   ease: "power2.inOut" 
+               }, ">-0.5");
+             });
+           }
+         }
+ 
+         // --- STUDENTS HEADING ---
+         gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            stagger: 0.3,
+            scrollTrigger: {
+              trigger: ".students-section",
+              start: "top 80%",
+              once: true
+            }
+         });
+ 
+         // --- STUDENT CARDS ---
+         const cards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
+         cards.forEach((card, i) => {
+           gsap.to(card, {
+             opacity: 1,
+             y: 0,
+             duration: 1,
+             delay: (i % 4) * 0.15,
+             ease: "power2.out",
+             scrollTrigger: {
+               trigger: card,
+               start: "top 95%",
                once: true
              }
            });
-
-           gtl.from(card, { opacity: 0, scale: 1.1, blur: 10, duration: 1.5, ease: "power2.out" })
-              .from(title, { opacity: 0, y: 30, duration: 1, ease: "power4.out" }, "-=1")
-              .from(desc, { opacity: 0, opacity: 0, duration: 1.2 }, "-=0.8")
-              .from(line, { width: 0, duration: 1 }, "-=0.6");
-        });
-
-        // --- STUDENTS HEADING ---
-        gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
-           opacity: 1,
-           y: 0,
-           duration: 1.2,
-           stagger: 0.3,
-           scrollTrigger: {
-             trigger: ".students-section",
-             start: "top 80%",
-             once: true
-           }
-        });
-
-        // --- STUDENT CARDS ---
-        const cards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
-        cards.forEach((card, i) => {
-          gsap.to(card, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: (i % 4) * 0.15,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 95%",
-              once: true
-            }
-          });
-        });
-      });
+         });
+       });
     });
   </script>
 </div>
