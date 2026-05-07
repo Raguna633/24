@@ -3,7 +3,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import TeacherHero from "../components/teacher/TeacherHero.astro";
 import TeacherGrid from "../components/teacher/TeacherGrid.astro";
 import TeacherQuote from "../components/teacher/TeacherQuote.astro";
-import TeacherModal from "../components/teacher/TeacherModal";
+import TeacherModal from "../components/teacher/TeacherModal.jsx";
 
 const pageTitle = "Our Beloved Teachers";
 const pageDescription =
@@ -13,7 +13,7 @@ const pageDescription =
 <MainLayout title={pageTitle} description={pageDescription}>
   <!-- Storyboarding: Hook (Hero) -> Body (Content) -> Tail (Bottom) -->
   <div
-    class="w-full bg-[var(--color-primary)] overflow-hidden min-h-dvh relative text-secondary"
+    class="w-full bg-[var(--color-primary)] relative text-secondary"
   >
     <!-- 1. Top Quote (Hero) -->
     <TeacherQuote
@@ -42,5 +42,5 @@ const pageDescription =
   {
     /* React Modal di-load client-side sejak awal agar event listener global (openTeacherModal) langsung aktif */
   }
-  <TeacherModal client:load />
+  <TeacherModal client:only="react" />
 </MainLayout>

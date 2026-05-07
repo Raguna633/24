@@ -1,0 +1,215 @@
+---
+// src/components/sections/MaknaLogoSection.astro
+interface Props {
+  maknaLogo: {
+    name: string;
+    title: string;
+    content: string;
+    photo: string;
+    backgroundImage: string;
+  };
+}
+
+const { maknaLogo } = Astro.props;
+
+// Parse the content
+const points = maknaLogo.content
+  .split(/(?=\d+\.\s)/)
+  .filter(Boolean)
+  .map((item) => {
+    // Split by first newline
+    const firstNewlineIndex = item.indexOf("\n");
+    if (firstNewlineIndex === -1) {
+      return { title: item.replace(/^\d+\.\s/, "").trim(), description: "" };
+    }
+    const titleLine = item.substring(0, firstNewlineIndex).replace(/^\d+\.\s/, "").trim();
+    const description = item.substring(firstNewlineIndex + 1).trim();
+    return { title: titleLine, description };
+  });
+
+// Setup image optimization
+const optimizedPhoto = maknaLogo.photo.includes('/upload/') 
+  ? maknaLogo.photo.replace('/upload/', '/upload/f_auto,q_auto/') 
+  : maknaLogo.photo;
+---
+
+<section class="relative w-full bg-[#f5f0ea]" id="makna-logo-section">
+  <!-- Optional Parallax Background (Slightly visible if needed) -->
+  <div class="absolute inset-0 opacity-5 pointer-events-none z-0">
+    <img 
+      src={maknaLogo.backgroundImage.replace('/upload/', '/upload/f_auto,q_auto/')} 
+      class="w-full h-full object-cover" 
+      alt="Background" 
+      loading="lazy" 
+      decoding="async" 
+    />
+  </div>
+
+  <div class="container mx-auto px-4 md:px-8 lg:px-16">
+    <div class="relative flex flex-col md:flex-row">
+      
+      <!-- Sticky Left (Desktop) / Sticky Background (Mobile) -->
+      <!-- The track container -->
+      <div class="absolute top-0 bottom-0 left-0 right-0 md:relative md:w-1/2 z-0">
+        <!-- The sticky element -->
+        <div class="sticky top-0 h-screen flex flex-col justify-center items-center px-4">
+          
+          <div class="text-center will-animate opacity-0 mb-8 md:mb-12" id="makna-title">
+            <h2 class="text-3xl md:text-5xl font-bold text-[#2A358F] font-serif mb-2">{maknaLogo.title}</h2>
+          </div>
+          
+          <div class="relative w-full max-w-[280px] md:max-w-md aspect-square will-animate opacity-0" id="makna-logo-img">
+            <img 
+            src={optimizedPhoto} 
+            alt={maknaLogo.name} 
+            class="w-full h-full object-contain drop-shadow-2xl"
+              loading="eager"
+              decoding="async"
+              width="400"
+              height="400"
+              />
+            </div>
+            
+        </div>
+      </div>
+
+      <!-- Scrollable Content Right (Desktop) / Foreground (Mobile) -->
+      <div class="relative w-full md:w-1/2 z-10 pt-[40vh] pb-[40vh]">
+        <div class="flex flex-col gap-[60vh] md:gap-[50vh]">
+          {points.map((point, index) => (
+            <div class="makna-point will-animate flex flex-col justify-center">
+              <div class="bg-white/80 backdrop-blur-md md:bg-transparent md:backdrop-blur-none p-8 md:p-0 rounded-2xl shadow-xl md:shadow-none border border-white/20 md:border-none">
+                <h3 class="text-2xl md:text-4xl font-bold text-[#2A358F] mb-4 flex items-center gap-3 md:gap-4">
+                  <span class="text-4xl md:text-5xl opacity-30 font-serif">{index + 1}</span>
+                  {point.title}
+                </h3>
+                <p class="text-base md:text-xl text-gray-700 leading-relaxed md:leading-relaxed">
+                  {point.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../../utils/loadingState";
+
+  document.addEventListener("astro:page-load", async () => {
+    // Check for reduced motion
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    
+    await waitForLoading();
+    
+    const section = document.getElementById("makna-logo-section");
+    if (!section) return;
+
+    const points = gsap.utils.toArray<HTMLElement>(".makna-point");
+    const logoImg = document.getElementById("makna-logo-img");
+    const title = document.getElementById("makna-title");
+
+    if (!points.length || !logoImg || !title) return;
+
+    if (prefersReducedMotion) {
+      // Just make them visible without animation if user prefers reduced motion
+      gsap.set([title, logoImg], { opacity: 1 });
+      gsap.set(points, { opacity: 1, y: 0 });
+      return;
+    }
+
+    // Set initial states for all elements
+    gsap.set(points, { opacity: 0.1, y: 50 });
+    gsap.set([title, logoImg], { y: 30, scale: 0.9, opacity: 0 });
+
+    let mm = gsap.matchMedia();
+
+    // Desktop Animation
+    mm.add("(min-width: 768px)", () => {
+      // Sticky Entrance Animation
+      gsap.to([title, logoImg], {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 1.5,
+        ease: "power3.out",
+        stagger: 0.2,
+        force3D: true,
+        scrollTrigger: {
+          trigger: section,
+          start: "top 70%",
+          once: true
+        }
+      });
+    });
+
+    // Mobile Animation
+    mm.add("(max-width: 767px)", () => {
+      // Sticky Entrance Animation (Lower opacity for background readability)
+      gsap.to([title, logoImg], {
+        opacity: 0.15,
+        y: 0,
+        scale: 1,
+        duration: 1.5,
+        ease: "power3.out",
+        stagger: 0.2,
+        force3D: true,
+        scrollTrigger: {
+          trigger: section,
+          start: "top 70%",
+          once: true
+        }
+      });
+    });
+
+    // Content Scroll Animation (Same for both)
+    points.forEach((point, i) => {
+      const isLast = i === points.length - 1;
+      
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: point,
+          start: "top 65%",
+          end: "bottom 35%",
+          scrub: 1,
+        }
+      });
+
+      // Fade in and move up
+      tl.to(point, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "none",
+        force3D: true
+      });
+
+      // Pulse the logo gently
+      tl.to(logoImg, {
+        scale: 1.05,
+        rotation: i % 2 === 0 ? 2 : -2, // slight tilt
+        duration: 1,
+        ease: "none",
+        force3D: true,
+        yoyo: true,
+        repeat: 1
+      }, "<");
+
+      // Fade out if not the last item
+      if (!isLast) {
+        tl.to(point, {
+          opacity: 0.1,
+          y: -30,
+          duration: 1,
+          ease: "none",
+          force3D: true
+        });
+      }
+    });
+  });
+</script>

@@ -7,6 +7,7 @@ import HeroSection from "../components/sections/HeroSection.astro";
 import AboutSection from "../components/sections/AboutSection.astro";
 import GreetingSection from "../components/sections/GreetingSection.astro";
 import JourneySection from "../components/sections/JourneySection.astro";
+import MaknaLogoSection from "../components/sections/MaknaLogoSection.astro";
 import HorizontalScrollCarousel from "../components/HorizontalScrollCarousel.astro";
 import ParallaxStack from "../components/ParallaxStack.astro";
 import FadeOverlay from "../components/FadeOverlay.astro";
@@ -258,6 +259,34 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
     schoolLogo: "",
   },
 ];
+
+const maknaLogo = {
+  name: "Logo Angkatan Nihayatu Zayn",
+  title: "Makna Logo Nihayatu Zayn",
+  content: `1. Dua garis lengkung
+Merupakan representasi adaptasi dan resiliensi yang kuat dalam menghadapi setiap
+medan kehidupan dan perkembangan zaman. Berdampingannya dua garis
+melambangkan ukhuwah islamiyyah, solidaritas dan harmoni sosial
+2. Garis emas dan abu
+Garis emas melambangkan kejayaan, kemulian, kehormatan sedangkan
+garis abu melambangkan keseimbangan, fleksibilitas dan khidmat. Bentuknya yang
+membumbung ke atas merupakan simbol istiqomah, tawakkal dan optimisme
+sekaligus merepresentasikan semangat yang tidak pernah padam dalam mengejar
+mimpi. Transisi dari warna yang lebih gelap ke warna yang lebih cerah
+melambangkan proses perkembangan diri.
+3. Titik emas
+Simbol tauhid sebagai pusat dari segala pergerakan. Di samping itu, titik ini juga
+melambangkan prinsip yang kuat, keteguhan, ketangguhan, simbol kesadaran diri,
+benih kebermanfaatan dan kesatuan visi
+4. Tulisan nihayatuzayn
+Nihayatuzayn mempunyai arti puncak keindahan, yang merupakan do’a, cita-cita
+serta tujuan yang berupa kesuksesan dunia dan akhirat. Sedangkan tipografi dengan
+khat kaligrafi mencerminkan kebanggaan atas identitas keislaman.`,
+  photo:
+    "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778119494/nihayatuzayn.png",
+  backgroundImage:
+    "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775059730/vlcsnap-2025-12-16-19h50m31s981.webp",
+};
 ---
 
 <MainLayout
@@ -318,6 +347,9 @@ Jadi, mari kita ucapkan selamat tinggal kepada masa lalu, dan mari kita sambut m
       ))
     }
   </HorizontalScrollCarousel>
+
+  <!-- Makna Logo Section -->
+  <MaknaLogoSection maknaLogo={maknaLogo} />
 
   <!-- TODO: Change Journey Section to CTA section that redirect to altie-about page  -->
   <!-- Journey Section -->

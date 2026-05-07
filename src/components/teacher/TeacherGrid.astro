@@ -1,6 +1,5 @@
 ---
 import TeacherCard from './TeacherCard.astro';
-import TeacherModal from './TeacherModal.jsx';
 
 const dummyTeachers = Array.from({ length: 56 }).map((_, i) => ({
   name: `Teacher Name ${i + 1}`,
@@ -17,7 +16,7 @@ const dummyTeachers = Array.from({ length: 56 }).map((_, i) => ({
   </div>
 
   <!-- Flexbox Layout -->
-  <div class="flex flex-wrap justify-center md:justify-start gap-x-8 gap-y-16 lg:gap-x-12 lg:gap-y-24">
+  <div class="teacher-grid-container flex flex-wrap justify-center md:justify-start gap-x-8 gap-y-16 lg:gap-x-12 lg:gap-y-24">
     {dummyTeachers.map((teacher, index) => (
       <TeacherCard 
         name={teacher.name} 
@@ -38,8 +37,8 @@ const dummyTeachers = Array.from({ length: 56 }).map((_, i) => ({
     const cards = document.querySelectorAll('[data-animate-scroll]');
     if (cards.length === 0) return;
     
+    // 1. Click Event Listeners
     cards.forEach(card => {
-      // Add click event listener to dispatch custom event for React Modal
       card.addEventListener('click', () => {
         window.dispatchEvent(new CustomEvent('openTeacherModal', {
           detail: { 
@@ -49,24 +48,53 @@ const dummyTeachers = Array.from({ length: 56 }).map((_, i) => ({
           }
         }));
       });
-
-      // Implementasi animasi scroll elemen di bawah lipatan
-      gsap.fromTo(card, 
-        { opacity: 0, y: 50 },
-        {
-          scrollTrigger: {
-            trigger: card,
-            start: "top 85%", // Animasi mulai ketika 85% layar
-            toggleActions: "play none none reverse" 
-          },
-          y: card.classList.contains('is-offset') ? 32 : 0, 
-          opacity: 1,
-          duration: 1.2,
-          ease: "power2.out",
-          overwrite: "auto"
-        }
-      );
     });
+
+    // 2. Optimized Batch Animation (Rule 05a)
+    // Batching ensures triggers are calculated efficiently for large grids
+    ScrollTrigger.batch(cards, {
+      onEnter: (batch) => {
+        gsap.to(batch, {
+          opacity: 1,
+          y: (i, target) => {
+            // Check if element has 'is-offset' class for secondary parallax feel
+            return (target as HTMLElement).classList.contains('is-offset') ? 32 : 0;
+          },
+          duration: 1,
+          ease: "power3.out",
+          stagger: {
+            each: 0.1,
+            grid: "auto",
+            from: "start"
+          },
+          overwrite: "auto"
+        });
+      },
+      // Animasi mulai ketika 85% layar
+      start: "top 85%",
+      // Only animate once for better performance on long grids
+      once: true
+    });
+
+    // 3. Robust Refresh with ResizeObserver (Rule 05a)
+    // This handles dynamic height changes as 56 cards render or images load
+    const gridContainer = document.querySelector('.teacher-grid-container');
+    if (gridContainer) {
+      let resizeTimeout: any;
+      const observer = new ResizeObserver(() => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 200);
+      });
+      observer.observe(gridContainer);
+      
+      // Cleanup observer on swap
+      document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
+    }
+
+    // Initial refresh
+    ScrollTrigger.refresh();
   };
 
   document.addEventListener('astro:page-load', () => {

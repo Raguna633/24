@@ -82,7 +82,7 @@ const overlayDirection = isTeacherLayout
               alt="School Logo"
               class="w-full h-full object-contain opacity-75"
               loading="lazy"
-              decoding="async"
+              decoding="auto"
             />
           </div>
         )}
@@ -109,8 +109,8 @@ const overlayDirection = isTeacherLayout
               widths={[1920, 2560]}
               alt={`Photo of ${name}`}
               class="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
+              loading="eager"
+              decoding="auto"
             />
           </div>
 

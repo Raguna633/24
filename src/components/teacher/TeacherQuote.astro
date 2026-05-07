@@ -19,7 +19,7 @@ const {
 ---
 
 <section
-  class={`max-w-screen mx-auto px-8 text-center overflow-hidden min-h-dvh flex flex-col justify-center ${isMid ? "bg-[#f2ede7]" : ""} ${isBottom ? "border-t border-[#c4c6d3]/20" : ""}`}
+  class={`max-w-screen mx-auto px-8 text-center min-h-dvh flex flex-col justify-center ${isMid ? "bg-[#f2ede7]" : ""} ${isBottom ? "border-t border-[#c4c6d3]/20" : ""}`}
   id={isHero
     ? "hero-quote-section"
     : isMid
@@ -169,6 +169,9 @@ const {
         },
       });
     });
+    
+    // Ensure all triggers are calibrated (Rule 05a)
+    ScrollTrigger.refresh();
   };
 
   // Bind to Astro View Transitions

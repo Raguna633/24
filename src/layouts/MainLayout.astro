@@ -723,9 +723,24 @@ const forceDesktopViewData = forceDesktopView;
       }
 
       // Initialize on every page load (handles initial load and view transitions)
-      document.addEventListener('astro:page-load', () => {
+      document.addEventListener('astro:page-load', async () => {
+        const { waitForLoading } = await import("../utils/loadingState");
+        
         initMainLayout();
         initLenis();
+
+        // Workflow 03 & Rule 05a: Global Scroll Calibration
+        // We wait for the loading overlay to finish and the page to be visible.
+        // This ensures ScrollTrigger calculates positions on the FINAL layout.
+        // This is safe for all pages and prevents common View Transition desync bugs.
+        await waitForLoading();
+        
+        // requestAnimationFrame ensures we run after the next paint cycle
+        requestAnimationFrame(() => {
+          if (ScrollTrigger.getAll().length > 0) {
+            ScrollTrigger.refresh();
+          }
+        });
       });
 
       // Cleanup before swapping to new page to prevent memory leaks

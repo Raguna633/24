@@ -19,14 +19,14 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
         alt="About section background"
         class="absolute inset-0 w-full h-full object-cover z-0"
         widths={[1920, 2560]}
-        loading="lazy"
+        loading="eager"
       />
     ) : (
       <Image
         src={aboutBg as any}
         alt="About Section Background"
         class="absolute inset-0 w-full h-full object-cover z-0 opacity-20"
-        loading="lazy"
+        loading="eager"
         width={1920}
         height={1080}
         format="webp"
