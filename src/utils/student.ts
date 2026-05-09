@@ -82,19 +82,36 @@ export function mapStudentCollection(
 }
 
 export function classToSlug(className?: string): string {
-  if (!className) return 'unknown-class';
+  if (!className) return "unknown-class";
   const name = className.toUpperCase();
-  if (name.includes('A PPLG')) return 'xii-a-pplg'; // Adjust if there are more PPLG classes
-  if (name.includes('B APL')) return 'xii-b-apl';
-  if (name.includes('C APL')) return 'xii-c-apl';
-  if (name.includes('D MPLB')) return 'xii-d-mplb';
-  
-  const num = name.match(/\d+/);
-  if (num) {
-    if (name.includes('IPA')) return `xii-ipa-${num[0]}`;
-    if (name.includes('IPS')) return `xii-ips-${num[0]}`;
+
+  // Handle Roman Numerals
+  const romanMap: Record<string, string> = {
+    " I": "-1",
+    " II": "-2",
+    " III": "-3",
+    " IV": "-4",
+  };
+
+  let normalizedName = name;
+  for (const [roman, arabic] of Object.entries(romanMap)) {
+    if (name.endsWith(roman)) {
+      normalizedName = name.replace(roman, arabic);
+      break;
+    }
+  }
+
+  if (normalizedName.includes("A PPLG")) return "xii-a-pplg";
+  if (normalizedName.includes("B APL")) return "xii-b-apl";
+  if (normalizedName.includes("C APL")) return "xii-c-apl";
+  if (normalizedName.includes("D MPLB")) return "xii-d-mplb";
+
+  const numMatch = normalizedName.match(/\d+/);
+  if (numMatch) {
+    if (normalizedName.includes("IPA")) return `xii-ipa-${numMatch[0]}`;
+    if (normalizedName.includes("IPS")) return `xii-ips-${numMatch[0]}`;
   }
 
   // Fallback normalization
-  return name.toLowerCase().replace(/\s+/g, '-');
+  return normalizedName.toLowerCase().replace(/\s+/g, "-");
 }

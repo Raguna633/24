@@ -137,3 +137,38 @@ const itemWidthClass = gridCols === 5
     will-change: transform, opacity;
   }
 </style>
+
+<script>
+  import gsap from "gsap";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:page-load", async () => {
+    // Only target items specifically within ImageCards if needed, but `.scroll-animate` is fine.
+    const items = document.querySelectorAll(".scroll-animate");
+    if (items.length === 0) return;
+
+    // Reset styles just in case
+    gsap.set(items, { opacity: 0, y: 50 });
+
+    // Wait for the loading overlay to finish before calculating positions
+    await waitForLoading();
+
+    ScrollTrigger.batch(items, {
+      start: "top 85%",
+      once: true,
+      onEnter: (elements) => {
+        gsap.to(elements, {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "power3.out",
+          force3D: true,
+        });
+      },
+    });
+  });
+</script>

@@ -1,0 +1,364 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import ImageCard from "../../components/ImageCard.astro";
+import BentoGalleryGrid from "../../components/BentoGalleryGrid.astro";
+import TextReveal from "../../components/animations/TextReveal.astro";
+import GalleryLightbox from "../../components/GalleryLightbox.tsx";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const galleries = await getCollection("galleries");
+  return galleries.map((gallery) => ({
+    params: { slug: gallery.id },
+    props: { gallery },
+  }));
+}
+
+const { gallery } = Astro.props;
+const { title, description, galleryType, bentoLayout, photos, cta } = gallery.data;
+
+// If uniform, we fetch uniforms collection to pass to ImageCard
+let uniformsData: any[] = [];
+let allUniforms: any[] = [];
+if (galleryType === "uniform") {
+  allUniforms = (await getCollection("uniforms")).sort((a, b) =>
+    a.id.localeCompare(b.id),
+  );
+  uniformsData = allUniforms.map((u) => ({
+    id: u.id,
+    img: u.data.uniformPhotos?.[0],
+    alt: `Foto ${u.data.uniformName}`,
+    title: u.data.uniformName,
+  }));
+}
+
+// Prepare Lightbox items based on gallery type
+let lightboxItems = [];
+if (galleryType === "uniform") {
+  lightboxItems = allUniforms.map((u) => ({
+    id: u.id,
+    src: u.data.uniformPhotos?.[0], // Preview src
+    alt: `Foto ${u.data.uniformName}`,
+    title: u.data.uniformName,
+    subtitle: `Model: <span class="text-white font-medium">${u.data.modelName || 'Anonim'}</span> (${u.data.modelClass || '-'})`,
+    photos: u.data.uniformPhotos.map((photo: any) => ({ src: photo }))
+  }));
+} else if (galleryType === "bento" && photos) {
+  lightboxItems = photos.map((photo, index) => ({
+    id: `photo-${index}`,
+    src: photo,
+    alt: `Photo ${index + 1}`,
+    title: title,
+    subtitle: `Photo ${index + 1} of ${photos.length}`
+  }));
+}
+---
+
+<MainLayout
+  title={`${title} - Yearbook 2025`}
+  description={description || `Koleksi foto ${title}`}
+>
+  <section
+    class="relative pb-16 overflow-hidden min-h-dvh bg-gradient-to-b from-[#f5f0ea] to-[#f5f0ea]/50"
+    aria-label={`Galeri ${title}`}
+  >
+    {/* ==================== DECORATIVE ELEMENTS ==================== */}
+
+    {/* Top Wave Divider */}
+    <div class="wave-top opacity-0 hero-elem">
+      <svg
+        data-name="Layer 1"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1200 120"
+        preserveAspectRatio="none"
+      >
+        <path d="M1200 0L0 0 892.25 114.72 1200 0z" class="shape-fill-white"
+        ></path>
+      </svg>
+    </div>
+
+    {/* Floating Decorative Circles */}
+    <div class="floating-circle circle-1 parallax-circle"></div>
+    <div class="floating-circle circle-2 parallax-circle"></div>
+    <div class="floating-circle circle-3 parallax-circle"></div>
+
+    {/* Paper Texture Overlay */}
+    <div class="paper-texture"></div>
+
+    {/* ==================== CONTENT ==================== */}
+    <div class="container max-w-screen mx-auto relative z-10 pt-20 md:pt-32">
+      
+      {/* Header Section */}
+      <header class="py-12 mx-8 text-center relative">
+        <div class="inline-block relative hero-title-wrapper">
+          <TextReveal>
+            <h1 class="text-4xl md:text-5xl lg:text-7xl font-bold text-gray-800 mb-2">
+              {title}
+            </h1>
+          </TextReveal>
+        </div>
+
+        {description && (
+          <div class="opacity-0 hero-desc mt-6">
+            <TextReveal>
+              <p class="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto">
+                {description}
+              </p>
+            </TextReveal>
+          </div>
+        )}
+      </header>
+
+      {/* Divider */}
+      <div class="divider-section scroll-fade opacity-0">
+        <div class="divider-line"></div>
+        <div class="divider-icon pulse-icon">
+          <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="25" cy="25" r="20" fill="#3557A2" opacity="0.2"
+            ></circle>
+            <path
+              d="M 25 15 L 30 25 L 25 35 L 20 25 Z"
+              fill="#2A358F"
+              opacity="0.4"></path>
+          </svg>
+        </div>
+        <div class="divider-line"></div>
+      </div>
+
+      {/* Gallery Grid */}
+      <div class="my-12 mx-auto max-w-6xl relative px-4 md:px-8">
+        {galleryType === "uniform" ? (
+          <ImageCard
+            images={uniformsData}
+            gridCols={4}
+            imageWidth={480}
+            imageHeight={480}
+            gap="gap-4 md:gap-6"
+            className="relative z-10"
+          />
+        ) : (
+          <BentoGalleryGrid
+            photos={photos || []}
+            layout={bentoLayout as any}
+            className="relative z-10"
+          />
+        )}
+      </div>
+
+      {/* Tail (CTA) */}
+      {cta && (
+        <div class="mt-20 mb-10 text-center opacity-0 scroll-fade flex flex-col items-center justify-center">
+          <TextReveal>
+            <h3 class="text-2xl font-serif text-gray-800 mb-6">Penasaran dengan momen lainnya?</h3>
+          </TextReveal>
+          <a
+            href={cta.url}
+            class="group relative inline-flex items-center gap-3 px-8 py-4 bg-[#2A358F] text-[#f5f0ea] rounded-full overflow-hidden transition-transform hover:scale-105 active:scale-95"
+          >
+            <span class="relative z-10 font-medium tracking-wide">
+              {cta.text}
+            </span>
+            <svg
+              class="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+            <div class="absolute inset-0 bg-[#3557A2] scale-x-0 origin-left transition-transform duration-500 ease-out group-hover:scale-x-100"></div>
+          </a>
+        </div>
+      )}
+    </div>
+
+  </section>
+
+  {/* Modal React Island */}
+  <GalleryLightbox items={lightboxItems} client:idle />
+</MainLayout>
+
+<style>
+  /* ==================== CONTAINER ==================== */
+  .container {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* ==================== WAVE DIVIDERS ==================== */
+  .wave-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    z-index: 1;
+  }
+
+  .wave-top svg {
+    position: relative;
+    display: block;
+    width: calc(166% + 1.3px);
+    height: 256px;
+  }
+
+  .shape-fill-white {
+    fill: #ffffffd9;
+  }
+
+  /* ==================== FLOATING CIRCLES ==================== */
+  .floating-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(53, 87, 162, 0.1),
+      rgba(42, 53, 143, 0.05)
+    );
+    z-index: 0;
+    opacity: 0;
+  }
+
+  .circle-1 {
+    width: 300px;
+    height: 300px;
+    top: 15%;
+    left: -5%;
+  }
+  .circle-2 {
+    width: 200px;
+    height: 200px;
+    top: 60%;
+    right: 5%;
+  }
+  .circle-3 {
+    width: 150px;
+    height: 150px;
+    bottom: 10%;
+    left: 10%;
+  }
+
+  /* ==================== PAPER TEXTURE ==================== */
+  .paper-texture {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.01) 2px,
+      rgba(0, 0, 0, 0.01) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ==================== DIVIDER SECTION ==================== */
+  .divider-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 3rem 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #3557a2, transparent);
+    opacity: 0.3;
+  }
+
+  .divider-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  @media (max-width: 768px) {
+    .wave-top svg {
+      width: calc(134% + 1.3px);
+      height: 181px;
+    }
+    .floating-circle {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from "gsap";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:page-load", async () => {
+    // Wait for the full loading screen gatekeeper
+    await waitForLoading();
+
+    // ==================== ENTRANCE ANIMATION (HERO) ====================
+    const tl = gsap.timeline();
+
+    tl.to(".wave-top", {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      ease: "power3.out",
+    })
+      .to(
+        ".hero-elem",
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out",
+          stagger: 0.15,
+        },
+        "-=0.8",
+      )
+      .to(
+        ".hero-desc",
+        {
+          opacity: 1,
+          duration: 0.8,
+          ease: "none",
+        },
+        "-=0.8",
+      );
+
+    // ==================== FLOAT & PULSE ANIMATIONS (INFINITE) ====================
+    gsap.to(".floating-circle", {
+      y: -30,
+      opacity: 1,
+      duration: 4,
+      yoyo: true,
+      repeat: -1,
+      ease: "sine.inOut",
+      stagger: 0.7,
+    });
+
+    gsap.to(".pulse-icon", {
+      scale: 1.1,
+      duration: 2,
+      yoyo: true,
+      repeat: -1,
+      ease: "sine.inOut",
+    });
+
+    // ==================== SCROLL ANIMATIONS (BELOW FOLD) ====================
+    
+    // Dividers & Text
+    gsap.utils.toArray(".scroll-fade").forEach((el) => {
+      gsap.to(el as HTMLElement, {
+        opacity: 1,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: el as HTMLElement,
+          start: "top 90%",
+        },
+      });
+    });
+  });
+</script>

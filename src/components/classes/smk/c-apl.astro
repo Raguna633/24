@@ -14,6 +14,8 @@ import molecule3 from "../../../assets/molecule3.svg?raw";
 import molecule4 from "../../../assets/molecule4.svg?raw";
 
 import { getEntry, getCollection } from "astro:content";
+import { mapStudentCollection } from "../../../utils/student";
+
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
@@ -45,12 +47,13 @@ const walasPic =
     : (classContent.walasPhoto as any)?.src || "";
 
 // Ambil semua siswa kelas C APL dari collection
-const allStudents = await getCollection(
+const studentsRaw = await getCollection(
   "students",
   ({ data }) => data.kelas === "C APL",
 );
+const allStudents = mapStudentCollection(studentsRaw);
 // Urutkan berdasarkan nama
-allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
+allStudents.sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <div class="overflow-x-hidden">
@@ -249,11 +252,12 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
             allStudents.map((student) => (
               <div class="student-card-wrapper opacity-0">
                 <StudentCard
-                  name={student.data.name}
+                  name={student.name}
                   slug={student.slug}
-                  photo={student.data.photo}
-                  quote={student.data.quote}
-                  class={student.data.kelas ?? ""}
+                  photo={student.photo}
+                  quote={student.quote}
+                  class={student.class}
+                  classSlug="xii-c-apl"
                 />
               </div>
             ))

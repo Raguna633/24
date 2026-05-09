@@ -10,12 +10,16 @@ interface Props {
   quote?: string;
   photo?: string | ImageMetadata | null;
   slug: string;
+  classSlug?: string;
 }
 
-const { name, class: className, quote, photo, slug } = Astro.props;
+const { name, class: className, quote, photo, slug, classSlug } = Astro.props;
 
 // Fallback ke gambar dummy jika photo tidak ada / undefined
 const displayPhoto = photo ?? "/images/dummy-avatar.webp";
+
+// Build the URL: nested under classes if classSlug is provided, otherwise default to /students/
+const studentUrl = classSlug ? `/classes/${classSlug}/${slug}` : `/students/${slug}`;
 ---
 
 <article
@@ -23,7 +27,7 @@ const displayPhoto = photo ?? "/images/dummy-avatar.webp";
          hover:-translate-y-2"
 >
   <a
-    href={`/students/${slug}`}
+    href={studentUrl}
     class="block group bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden"
     data-student-link
   >

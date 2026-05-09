@@ -52,8 +52,24 @@ const classes = defineCollection({
     }),
 });
 
+const galleries = defineCollection({
+    loader: glob({ pattern: '**/*.{md,mdx}', base: 'src/data/galleries' }),
+    schema: z.object({
+        title: z.string(),
+        description: z.string().optional(),
+        galleryType: z.enum(['uniform', 'bento']),
+        bentoLayout: z.enum(['layout-1', 'layout-2']).optional(),
+        photos: z.array(z.string()).optional(),
+        cta: z.object({
+            text: z.string(),
+            url: z.string(),
+        }).optional(),
+    }),
+});
+
 export const collections = {
     students,
     uniforms,
     classes,
+    galleries,
 };

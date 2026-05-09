@@ -46,39 +46,33 @@ interface Props {
   }>;
 }
 
-const { studentData, allSlugs } = Astro.props;
+const { studentData } = Astro.props;
 const { slug, student } = Astro.params;
 
-// Parse URL filters
-const url = new URL(Astro.request.url);
-const filters: StudentFilters = {
-  search: url.searchParams.get("search") || undefined,
-  jenjang: url.searchParams.get("jenjang") || undefined,
-  gender: url.searchParams.get("gender") || undefined,
-  sort: (url.searchParams.get("sort") as "a-z" | "z-a" | undefined) || "a-z",
-};
+import { getEntry } from "astro:content";
 
-// Get full students data only when needed for navigation
+// Map URL slug back to collection ID
+let classId = slug!.replace("xii-", "");
+classId = classId.replace("ipa-", "ipa");
+classId = classId.replace("ips-", "ips");
+const classData = await getEntry("classes", classId);
+const classContent = classData?.data;
+
+// Class-scoped navigation
 const allStudents = mapStudentCollection(await getCollection("students"));
-const navContext = getNavigationContext(allStudents, student!, filters);
+const classStudents = allStudents.filter(s => classToSlug(s.class) === slug);
+const currentIndex = classStudents.findIndex(s => s.slug === student);
 
-// If student not in filtered results, redirect or show message
-if (!navContext) {
-  return Astro.redirect(`/students${buildQuery(filters)}`); // Fallback to list
-}
-
-const { prev, next, currentIndex, total } = navContext;
+const prevStudent = currentIndex > 0 ? classStudents[currentIndex - 1] : null;
+const nextStudent = currentIndex < classStudents.length - 1 ? classStudents[currentIndex + 1] : null;
 
 function buildBackUrl(): string {
-  return `/classes/${slug}${buildQuery(filters)}`;
+  // Kembali ke halaman kelas yang sesuai dengan parameter URL slug
+  return `/classes/${slug}`;
 }
 
 function buildStudentUrl(studentSlug: string): string {
-  const targetStudent = allStudents.find((s) => s.slug === studentSlug);
-  const targetClassSlug = targetStudent
-    ? classToSlug(targetStudent.class)
-    : slug;
-  return `/classes/${targetClassSlug}/${studentSlug}${buildQuery(filters)}`;
+  return `/classes/${slug}/${studentSlug}`;
 }
 ---
 
@@ -87,14 +81,14 @@ function buildStudentUrl(studentSlug: string): string {
   description={`Profil lengkap ${studentData.name}, siswa ${studentData.class} angkatan 2025`}
 >
   <div
-    class="min-h-dvh bg-gradient-to-br from-primary-500/10 to-secondary-500/5 relative overflow-hidden"
+    class="min-h-dvh bg-[#f5f0ea] relative overflow-hidden"
   >
     <div class="container mx-auto px-4 py-12 relative z-10">
       {/* Back Button */}
-      <div class="mb-8 animate-on-load" style="--delay: 0s;">
+      <div class="mb-8 opacity-0 translate-y-8 will-animate" id="back-button-container">
         <a
           href={buildBackUrl()}
-          class="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 transition-colors group"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-[#2A358F] text-[#f5f0ea] rounded-full hover:bg-[#1f2769] hover:scale-105 transition-all shadow-md group font-medium"
         >
           <svg
             class="w-5 h-5 transition-transform group-hover:-translate-x-1"
@@ -108,20 +102,20 @@ function buildStudentUrl(studentSlug: string): string {
               stroke-width="2"
               d="M15 19l-7-7 7-7"></path>
           </svg>
-          Kembali ke Daftar Kelas
+          Kembali ke Kelas {studentData.class}
         </a>
       </div>
 
-      <div class="max-w-4xl mx-auto">
+      <article class="max-w-4xl mx-auto">
         <div
-          class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-8 mb-8 border border-gray-100 animate-on-load"
-          style="--delay: 0.1s;"
+          class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-8 mb-8 border border-gray-100 opacity-0 translate-y-8 will-animate"
+          id="profile-info-container"
         >
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Photo Section */}
             <div class="md:col-span-1">
               <div
-                class="relative aspect-square rounded-lg overflow-hidden border-4 border-primary-500 shadow-lg mb-4"
+                class="relative aspect-3/4 rounded-lg overflow-hidden border-4 border-gray-500 shadow-lg mb-4"
               >
                 {
                   typeof studentData.photo === "string" &&
@@ -152,7 +146,8 @@ function buildStudentUrl(studentSlug: string): string {
                 data-photo-url={normalizePhotoPath(studentData.photo)}
                 data-student-name={studentData.name}
                 data-password={studentData.downloadPassword}
-                class="w-full px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors font-medium focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
+                class="w-full px-4 py-2 text-[#f5f0ea] rounded-lg hover:brightness-110 hover:scale-[1.02] transition-all font-medium focus-visible:ring-2 focus-visible:ring-[#2A358F] focus-visible:ring-offset-2 focus-visible:outline-none"
+                style={{ backgroundColor: '#2A358F' }}
                 aria-label={`Download foto ${studentData.name}`}
               >
                 <svg
@@ -184,22 +179,7 @@ function buildStudentUrl(studentSlug: string): string {
               <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                 {studentData.name}
               </h1>
-              <p class="text-xl text-gray-600 mb-6">{studentData.class}</p>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-primary-50 rounded-lg p-4">
-                  <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                    Jenis Kelamin
-                  </p>
-                  <p class="font-medium text-gray-900">{studentData.gender}</p>
-                </div>
-                <div class="bg-secondary-50 rounded-lg p-4">
-                  <p class="text-sm text-gray-500 uppercase tracking-wide mb-1">
-                    Jenjang
-                  </p>
-                  <p class="font-medium text-gray-900">{studentData.jenjang}</p>
-                </div>
-              </div>
+              <p class="text-xl text-gray-600 mb-6">XII {studentData.class}</p>
 
               {
                 studentData.alamat && (
@@ -224,7 +204,7 @@ function buildStudentUrl(studentSlug: string): string {
                       href={`https://instagram.com/${studentData.instagram.replace("@", "")}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="font-medium text-purple-600 hover:text-purple-700 transition-colors inline-flex items-center gap-1"
+                      class="font-medium text-purple-600 hover:text-purple-700 transition-colors inline-flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:outline-none rounded-sm"
                     >
                       <svg
                         class="w-5 h-5"
@@ -251,78 +231,56 @@ function buildStudentUrl(studentSlug: string): string {
                   </div>
                 )
               }
+
+              {
+                studentData.quote && (
+                  <div
+                    class="mt-4 bg-gray-50 rounded-lg p-4 opacity-0 translate-y-4 will-animate"
+                    id="quote-container"
+                  >
+                    <div class="flex items-start gap-4">
+                      <svg
+                        class="w-6 h-6 text-[#2A358F] flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                      </svg>
+                      <blockquote class="text-base italic text-gray-700 flex-1">
+                        "{studentData.quote}"
+                      </blockquote>
+                    </div>
+                  </div>
+                )
+              }
             </div>
           </div>
         </div>
 
-        {/* Quote Section */}
-        {
-          studentData.quote && (
-            <div
-              class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8 border border-gray-100 animate-on-load"
-              style="--delay: 0.2s;"
-            >
-              <div class="flex items-start gap-4">
-                <svg
-                  class="w-8 h-8 text-primary-500 flex-shrink-0"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-                <blockquote class="text-lg italic text-gray-700 flex-1">
-                  "{studentData.quote}"
-                </blockquote>
-              </div>
-            </div>
-          )
-        }
 
         {/* OPTIMIZED NAVIGATION */}
-        <div
-          class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-100 animate-on-load"
-          style="--delay: 0.4s;"
+        <nav
+          class="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-100 opacity-0 translate-y-8 will-animate"
+          aria-label="Navigasi Profil Siswa"
+          id="navigation-container"
         >
-          {
-            (filters.search ||
-              filters.jenjang ||
-              filters.gender ||
-              filters.sort !== "a-z") && (
-              <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p class="text-sm text-blue-800">
-                  🔍 Navigasi berdasarkan filter:
-                  {filters.jenjang && (
-                    <span class="font-semibold ml-1">{filters.jenjang}</span>
-                  )}
-                  {filters.gender && (
-                    <span class="font-semibold ml-1">{filters.gender}</span>
-                  )}
-                  {filters.search && (
-                    <span class="font-semibold ml-1">"{filters.search}"</span>
-                  )}
-                  {filters.sort === "z-a" && (
-                    <span class="font-semibold ml-1">Z-A</span>
-                  )}
-                </p>
-              </div>
-            )
-          }
-
           <div class="flex justify-between items-center gap-4">
-            {/* Previous Button */}
+            {/* Previous Button / Class CTA */}
             <div class="flex-1">
               {
-                prev ? (
+                prevStudent ? (
                   <a
-                    href={buildStudentUrl(prev.slug)}
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors group"
-                    title={`Sebelumnya: ${prev.name}`}
+                    href={buildStudentUrl(prevStudent.slug)}
+                    class="inline-flex items-center gap-2 px-4 py-2 text-[#f5f0ea] rounded-lg hover:brightness-110 transition-colors group focus-visible:ring-2 focus-visible:ring-[#2A358F] focus-visible:ring-offset-2 focus-visible:outline-none"
+                    style={{ backgroundColor: '#2A358F' }}
+                    aria-label={`Sebelumnya: ${prevStudent.name}`}
                   >
                     <svg
                       class="w-5 h-5 transition-transform group-hover:-translate-x-1"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <path
                         stroke-linecap="round"
@@ -334,12 +292,31 @@ function buildStudentUrl(studentSlug: string): string {
                     <span class="hidden sm:inline">Sebelumnya</span>
                     <span class="sm:hidden">Prev</span>
                   </a>
+                ) : classContent?.prevClass ? (
+                  <a
+                    href={`/classes/${classContent.prevClass.slug}`}
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors group border border-gray-200 focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:outline-none"
+                    aria-label={`Kembali ke Kelas ${classContent.prevClass.name}`}
+                  >
+                    <svg
+                      class="w-5 h-5 transition-transform group-hover:-translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                      />
+                    </svg>
+                    <span class="hidden sm:inline">Kelas Sebelumnya</span>
+                    <span class="sm:hidden">Kelas Prev</span>
+                  </a>
                 ) : (
-                  <div class="text-gray-400 text-sm">
-                    {filters.search || filters.jenjang || filters.gender
-                      ? "Siswa pertama dalam filter"
-                      : "Siswa pertama"}
-                  </div>
+                  <div class="text-gray-400 text-sm">Siswa pertama</div>
                 )
               }
             </div>
@@ -351,23 +328,19 @@ function buildStudentUrl(studentSlug: string): string {
                   >{currentIndex + 1}</span
                 >
                 <span class="mx-1">/</span>
-                <span class="font-semibold text-gray-900">{total}</span>
+                <span class="font-semibold text-gray-900">{classStudents.length}</span>
               </span>
-              {
-                (filters.search || filters.jenjang || filters.gender) && (
-                  <p class="text-xs text-gray-500 mt-1">filtered</p>
-                )
-              }
             </div>
 
-            {/* Next Button */}
+            {/* Next Button / Class CTA */}
             <div class="flex-1 text-right">
               {
-                next ? (
+                nextStudent ? (
                   <a
-                    href={buildStudentUrl(next.slug)}
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors group"
-                    title={`Selanjutnya: ${next.name}`}
+                    href={buildStudentUrl(nextStudent.slug)}
+                    class="inline-flex items-center justify-end gap-2 px-4 py-2 text-[#f5f0ea] rounded-lg hover:brightness-110 transition-colors group focus-visible:ring-2 focus-visible:ring-[#2A358F] focus-visible:ring-offset-2 focus-visible:outline-none ml-auto"
+                    style={{ backgroundColor: '#2A358F' }}
+                    aria-label={`Selanjutnya: ${nextStudent.name}`}
                   >
                     <span class="hidden sm:inline">Selanjutnya</span>
                     <span class="sm:hidden">Next</span>
@@ -376,6 +349,7 @@ function buildStudentUrl(studentSlug: string): string {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <path
                         stroke-linecap="round"
@@ -386,42 +360,112 @@ function buildStudentUrl(studentSlug: string): string {
                     </svg>
                   </a>
                 ) : (
-                  <div class="text-gray-400 text-sm">
-                    {filters.search || filters.jenjang || filters.gender
-                      ? "Siswa terakhir dalam filter"
-                      : "Siswa terakhir"}
-                  </div>
+                  <a
+                    href={classContent?.nextClass ? `/classes/${classContent.nextClass.slug}` : "/gallery/uniform"}
+                    class="inline-flex items-center justify-end gap-2 px-4 py-2 bg-[#2A358F] text-[#f5f0ea] rounded-lg hover:bg-[#1f2769] transition-colors group focus-visible:ring-2 focus-visible:ring-[#2A358F] focus-visible:ring-offset-2 focus-visible:outline-none ml-auto"
+                    aria-label={classContent?.nextClass ? `Lanjut ke Kelas ${classContent.nextClass.name}` : "Lanjut ke Gallery Uniform"}
+                  >
+                    <span class="hidden sm:inline">{classContent?.nextClass ? `Kelas Berikutnya` : `Ke Gallery`}</span>
+                    <span class="sm:hidden">Lanjut</span>
+                    <svg
+                      class="w-5 h-5 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                      />
+                    </svg>
+                  </a>
                 )
               }
             </div>
           </div>
-        </div>
-      </div>
+        </nav>
+      </article>
     </div>
   </div>
 </MainLayout>
 
 <style>
-  .animate-on-load {
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
-    animation-delay: var(--delay, 0s);
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .will-animate {
+    will-change: transform, opacity;
   }
 </style>
 
-<!-- <script>
-  document.addEventListener('DOMContentLoaded', () => {
+<script>
+  import gsap from "gsap";
+  import { waitForLoading } from "../../../utils/loadingState";
+
+  document.addEventListener('astro:page-load', async () => {
+    
+    // --- STORYTELLING & PREMIUM ANIMATION (GSAP) ---
+    // Wait for the loading overlay to finish entirely before running
+    await waitForLoading();
+
+    const tl = gsap.timeline();
+
+    const backBtn = document.getElementById("back-button-container");
+    const profileInfo = document.getElementById("profile-info-container");
+    const quoteBox = document.getElementById("quote-container");
+    const navBox = document.getElementById("navigation-container");
+
+    if (backBtn) {
+      tl.to(backBtn, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        force3D: true,
+      });
+    }
+
+    if (profileInfo) {
+      const photoEl = profileInfo.querySelector(".aspect-3\\/4");
+      
+      if (photoEl) {
+        tl.fromTo(photoEl, 
+          { scale: 0.95, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 1.2, ease: "power3.out", force3D: true },
+          "-=0.4"
+        );
+      }
+      
+      tl.to(profileInfo, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out",
+        force3D: true,
+      }, "-=0.8");
+    }
+
+    if (quoteBox) {
+      tl.to(quoteBox, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        force3D: true,
+      }, "-=0.6");
+    }
+
+    if (navBox) {
+      tl.to(navBox, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power3.out",
+        force3D: true,
+      }, "-=0.6");
+    }
+
+    // --- DOWNLOAD BUTTON LOGIC ---
     const downloadButton = document.getElementById('downloadButton');
     
     if (!downloadButton) return;
@@ -469,4 +513,4 @@ function buildStudentUrl(studentSlug: string): string {
       }
     });
   });
-</script> -->
+</script>

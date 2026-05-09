@@ -1,0 +1,261 @@
+---
+// BentoGalleryGrid.astro
+// Static Bento Grid component for storytelling gallery pages
+import CloudinaryImage from "./ui/CloudinaryImage.astro";
+import BlockReveal from "./BlockReveal.astro";
+
+interface Props {
+  photos: string[];
+  layout?: "layout-1" | "layout-2";
+  className?: string;
+}
+
+const { photos = [], layout = "layout-1", className = "" } = Astro.props;
+
+// Layout 1 pattern (repeats every 18 photos)
+const layout1Pattern = [
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-2 md:row-span-1",
+  "md:col-span-1 md:row-span-2",
+  "md:col-span-3 md:row-span-2",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-3 md:row-span-1",
+  "md:col-span-1 md:row-span-2",
+  "md:col-span-2 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-3 md:row-span-2",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-2 md:row-span-1",
+];
+
+// Layout 2 pattern (repeats every 18 photos)
+const layout2Pattern = [
+  "md:col-span-1 md:row-span-2",
+  "md:col-span-2 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-2 md:row-span-1",
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-2 md:row-span-1",
+  "md:col-span-1 md:row-span-2",
+  "md:col-span-3 md:row-span-2",
+  "md:col-span-3 md:row-span-1",
+  "md:col-span-1 md:row-span-2",
+  "md:col-span-2 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-1 md:row-span-1",
+  "md:col-span-2 md:row-span-2",
+];
+
+const getCalculatedSpans = () => {
+  const pattern = layout === "layout-2" ? layout2Pattern : layout1Pattern;
+  let classes = photos.map((_, i) => pattern[i % pattern.length]);
+  
+  if (photos.length === 0) return [];
+
+  const getSpan = (cls: string, prefix: string) => {
+    const match = cls.match(new RegExp(`${prefix}-span-(\\d+)`));
+    return match ? parseInt(match[1]) : 1;
+  };
+
+  const COLS = 4;
+  const grid: number[][] = [];
+  const ensureRow = (y: number) => {
+    while (grid.length <= y) grid.push(new Array(COLS).fill(-1));
+  };
+
+  const assignedSpans: {x: number, y: number, w: number, h: number, cls: string, id: number}[] = [];
+
+  // 1. Pack items using dense packing algorithm
+  for (let i = 0; i < classes.length; i++) {
+    // Force last 4 items to be 1x1 to prevent unfillable gaps at the very end
+    if (i >= classes.length - 4) {
+       classes[i] = "md:col-span-1 md:row-span-1";
+    }
+
+    let w = getSpan(classes[i], "md:col");
+    let h = getSpan(classes[i], "md:row");
+    
+    // Ensure w doesn't exceed grid cols
+    if (w > COLS) w = COLS;
+
+    let placed = false;
+    for (let y = 0; !placed; y++) {
+      ensureRow(y + h - 1);
+      for (let x = 0; x <= COLS - w; x++) {
+        let fits = true;
+        for (let dy = 0; dy < h; dy++) {
+          for (let dx = 0; dx < w; dx++) {
+            if (grid[y + dy][x + dx] !== -1) fits = false;
+          }
+        }
+        
+        if (fits) {
+          for (let dy = 0; dy < h; dy++) {
+            for (let dx = 0; dx < w; dx++) {
+              grid[y + dy][x + dx] = i;
+            }
+          }
+          assignedSpans.push({ x, y, w, h, cls: classes[i], id: i });
+          placed = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // 2. Patch holes by expanding adjacent items into empty cells
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < COLS; x++) {
+      if (grid[y][x] === -1) {
+        let expanded = false;
+        
+        // Try to expand the item to the left
+        if (x > 0 && grid[y][x-1] !== -1) {
+          const itemIdx = grid[y][x-1];
+          const item = assignedSpans[itemIdx];
+          
+          let canExpand = true;
+          for (let dy = 0; dy < item.h; dy++) {
+            if (item.y + dy >= grid.length || grid[item.y + dy][x] !== -1) canExpand = false;
+          }
+          
+          if (canExpand) {
+             for (let dy = 0; dy < item.h; dy++) {
+               grid[item.y + dy][x] = itemIdx;
+             }
+             item.w += 1;
+             item.cls = item.cls.replace(/md:col-span-\d+/, `md:col-span-${item.w}`);
+             expanded = true;
+          }
+        }
+        
+        // Try to expand the item to the right (pull it left)
+        if (!expanded && x < COLS - 1 && grid[y][x+1] !== -1) {
+          const itemIdx = grid[y][x+1];
+          const item = assignedSpans[itemIdx];
+          
+          let canExpand = true;
+          for (let dy = 0; dy < item.h; dy++) {
+            if (item.y + dy >= grid.length || grid[item.y + dy][x] !== -1) canExpand = false;
+          }
+          
+          if (canExpand) {
+             for (let dy = 0; dy < item.h; dy++) {
+               grid[item.y + dy][x] = itemIdx;
+             }
+             item.x -= 1;
+             item.w += 1;
+             item.cls = item.cls.replace(/md:col-span-\d+/, `md:col-span-${item.w}`);
+             expanded = true;
+          }
+        }
+        
+        // Try to expand the item above downwards
+        if (!expanded && y > 0 && grid[y-1][x] !== -1) {
+           const itemIdx = grid[y-1][x];
+           const item = assignedSpans[itemIdx];
+           
+           let canExpand = true;
+           for (let dx = 0; dx < item.w; dx++) {
+             if (item.x + dx >= COLS || grid[y][item.x + dx] !== -1) canExpand = false;
+           }
+           
+           if (canExpand) {
+             for (let dx = 0; dx < item.w; dx++) {
+               grid[y][item.x + dx] = itemIdx;
+             }
+             item.h += 1;
+             item.cls = item.cls.replace(/md:row-span-\d+/, `md:row-span-${item.h}`);
+           }
+        }
+      }
+    }
+  }
+
+  // Sort back to original DOM order so we can assign classes correctly
+  return assignedSpans.sort((a, b) => a.id - b.id).map(s => s.cls);
+};
+
+const calculatedClasses = getCalculatedSpans();
+---
+
+<div class={`grid grid-cols-2 md:grid-cols-4 grid-flow-dense gap-2 md:gap-4 auto-rows-[150px] md:auto-rows-[250px] ${className}`}>
+  {photos.map((photo, index) => {
+    const spanClass = calculatedClasses[index];
+    // Give each photo a unique ID for the lightbox
+    const id = `photo-${index}`;
+    
+    return (
+      <button
+        class={`group relative overflow-hidden rounded-xl bg-gray-100 will-animate opacity-0 translate-y-10 focus:outline-none cursor-pointer ${spanClass}`}
+        data-gallery-id={id}
+        data-animate-scroll="true"
+        aria-label={`View photo ${index + 1}`}
+      >
+        <CloudinaryImage
+          src={photo}
+          alt={`Gallery photo ${index + 1}`}
+          class="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-105"
+          widths={[400, 800, 1200]}
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500"></div>
+        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div class="bg-white/20 backdrop-blur-md rounded-full p-3 text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"></path>
+              <path d="M10 14 21 3"></path>
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            </svg>
+          </div>
+        </div>
+      </button>
+    );
+  })}
+</div>
+
+<script>
+  import gsap from "gsap";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:page-load", async () => {
+    // Only init if there are grid items
+    const items = document.querySelectorAll('[data-animate-scroll="true"]');
+    if (items.length === 0) return;
+
+    // Reset styles for items to avoid FOUC/bugs when navigating
+    gsap.set(items, { opacity: 0, y: 50 });
+
+    await waitForLoading();
+
+    // Use ScrollTrigger batch for elegant staggered reveal
+    ScrollTrigger.batch(items, {
+      start: "top 85%",
+      once: true,
+      onEnter: (elements) => {
+        gsap.to(elements, {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power3.out",
+          force3D: true,
+        });
+      },
+    });
+  });
+</script>

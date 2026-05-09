@@ -1,0 +1,158 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import TextReveal from "../../components/animations/TextReveal.astro";
+import BlockReveal from "../../components/BlockReveal.astro";
+import { getCollection } from "astro:content";
+
+// Get all galleries to build cards
+const galleries = await getCollection("galleries");
+
+// Sort manually or rely on some order. For now, we'll map them explicitly
+const categories = [
+  {
+    id: "uniform",
+    title: "Our School Uniforms",
+    desc: "Kenangan indah dalam seragam kebanggaan kita",
+    img: "https://res.cloudinary.com/demo/image/upload/v1612440939/sample.jpg", // placeholder cover
+    color: "from-blue-600/20 to-blue-900/40"
+  },
+  {
+    id: "azzarqo",
+    title: "Galeri Azzarqo",
+    desc: "Momen-momen tak terlupakan di Azzarqo",
+    img: "https://res.cloudinary.com/demo/image/upload/v1612440939/dog.jpg", // placeholder cover
+    color: "from-amber-600/20 to-orange-900/40"
+  },
+  {
+    id: "nihayatu-zayn",
+    title: "Galeri Nihayatu Zayn",
+    desc: "Momen-momen tak terlupakan di Nihayatu Zayn",
+    img: "https://res.cloudinary.com/demo/image/upload/v1612440939/cat.jpg", // placeholder cover
+    color: "from-emerald-600/20 to-teal-900/40"
+  }
+];
+---
+
+<MainLayout
+  title="Galeri - Yearbook 2025"
+  description="Kumpulan momen dan kenangan terbaik angkatan kita."
+>
+  <section
+    class="relative pb-24 overflow-hidden min-h-dvh bg-[#f5f0ea]"
+    aria-label="Kategori Galeri"
+  >
+    {/* Paper Texture Overlay */}
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-40 pointer-events-none z-0"></div>
+
+    <div class="container max-w-screen mx-auto relative z-10 pt-32 px-4 md:px-8">
+      {/* Header Section */}
+      <header class="text-center relative max-w-3xl mx-auto mb-20">
+        <div class="inline-block relative">
+          <TextReveal>
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-800 tracking-tight mb-4">
+              Mesin Waktu
+            </h1>
+          </TextReveal>
+        </div>
+
+        <div class="opacity-0 header-desc">
+          <TextReveal>
+            <p class="text-gray-600 text-lg md:text-xl font-serif">
+              Pilih portal memori Anda. Setiap galeri menyimpan sepotong cerita yang akan selalu kita ingat.
+            </p>
+          </TextReveal>
+        </div>
+      </header>
+
+      {/* Cards Section (Flex Layout) */}
+      <div class="flex flex-col lg:flex-row gap-8 justify-center items-stretch max-w-7xl mx-auto">
+        {categories.map((cat, index) => (
+          <a
+            href={`/gallery/${cat.id}`}
+            class={`gallery-card opacity-0 translate-y-12 relative flex-1 flex flex-col justify-end overflow-hidden rounded-2xl md:rounded-3xl min-h-[400px] lg:min-h-[500px] group focus:outline-none focus:ring-4 focus:ring-[#3557A2]/50`}
+            aria-label={`Buka ${cat.title}`}
+          >
+            {/* Background Image */}
+            <div class="absolute inset-0 z-0 overflow-hidden">
+              <img
+                src={cat.img}
+                alt={cat.title}
+                class="w-full h-full object-cover transition-transform duration-1000 ease-out-expo group-hover:scale-110"
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+            </div>
+            
+            {/* Gradient Overlay */}
+            <div class={`absolute inset-0 z-1 bg-gradient-to-t ${cat.color} transition-opacity duration-500 group-hover:opacity-80`}></div>
+            <div class="absolute inset-0 z-1 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"></div>
+
+            {/* Content */}
+            <div class="relative z-10 p-6 md:p-8 transform transition-transform duration-500 group-hover:-translate-y-2">
+              <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white/90 text-xs font-bold uppercase tracking-widest mb-4">
+                Koleksi {index + 1}
+              </span>
+              <h2 class="text-3xl md:text-4xl font-bold text-white mb-2 leading-tight">
+                {cat.title}
+              </h2>
+              <p class="text-white/80 text-sm md:text-base font-medium max-w-sm transform opacity-0 -translate-x-4 transition-all duration-500 delay-100 group-hover:opacity-100 group-hover:translate-x-0">
+                {cat.desc}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Tail (CTA Back) */}
+      <div class="mt-24 text-center opacity-0 cta-back">
+        <button
+          onclick="window.history.length > 1 ? window.history.back() : window.location.href = '/'"
+          class="group relative inline-flex items-center gap-3 px-8 py-4 bg-transparent border border-[#2A358F]/30 text-[#2A358F] rounded-full overflow-hidden transition-all hover:border-[#2A358F] focus:outline-none"
+        >
+          <svg
+            class="relative z-10 w-5 h-5 transition-transform group-hover:-translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span class="relative z-10 font-medium tracking-wide">
+            Kembali
+          </span>
+          <div class="absolute inset-0 bg-[#2A358F]/5 scale-x-0 origin-right transition-transform duration-500 ease-out group-hover:scale-x-100"></div>
+        </button>
+      </div>
+    </div>
+  </section>
+</MainLayout>
+
+<script>
+  import gsap from "gsap";
+  import { waitForLoading } from "../../utils/loadingState";
+
+  document.addEventListener("astro:page-load", async () => {
+    // Wait for the full loading screen gatekeeper
+    await waitForLoading();
+
+    const tl = gsap.timeline();
+
+    tl.to(".header-desc", {
+      opacity: 1,
+      duration: 1,
+      ease: "power2.out"
+    })
+    .to(".gallery-card", {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      stagger: 0.15,
+      ease: "power4.out",
+      force3D: true
+    }, "-=0.5")
+    .to(".cta-back", {
+      opacity: 1,
+      duration: 1,
+      ease: "power2.out"
+    }, "-=0.5");
+  });
+</script>

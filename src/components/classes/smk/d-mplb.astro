@@ -1,5 +1,6 @@
 ---
 import { getEntry, getCollection } from "astro:content";
+import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
@@ -80,11 +81,12 @@ const stories = [
 ];
 
 // Ambil semua siswa kelas D MPLB dari collection
-const allStudents = await getCollection(
+const studentsRaw = await getCollection(
   "students",
   ({ data }) => data.kelas === "D MPLB",
 );
-allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
+const allStudents = mapStudentCollection(studentsRaw);
+allStudents.sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <div class="overflow-x-hidden">
@@ -205,11 +207,12 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           allStudents.map((student) => (
             <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
-                name={student.data.name}
+                name={student.name}
                 slug={student.slug}
-                photo={student.data.photo}
-                quote={student.data.quote}
-                class={student.data.kelas ?? ""}
+                photo={student.photo}
+                quote={student.quote}
+                class={student.class}
+                classSlug="xii-d-mplb"
               />
             </div>
           ))

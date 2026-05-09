@@ -1,5 +1,6 @@
 ---
 import { getEntry, getCollection } from "astro:content";
+import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
@@ -42,11 +43,12 @@ const polaroidMemories = [
   { image: group3, date: "JANUARY 2024", note: "Break Time" },
 ];
 
-const allStudents = await getCollection(
+const studentsRaw = await getCollection(
   "students",
   ({ data }) => data.kelas === "IPS II",
 );
-allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
+const allStudents = mapStudentCollection(studentsRaw);
+allStudents.sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <div class="overflow-x-hidden bg-[#e5e7eb]">
@@ -135,11 +137,12 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           allStudents.map((student) => (
             <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
-                name={student.data.name}
+                name={student.name}
                 slug={student.slug}
-                photo={student.data.photo}
-                quote={student.data.quote}
-                class={student.data.kelas ?? ""}
+                photo={student.photo}
+                quote={student.quote}
+                class={student.class}
+                classSlug="xii-ips-2"
               />
             </div>
           ))
@@ -159,7 +162,7 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
     }
     .polaroid-card {
       width: 250px;
-      @screen md {
+      @media (min-width: 768px) {
         width: 320px;
       }
     }

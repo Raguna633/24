@@ -1,5 +1,6 @@
 ---
 import { getEntry, getCollection } from "astro:content";
+import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
@@ -54,11 +55,12 @@ const anatomyFiles = [
   { image: group6, label: "FULL_ANATOMY", text: "Kini kita adalah satu organisme yang utuh dan tak terpisahkan." },
 ];
 
-const allStudents = await getCollection(
+const studentsRaw = await getCollection(
   "students",
   ({ data }) => data.kelas === "IPA III",
 );
-allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
+const allStudents = mapStudentCollection(studentsRaw);
+allStudents.sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <div class="overflow-x-hidden bg-[#fdfaf6]">
@@ -159,11 +161,12 @@ allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
           allStudents.map((student) => (
             <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
-                name={student.data.name}
+                name={student.name}
                 slug={student.slug}
-                photo={student.data.photo}
-                quote={student.data.quote}
-                class={student.data.kelas ?? ""}
+                photo={student.photo}
+                quote={student.quote}
+                class={student.class}
+                classSlug="xii-ipa-3"
               />
             </div>
           ))

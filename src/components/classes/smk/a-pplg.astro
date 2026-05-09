@@ -1,5 +1,6 @@
 ---
 import { getEntry, getCollection } from "astro:content";
+import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import ClassHeroSection from "../ClassHeroSection.astro";
@@ -49,12 +50,13 @@ const walasPic =
     : (classContent.walasPhoto as any)?.src || "";
 
 // Ambil semua siswa kelas A PPLG dari collection
-const allStudents = await getCollection(
+const studentsRaw = await getCollection(
   "students",
   ({ data }) => data.kelas === "A PPLG",
 );
+const allStudents = mapStudentCollection(studentsRaw);
 // Urutkan berdasarkan nama
-allStudents.sort((a, b) => a.data.name.localeCompare(b.data.name));
+allStudents.sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <div class="overflow-x-hidden">
@@ -305,7 +307,7 @@ const { kelas } = Astro.params;
 
             <div id="xp-notification" class="xp-notification">
               <div class="xp-notification-header">
-                <span class="xp-notification-title">Seriusan?</span>
+                <span class="xp-notification-title">Gokill</span>
                 <span class="xp-notification-close">×</span>
               </div>
               <div class="xp-notification-body">Anjay jadi wallpaper :v</div>
@@ -414,12 +416,13 @@ const { kelas } = Astro.params;
         {
           allStudents.map((student) => (
             <div class="student-card-wrapper opacity-0">
-              <StudentCard
-                name={student.data.name}
+             <StudentCard
+                name={student.name}
                 slug={student.slug}
-                photo={student.data.photo}
-                quote={student.data.quote}
-                class={student.data.kelas ?? ""}
+                photo={student.photo}
+                quote={student.quote}
+                class={student.class}
+                classSlug="xii-a-pplg"
               />
             </div>
           ))
