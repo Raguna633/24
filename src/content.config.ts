@@ -61,6 +61,7 @@ const galleries = defineCollection({
         bentoLayout: z.enum(['layout-1', 'layout-2']).optional(),
         photos: z.array(z.string()).optional(),
         cta: z.object({
+            text_title: z.string(),
             text: z.string(),
             url: z.string(),
         }).optional(),
