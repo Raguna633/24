@@ -50,21 +50,20 @@ const forceDesktopViewData = forceDesktopView;
     <script is:inline define:vars={{ forceDesktopView: forceDesktopViewData }}>
       (function() {
         const desktopWidth = 1440;
-        const physicalWidth = Math.max(window.screen.width, window.screen.height);
-        const zoomRatio = physicalWidth / desktopWidth;
+        
+        // Aproksimasi awal agar halaman cepat dirender tanpa FOUC parah
+        const physicalWidth = Math.max(window.screen.availWidth, window.screen.availHeight);
+        const approxZoomRatio = physicalWidth / desktopWidth;
+
         const viewport = document.getElementById('viewport-meta');
         if (!viewport) return;
 
-        // ================================================================
-        // LANGKAH 1: Ubah viewport SEGERA (sebelum render) agar tidak FOUC.
-        // viewport-fit=cover WAJIB ada di dalam content= string — bukan sebagai
-        // HTML attribute terpisah — agar browser mengaktifkan safe-area env vars.
-        // ================================================================
-        function setDesktopViewport(userScalable) {
-          const maxScale = userScalable ? '3.0' : zoomRatio;
+        function setDesktopViewport(userScalable, customRatio) {
+          const ratio = customRatio || approxZoomRatio;
+          const maxScale = userScalable ? '3.0' : ratio;
           const scalable = userScalable ? 'yes' : 'no';
           viewport.setAttribute('content',
-            `width=${desktopWidth}, initial-scale=${zoomRatio}, minimum-scale=${zoomRatio}, maximum-scale=${maxScale}, user-scalable=${scalable}, viewport-fit=cover`
+            `width=${desktopWidth}, initial-scale=${ratio}, minimum-scale=${ratio}, maximum-scale=${maxScale}, user-scalable=${scalable}, viewport-fit=cover`
           );
         }
 
@@ -142,38 +141,38 @@ const forceDesktopViewData = forceDesktopView;
             // Simpan safe-area vertikal (tetap berguna untuk iPhone notch)
             sessionStorage.setItem('measured-safe-top',    String(t));
             sessionStorage.setItem('measured-safe-bottom', String(b));
-
-            // Simpan innerWidth portrait — untuk hitung nav bar saat landscape Desktop Mode
-            // Catatan: pengukuran landscape yang akurat disimpan oleh switchToMode()
-            sessionStorage.setItem('measured-safe-right', '0'); // Android nav bar via innerWidth, bukan env()
+            sessionStorage.setItem('measured-safe-right', '0');
             applySafeVars(0, t, b, 0);
-
           } else {
             // === MODE DESKTOP ===
-            // env() tidak berfungsi saat viewport=1440. Gunakan pengukuran innerWidth.
-            //
-            // CARA KERJA:
-            // Saat switchToMode('desktop') dipanggil (masih di landscape mobile),
-            // window.innerWidth sudah TIDAK termasuk navigation bar (browser excludes it).
-            // Selisih physicalWidth - innerWidth = lebar nav bar dalam CSS px.
-            // Diskalakan ke virtual 1440px space untuk jadi padding-right.
-            const mobileInnerW = parseFloat(sessionStorage.getItem('mobile-inner-width-before-switch') || '0');
-            const mobilePysicalW = parseFloat(sessionStorage.getItem('mobile-physical-width-before-switch') || String(physicalWidth));
-
-            let navBarVirtualPx = 0;
-            if (mobileInnerW > 0 && mobilePysicalW > mobileInnerW) {
-              const navBarCSSPx = mobilePysicalW - mobileInnerW;
-              // Konversi dari CSS px mobile ke virtual px 1440
-              navBarVirtualPx = navBarCSSPx * desktopWidth / mobilePysicalW;
+            // Lakukan kalibrasi presisi: sesaat kembalikan ke mode mobile, 
+            // tunggu browser update layout, baca ukuran presisi, lalu set viewport final.
+            const vp = document.querySelector('meta[name="viewport"]');
+            if (vp) {
+              window.isRecalibratingViewport = true;
+              vp.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+              setTimeout(() => {
+                const trueWidth = window.innerWidth;
+                const exactScale = trueWidth / desktopWidth;
+                // HACK: Paksa browser untuk zoom out dengan menyamakan maximum-scale dengan exactScale
+                vp.setAttribute('content', `width=${desktopWidth}, initial-scale=${exactScale}, minimum-scale=${exactScale}, maximum-scale=${exactScale}, user-scalable=yes, viewport-fit=cover`);
+                
+                // Karena exactScale menggunakan trueWidth (yang sudah dikecualikan dari nav bar oleh browser),
+                // maka 1440px akan muat persis di area yang terlihat, sehingga tidak butuh right padding manual.
+                const navBarCSSPx = 0;
+                sessionStorage.setItem('measured-safe-right', '0');
+                
+                const storedT = parseFloat(sessionStorage.getItem('measured-safe-top') || '0');
+                const storedB = parseFloat(sessionStorage.getItem('measured-safe-bottom') || '0');
+                applySafeVars(navBarCSSPx, storedT, storedB, exactScale);
+                
+                // Kembalikan maximum-scale agar user bisa melakukan pinch-to-zoom in
+                setTimeout(() => { 
+                  vp.setAttribute('content', `width=${desktopWidth}, initial-scale=${exactScale}, minimum-scale=${exactScale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`);
+                  window.isRecalibratingViewport = false; 
+                }, 3000);
+              }, 50);
             }
-
-            // Safe area vertikal dari pengukuran sebelumnya (tetap via env(), berguna untuk iPhone)
-            const storedT = parseFloat(sessionStorage.getItem('measured-safe-top')    || '0');
-            const storedB = parseFloat(sessionStorage.getItem('measured-safe-bottom') || '0');
-            const scaledT = storedT > 0 ? storedT / zoomRatio : 0;
-            const scaledB = storedB > 0 ? storedB / zoomRatio : 0;
-
-            applySafeVars(navBarVirtualPx, scaledT, scaledB, 0);
           }
         }
 
@@ -574,14 +573,15 @@ const forceDesktopViewData = forceDesktopView;
 
         function handleResize() {
           const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-          const currentMode = getCurrentMode();
           
-          // Gunakan Math.max untuk mendapat dimensi landscape yang benar.
-          // Pada Android, screen.width/height TIDAK berubah saat rotasi —
-          // keduanya selalu portrait dimensions. Math.max memberi nilai lebih besar (landscape).
-          const physicalWidth = Math.max(window.screen.width, window.screen.height);
+          // Mencegah infinite loop: Abaikan event resize jika orientasi fisik layar tidak berubah
+          if (isPortrait === (window as any).lastOrientation) {
+            return;
+          }
+          (window as any).lastOrientation = isPortrait;
+
+          const currentMode = getCurrentMode();
           const desktopWidth = 1440;
-          const scale = physicalWidth / desktopWidth;
 
           // 🔒 Handle forced desktop mode specifically
           if (isForced) {
@@ -591,12 +591,17 @@ const forceDesktopViewData = forceDesktopView;
               if (rotateOverlay?.classList.contains('active-overlay')) {
                 hideRotateOverlay();
               }
-              // Recalculate scale correctly with landscape dimension
-              const viewport = document.querySelector('meta[name="viewport"]');
-              viewport?.setAttribute('content',
-                `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`
-              );
-              window.dispatchEvent(new CustomEvent('viewModeChange'));
+              // Recalculate scale correctly with asynchronous calibration
+              const vp = document.querySelector('meta[name="viewport"]');
+              if (vp) {
+                vp.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+                setTimeout(() => {
+                  const trueWidth = window.innerWidth;
+                  const exactScale = trueWidth / desktopWidth;
+                  vp.setAttribute('content', `width=${desktopWidth}, initial-scale=${exactScale}, minimum-scale=${exactScale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`);
+                  window.dispatchEvent(new CustomEvent('viewModeChange'));
+                }, 50);
+              }
             }
             updateToggleButton();
             return;
@@ -618,12 +623,25 @@ const forceDesktopViewData = forceDesktopView;
           } else if (isPortrait && currentMode !== 'mobile' && !isForced) {
             switchToMode('mobile');
           } else if (currentMode === 'desktop') {
-            // Recalculate scale with correct landscape dimension
-            const viewport = document.querySelector('meta[name="viewport"]');
-            viewport?.setAttribute('content',
-              `width=${desktopWidth}, initial-scale=${scale}, minimum-scale=${scale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`
-            );
-            window.dispatchEvent(new CustomEvent('viewModeChange'));
+            // Recalculate scale correctly with asynchronous calibration
+            const vp = document.querySelector('meta[name="viewport"]');
+            if (vp) {
+              (window as any).isRecalibratingViewport = true;
+              vp.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
+              setTimeout(() => {
+                const trueWidth = window.innerWidth;
+                const exactScale = trueWidth / desktopWidth;
+                // HACK: Paksa browser untuk zoom out
+                vp.setAttribute('content', `width=${desktopWidth}, initial-scale=${exactScale}, minimum-scale=${exactScale}, maximum-scale=${exactScale}, user-scalable=yes, viewport-fit=cover`);
+                window.dispatchEvent(new CustomEvent('viewModeChange'));
+                
+                // Kembalikan maximum-scale
+                setTimeout(() => { 
+                  vp.setAttribute('content', `width=${desktopWidth}, initial-scale=${exactScale}, minimum-scale=${exactScale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`);
+                  (window as any).isRecalibratingViewport = false; 
+                }, 100);
+              }, 50);
+            }
           }
           
           updateToggleButton();
@@ -692,6 +710,7 @@ const forceDesktopViewData = forceDesktopView;
         if (!(window as any).mainLayoutInitialized) {
           let resizeTimeout: any;
           window.addEventListener('resize', () => {
+            if ((window as any).isRecalibratingViewport) return;
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(handleResize, 300);
           });
@@ -744,8 +763,15 @@ const forceDesktopViewData = forceDesktopView;
       });
 
       // Cleanup before swapping to new page to prevent memory leaks
-      document.addEventListener('astro:before-swap', () => {
+      // Dan pertahankan state viewport agar tidak reset (mencegah kedipan/loop kalkulasi)
+      document.addEventListener('astro:before-swap', (e) => {
         ScrollTrigger.getAll().forEach(t => t.kill());
+        
+        const currentVp = document.querySelector('meta[name="viewport"]');
+        const newVp = e.newDocument.querySelector('meta[name="viewport"]');
+        if (currentVp && newVp) {
+          newVp.setAttribute('content', currentVp.getAttribute('content') || '');
+        }
       });
     </script>
 

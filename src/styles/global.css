@@ -70,16 +70,18 @@ body {
   background-color: var(--color-primary);
   -ms-overflow-style: none;
   user-select: none;
-  /*
+  overflow-x: hidden;
+}
+
+main {
+    /*
     Safe area right ditangani di sini — BUKAN di level komponen individual.
     Dengan ini, Tailwind px-* classes di setiap komponen TIDAK ditimpa,
     dan area nav bar Android (landscape Desktop Mode) otomatis dikecualikan.
     Komponen tidak perlu lagi inline style="padding-right: var(--app-safe-right)".
   */
   padding-right: var(--app-safe-right, 0px);
-  overflow-x: hidden;
 }
-
 
 html.lenis {
   height: auto;
