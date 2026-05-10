@@ -33,11 +33,15 @@ const { paragraphs, backgrounds } = Astro.props;
           data-bg-index={index}
         >
           <CloudinaryImage
-            src={bg}
+            src={bg.includes('/upload/') ? bg.replace('/upload/', '/upload/f_auto,q_auto/') : bg}
             alt={`Sejarah ${index + 1}`}
             class="object-cover w-full h-full filter brightness-[0.6] sepia-[0.2]"
             sizes="(max-width: 768px) 100vw, 50vw"
+            widths={[720, 1280]}
             loading={index === 0 ? "eager" : "lazy"}
+            decoding="async"
+            width="1280"
+            height="1280"
           />
         </div>
       ))}
@@ -51,15 +55,19 @@ const { paragraphs, backgrounds } = Astro.props;
           data-text-index={index}
         >
           <!-- Gambar Mobile Fallback -->
-          <div class="block md:hidden absolute inset-0 z-0 opacity-20 pointer-events-none">
+          <div class="block md:hidden absolute inset-0 z-0 opacity-40 pointer-events-none">
              <CloudinaryImage
-              src={backgrounds[index]}
+              src={backgrounds[index].includes('/upload/') ? backgrounds[index].replace('/upload/', '/upload/f_auto,q_auto/') : backgrounds[index]}
               alt={`Sejarah Mobile ${index + 1}`}
               class="object-cover w-full h-full filter brightness-50"
               sizes="100vw"
+              widths={[720]}
               loading="lazy"
+              decoding="async"
+              width="720"
+              height="1280"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]"></div>
+            {/* <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]"></div> */}
           </div>
 
           <div class="history-text max-w-xl text-left opacity-0 translate-y-12 relative z-10">

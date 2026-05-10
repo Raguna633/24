@@ -7,9 +7,29 @@ interface Props {
   subjects: string;
   index: number;
   offset?: boolean;
+  photo?: string;
 }
 
-const { name, subjects, index, offset = false } = Astro.props;
+const { name, subjects, index, offset = false, photo } = Astro.props;
+const displayImg = photo || dummyImg;
+
+// Helper for Cloudinary optimization (Rule 04)
+const optimizeCloudinaryUrl = (url: string, width: number = 600) => {
+  if (!url || !url.includes('cloudinary.com')) return url;
+  if (url.includes('f_auto')) return url; // Already optimized
+  
+  const parts = url.split('/upload/');
+  if (parts.length === 2) {
+    // Add f_auto, q_auto, c_fill, and specific width & aspect ratio
+    return `${parts[0]}/upload/f_auto,q_auto,w_${width},c_fill,ar_3:4/${parts[1]}`;
+  }
+  return url;
+};
+
+// Optimized URL for the grid card
+const optimizedImg = optimizeCloudinaryUrl(displayImg, 600);
+// High-res optimized URL for the modal (passed via data-img)
+const modalImg = optimizeCloudinaryUrl(displayImg, 1200);
 ---
 
 <div 
@@ -18,15 +38,18 @@ const { name, subjects, index, offset = false } = Astro.props;
   data-index={index} 
   data-name={name} 
   data-subjects={subjects} 
-  data-img={dummyImg}
+  data-img={modalImg}
 >
   <div class="relative mb-4 overflow-hidden rounded-xl bg-white shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)]">
     <img 
-      src={dummyImg} 
+      src={optimizedImg} 
       alt={name} 
+      width="600"
+      height="800"
       transition:name={`teacher-photo-${index}`} 
       class="w-full aspect-[3/4] object-cover group-hover:scale-105 transition-transform duration-700 grayscale hover:grayscale-0" 
       loading="lazy" 
+      decoding="async"
     />
     <div class="absolute inset-0 bg-[#183f89]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"></div>
   </div>

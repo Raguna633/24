@@ -24,12 +24,18 @@ if (galleryType === "uniform") {
   allUniforms = (await getCollection("uniforms")).sort((a, b) =>
     a.id.localeCompare(b.id),
   );
-  uniformsData = allUniforms.map((u) => ({
-    id: u.id,
-    img: u.data.uniformPhotos?.[0],
-    alt: `Foto ${u.data.uniformName}`,
-    title: u.data.uniformName,
-  }));
+  uniformsData = allUniforms.map((u) => {
+    const originalSrc = u.data.uniformPhotos?.[0];
+    const optimizedImg = originalSrc?.includes('/upload/') 
+      ? originalSrc.replace('/upload/', '/upload/f_auto,q_auto,c_fill,ar_1:1,w_480/') 
+      : originalSrc;
+    return {
+      id: u.id,
+      img: optimizedImg,
+      alt: `Foto ${u.data.uniformName}`,
+      title: u.data.uniformName,
+    };
+  });
 }
 
 // Prepare Lightbox items based on gallery type
@@ -138,7 +144,7 @@ if (galleryType === "uniform") {
           />
         ) : (
           <BentoGalleryGrid
-            photos={photos || []}
+            photos={(photos || []).map((p: string) => p.includes('/upload/') ? p.replace('/upload/', '/upload/f_auto,q_auto,w_800/') : p)}
             layout={bentoLayout as any}
             className="relative z-10"
           />

@@ -68,9 +68,20 @@ const galleries = defineCollection({
     }),
 });
 
+const teachers = defineCollection({
+    loader: glob({ pattern: '**/*.{md,mdx}', base: 'src/data/teachers' }),
+    schema: z.object({
+        name: z.string(),
+        subjects: z.string(),
+        teachOnClass: z.array(z.string()).optional(),
+        photo: z.string().optional(),
+    }),
+});
+
 export const collections = {
     students,
     uniforms,
     classes,
     galleries,
+    teachers,
 };

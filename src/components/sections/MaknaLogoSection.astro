@@ -29,7 +29,7 @@ const points = maknaLogo.content
 
 // Setup image optimization
 const optimizedPhoto = maknaLogo.photo.includes('/upload/') 
-  ? maknaLogo.photo.replace('/upload/', '/upload/f_auto,q_auto/') 
+  ? maknaLogo.photo.replace('/upload/', '/upload/f_auto,q_auto,w_800/') 
   : maknaLogo.photo;
 ---
 
@@ -37,11 +37,15 @@ const optimizedPhoto = maknaLogo.photo.includes('/upload/')
   <!-- Optional Parallax Background (Slightly visible if needed) -->
   <div class="absolute inset-0 opacity-5 pointer-events-none z-0">
     <img 
-      src={maknaLogo.backgroundImage.replace('/upload/', '/upload/f_auto,q_auto/')} 
+      src={maknaLogo.backgroundImage.includes('/upload/') 
+        ? maknaLogo.backgroundImage.replace('/upload/', '/upload/f_auto,q_auto,w_1280/') 
+        : maknaLogo.backgroundImage} 
       class="w-full h-full object-cover" 
       alt="Background" 
       loading="lazy" 
       decoding="async" 
+      width="1280"
+      height="720"
     />
   </div>
 

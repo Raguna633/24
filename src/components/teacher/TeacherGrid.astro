@@ -1,9 +1,14 @@
 ---
+import { getCollection } from 'astro:content';
 import TeacherCard from './TeacherCard.astro';
 
-const dummyTeachers = Array.from({ length: 56 }).map((_, i) => ({
-  name: `Teacher Name ${i + 1}`,
-  subjects: ['Mathematics', 'Physics', 'History & Civics', 'Biology', 'English Literature', 'Arts & Culture', 'Physical Education'][i % 7],
+const allTeachers = await getCollection('teachers');
+const sortedTeachers = allTeachers.sort((a, b) => a.data.name.localeCompare(b.data.name));
+
+const teachersData = sortedTeachers.map((t, i) => ({
+  name: t.data.name,
+  subjects: t.data.subjects,
+  photo: t.data.photo,
   index: i
 }));
 ---
@@ -17,10 +22,11 @@ const dummyTeachers = Array.from({ length: 56 }).map((_, i) => ({
 
   <!-- Flexbox Layout -->
   <div class="teacher-grid-container flex flex-wrap justify-center md:justify-start gap-x-8 gap-y-16 lg:gap-x-12 lg:gap-y-24">
-    {dummyTeachers.map((teacher, index) => (
+    {teachersData.map((teacher, index) => (
       <TeacherCard 
         name={teacher.name} 
         subjects={teacher.subjects} 
+        photo={teacher.photo}
         index={teacher.index} 
         offset={index % 2 !== 0} 
       />
