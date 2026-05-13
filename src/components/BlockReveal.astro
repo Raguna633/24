@@ -13,7 +13,7 @@ const {
   text, 
   className = "", 
   blockColor = "var(--color-primary-500, #0a2130)", 
-  stagger = 0.1, 
+  stagger = 0.8, 
   duration = 0.6,
   delay = 0 
 } = Astro.props;
@@ -42,8 +42,8 @@ const {
     position: relative;
     overflow: hidden;
     display: inline-block;
-    margin-bottom: 0.2em;
-    min-height: 1.2em; /* Ensure empty lines still have height if needed */
+    margin-bottom: 0.02em;
+    min-height: 1.1em; /* Ensure empty lines still have height if needed */
   }
 
   .text-reveal-outer :global(.block-revealer) {

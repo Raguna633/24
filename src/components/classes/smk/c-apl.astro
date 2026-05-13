@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import groupPhoto from "../../../assets/apl-c-group-nobg.webp";
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
+const groupPhoto = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599530/apl-c-group-nobg.webp";
 import rectPattern from "../../../assets/rectangle-pattern.svg?raw";
 
 import hexagonDecoration from "../../../assets/hexagon.svg?raw";
@@ -158,10 +159,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           <div
             class="relative z-30 w-full flex justify-center mt-6 px-12 pb-8 opacity-0 translate-y-10 group-main-image"
           >
-            <Image
+            <CloudinaryImage
               src={groupPhoto}
               alt="C APL Group Photo"
+              widths={[650, 1300]}
               class="w-full max-w-[650px] h-auto drop-shadow-2xl object-contain relative z-30"
+              loading="eager"
             />
           </div>
         </div>
@@ -222,23 +225,23 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
     <!-- Students Roster Section -->
     <section
-      class="students-section relative pt-24 pb-44 px-4 sm:px-6 lg:px-8 z-10 bg-[#f5f0ea]"
+      class="students-section relative py-32 px-6 z-10 bg-[#f5f0ea]"
     >
       <div class="max-w-7xl mx-auto">
         <!-- Section Heading -->
         <div class="mb-20 text-center">
           <span
-            class="students-heading-label inline-block text-[#2A358F]/50 text-xs tracking-[0.4em] uppercase mb-4 opacity-0"
+            class="students-heading-label inline-block text-[#2A358F]/50 text-xs tracking-[0.4em] uppercase mb-4 opacity-0 will-animate"
           >
             The Students
           </span>
           <h2
-            class="students-heading-title text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0"
+            class="students-heading-title text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 will-animate"
           >
             C APL
           </h2>
           <div
-            class="students-heading-count mt-6 text-[#2A358F]/40 font-mono text-sm opacity-0"
+            class="students-heading-count mt-6 text-[#2A358F]/40 font-mono text-sm opacity-0 will-animate"
           >
             DATASET: {allStudents.length} ENTRIES FOUND
           </div>
@@ -246,11 +249,11 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
         <!-- Student Grid -->
         <div
-          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12"
+          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"
         >
           {
             allStudents.map((student) => (
-              <div class="student-card-wrapper opacity-0">
+              <div class="student-card-wrapper opacity-0 will-animate">
                 <StudentCard
                   name={student.name}
                   slug={student.slug}
@@ -291,28 +294,25 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       gsap.registerPlugin(ScrollTrigger, CSSPlugin);
 
       document.addEventListener("astro:page-load", async () => {
+        const ctx = gsap.context(() => {
+          // --- INITIAL STATE / FOUC PREVENTION ---
+          gsap.set(".group-quote-box", { opacity: 0, x: -50 });
+          gsap.set(".group-quote-icon", { opacity: 0 });
+          gsap.set(".group-quote-text, .group-quote-footer", { opacity: 1 });
+          gsap.set(".group-header-title", { opacity: 0, y: 50 });
+          gsap.set(".group-main-image", { opacity: 0, y: 20, scale: 0.95 });
+          gsap.set(".group-hexagon, .botanica-item", { opacity: 0 });
+          gsap.set(".students-heading-label, .students-heading-title, .students-heading-count", { y: 30, opacity: 0 });
+          gsap.set(".student-card-wrapper", { y: 50, opacity: 0 });
+        });
+
         await waitForLoading();
 
-        const container = document.getElementById("group-wrapper-c-apl");
-        if (!container) return;
+        ctx.add(() => {
+          const container = document.getElementById("group-wrapper-c-apl");
+          if (!container) return;
 
-        let ctx = gsap.context(() => {
           const q = gsap.utils.selector(container);
-
-          // Initial set to ensure hidden state before GSAP takes over
-          gsap.set(q(".group-quote-box"), { opacity: 0, x: -50 });
-          gsap.set(q(".group-quote-icon"), { opacity: 0 });
-          // The .split-line-inner elements are handled by TextReveal set initial state (y: 150%)
-          gsap.set(q(".group-quote-text, .group-quote-footer"), {
-            opacity: 1,
-          });
-          gsap.set(q(".group-header-title"), { opacity: 0, y: 50 });
-          gsap.set(q(".group-main-image"), {
-            opacity: 0,
-            y: 20,
-            scale: 0.95,
-          });
-          gsap.set(q(".group-hexagon, .botanica-item"), { opacity: 0 });
 
           const masterTl = gsap.timeline({
             scrollTrigger: {
@@ -326,13 +326,10 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
             },
           });
 
-          const bgPaths = q(
-            ".group-background-pattern svg path, .group-background-pattern svg rect",
-          );
+          const bgPaths = q(".group-background-pattern svg path, .group-background-pattern svg rect");
           bgPaths.forEach((path) => {
             const p = path as unknown as SVGPathElement;
-            const length =
-              p instanceof SVGPathElement ? p.getTotalLength() : 1000;
+            const length = p instanceof SVGPathElement ? p.getTotalLength() : 1000;
             gsap.set(p, {
               strokeDasharray: length,
               strokeDashoffset: length,
@@ -341,36 +338,18 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               stroke: "#6dbb8b",
               strokeWidth: 1,
             });
-            masterTl.to(
-              p,
-              {
-                strokeDashoffset: 0,
-                opacity: 0.3,
-                duration: 1,
-                ease: "none",
-              },
-              0,
-            );
+            masterTl.to(p, {
+              strokeDashoffset: 0,
+              opacity: 0.3,
+              duration: 1,
+              ease: "none",
+            }, 0);
           });
-          masterTl.to(
-            q(".group-background-pattern svg"),
-            { opacity: 1, duration: 0.5 },
-            0,
-          );
 
-          masterTl.to(
-            q(".group-header-title"),
-            { y: 0, opacity: 1, duration: 1.2, ease: "power4.out" },
-            0.2,
-          );
+          masterTl.to(q(".group-background-pattern svg"), { opacity: 1, duration: 0.5 }, 0);
+          masterTl.to(q(".group-header-title"), { y: 0, opacity: 1, duration: 1.2, ease: "power4.out" }, 0.2);
+          masterTl.to(q(".group-quote-box"), { x: 0, opacity: 1, duration: 1, ease: "power3.out" }, 0.5);
 
-          masterTl.to(
-            q(".group-quote-box"),
-            { x: 0, opacity: 1, duration: 1, ease: "power3.out" },
-            0.5,
-          );
-
-          // Draw animation for Quote Icon
           const quoteIconPaths = q(".group-quote-icon svg path");
           quoteIconPaths.forEach((path) => {
             const p = path as unknown as SVGPathElement;
@@ -380,39 +359,25 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               strokeDashoffset: length,
               opacity: 0,
             });
-            masterTl.to(
-              p,
-              {
-                strokeDashoffset: 0,
-                opacity: 1,
-                duration: 1.5,
-                ease: "power2.inOut",
-              },
-              0.7,
-            );
+            masterTl.to(p, {
+              strokeDashoffset: 0,
+              opacity: 1,
+              duration: 1.5,
+              ease: "power2.inOut",
+            }, 0.7);
           });
-          masterTl.to(
-            q(".group-quote-icon"),
-            { opacity: 1, duration: 0.2 },
-            0.7,
-          );
 
-          // Animate the masked lines inside TextReveal (Quote & Footer)
-          const quoteLines = q(
-            ".group-quote-text .split-line-inner, .group-quote-footer .split-line-inner",
-          );
+          masterTl.to(q(".group-quote-icon"), { opacity: 1, duration: 0.2 }, 0.7);
+
+          const quoteLines = q(".group-quote-text .split-line-inner, .group-quote-footer .split-line-inner");
           if (quoteLines.length > 0) {
-            masterTl.to(
-              quoteLines,
-              {
-                y: "0%",
-                autoAlpha: 1,
-                duration: 1.2,
-                stagger: 0.1,
-                ease: "power4.out",
-              },
-              0.8,
-            );
+            masterTl.to(quoteLines, {
+              y: "0%",
+              autoAlpha: 1,
+              duration: 1.2,
+              stagger: 0.1,
+              ease: "power4.out",
+            }, 0.8);
           }
 
           const hexPaths = q(".group-hexagon svg path");
@@ -423,44 +388,28 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               strokeDasharray: length,
               strokeDashoffset: length,
             });
-            masterTl.to(
-              p,
-              { strokeDashoffset: 0, duration: 1.5, ease: "power2.inOut" },
-              0.6,
-            );
+            masterTl.to(p, { strokeDashoffset: 0, duration: 1.5, ease: "power2.inOut" }, 0.6);
           });
+
           masterTl.to(q(".group-hexagon"), { opacity: 1, duration: 0.5 }, 0.6);
-          masterTl.to(
-            q(".group-main-image"),
-            { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: "power2.out" },
-            1.0,
-          );
+          masterTl.to(q(".group-main-image"), { y: 0, opacity: 1, scale: 1, duration: 1.5, ease: "power2.out" }, 1.0);
 
           const botanicaItems = q(".botanica-item");
-          masterTl.to(
-            botanicaItems,
-            {
-              opacity: 0.9,
-              scale: 1,
-              stagger: 0.1,
-              duration: 1,
-              ease: "back.out(1.7)",
-            },
-            1.2,
-          );
+          masterTl.to(botanicaItems, {
+            opacity: 0.9,
+            scale: 1,
+            stagger: 0.1,
+            duration: 1,
+            ease: "back.out(1.7)",
+          }, 1.2);
+
           botanicaItems.forEach((item) => {
-            const speed = parseFloat(
-              (item as HTMLElement).dataset.speed || "0",
-            );
-            masterTl.to(
-              item,
-              {
-                y: `-=${speed}`,
-                ease: "none",
-                duration: masterTl.duration(),
-              },
-              0,
-            );
+            const speed = parseFloat((item as HTMLElement).dataset.speed || "0");
+            masterTl.to(item, {
+              y: `-=${speed}`,
+              ease: "none",
+              duration: masterTl.duration(),
+            }, 0);
           });
 
           // Floating loop
@@ -495,16 +444,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           const studentsContainer = document.querySelector(".students-section");
           if (studentsContainer) {
             const sq = gsap.utils.selector(studentsContainer);
-            gsap.set(
-              sq(
-                ".students-heading-label, .students-heading-title, .students-heading-count",
-              ),
-              { y: 30 },
-            );
-            gsap.to(sq(".students-heading-label"), {
+            
+            gsap.to(sq(".students-heading-label, .students-heading-title, .students-heading-count"), {
               opacity: 1,
               y: 0,
-              duration: 0.8,
+              duration: 1,
+              stagger: 0.2,
               ease: "power2.out",
               scrollTrigger: {
                 trigger: studentsContainer,
@@ -512,58 +457,27 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                 once: true,
               },
             });
-            gsap.to(sq(".students-heading-title"), {
-              opacity: 1,
-              y: 0,
-              duration: 1.2,
-              ease: "power4.out",
-              force3D: true,
-              scrollTrigger: {
-                trigger: studentsContainer,
-                start: "top 75%",
-                once: true,
+
+            ScrollTrigger.batch(sq(".student-card-wrapper"), {
+              onEnter: (batch) => {
+                gsap.to(batch, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.7,
+                  ease: "power3.out",
+                  force3D: true,
+                  stagger: 0.08,
+                });
               },
-              delay: 0.15,
-            });
-            gsap.to(sq(".students-heading-count"), {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: studentsContainer,
-                start: "top 75%",
-                once: true,
-              },
-              delay: 0.3,
-            });
-            const studentCards = sq(".student-card-wrapper");
-            gsap.set(studentCards, { y: 50 });
-            studentCards.forEach((card, i) => {
-              gsap.to(card, {
-                opacity: 1,
-                y: 0,
-                duration: 0.7,
-                ease: "power3.out",
-                force3D: true,
-                delay: (i % 4) * 0.08,
-                scrollTrigger: {
-                  trigger: card,
-                  start: "top 90%",
-                  once: true,
-                },
-              });
+              start: "top 90%",
+              once: true,
             });
           }
-        }, container);
+        });
 
-        document.addEventListener(
-          "astro:before-swap",
-          () => {
-            ctx.revert();
-          },
-          { once: true },
-        );
+        document.addEventListener("astro:before-swap", () => {
+          ctx.revert();
+        }, { once: true });
       });
     </script>
   </section>

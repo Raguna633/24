@@ -2,6 +2,7 @@
 import { getEntry, getCollection } from "astro:content";
 import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
 import type { ImageMetadata } from "astro";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
@@ -12,7 +13,7 @@ import TefatieText from "./TefatieText.astro";
 import TextCustom from "../../TextCustom.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
 import TextReveal from "../../animations/TextReveal.astro";
-import tefaGroup from "../../../assets/pplg-group-tefa.webp";
+const tefaGroup = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778602713/pplg-group-tefa.webp";
 import cppIcon from "../../../assets/cpp.svg";
 import csharpIcon from "../../../assets/csharp.svg";
 import jsIcon from "../../../assets/js.svg";
@@ -20,11 +21,11 @@ import unityIcon from "../../../assets/unity.svg";
 
 import xpLogo from "../../../assets/windows-xp.svg";
 import laptop from "../../../assets/35202481_laptop_cartoon_2.svg";
-import grup from "../../../assets/pplg-group1.webp";
+const grup = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778602712/pplg-group1.webp";
 
 // Group 2 Assets
 import logoMl from "../../../assets/logo-ml.svg";
-import pplgGroup2 from "../../../assets/pplg-group2.jpg";
+const pplgGroup2 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778602712/pplg-group2.webp";
 import jenggotFf from "../../../assets/jenggot-ff.svg";
 import pramuka from "../../../assets/pramuka.svg";
 
@@ -226,15 +227,12 @@ const { kelas } = Astro.params;
       <div
         class="image-wrapper relative aspect-[4/3] w-full max-w-182 bottom-0 z-20 tefa-group-img will-animate"
       >
-        <Image
-          src={tefaGroup as ImageMetadata}
+        <CloudinaryImage
+          src={tefaGroup}
           alt={"Tim Tefa Pertama :v"}
-          sizes="(max-width: 768px) 100vw, 80vw"
+          widths={[800, 1200]}
           loading="eager"
-          decoding="async"
-          quality={80}
-          format="webp"
-          class:list={"-bottom-10 relative object-contain w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"}
+          class="-bottom-10 relative object-contain w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"
         />
       </div>
       <LineDecor
@@ -295,12 +293,11 @@ const { kelas } = Astro.params;
               <div class="system-tray">10:54 PM</div>
             </div>
             <div id="grup-anomali" class="z-0 w-full h-full">
-              <Image
+              <CloudinaryImage
                 src={grup}
-                width={480}
+                widths={[400, 800]}
                 alt="Bliss"
                 loading="eager"
-                decoding="async"
                 class="w-full h-full object-contain"
               />
             </div>
@@ -341,11 +338,11 @@ const { kelas } = Astro.params;
         <div
           class="group-photo-wrapper bg-white p-4 pb-12 md:p-6 md:pb-22 shadow-2xl relative w-full shrink-0 will-animate"
         >
-          <Image
+          <CloudinaryImage
             src={pplgGroup2}
             alt="Group 2"
             loading={"eager"}
-            decoding={"async"}
+            widths={[800, 1200]}
             class="w-full h-auto object-cover select-none border border-gray-100"
           />
 
@@ -386,24 +383,24 @@ const { kelas } = Astro.params;
     SECTION 6: Grid Siswa — Kenali satu per satu dari mereka
   ============================================================ -->
   <section
-    class="students-section py-24 px-6 bg-[#f5f0ea]"
+    class="students-section py-32 px-6 bg-[#f5f0ea]"
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
       <!-- Heading -->
       <div class="students-heading mb-16 text-center">
         <p
-          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label"
+          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label will-animate"
         >
           Keluarga
         </p>
         <h2
-          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title"
+          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title will-animate"
         >
           {classContent.className}
         </h2>
         <p
-          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count"
+          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count will-animate"
         >
           {allStudents.length} orang yang membentuk cerita ini
         </p>
@@ -411,11 +408,11 @@ const { kelas } = Astro.params;
 
       <!-- Grid siswa: 2 kolom mobile, 3 tablet, 4 desktop -->
       <div
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"
       >
         {
           allStudents.map((student) => (
-            <div class="student-card-wrapper opacity-0">
+            <div class="student-card-wrapper opacity-0 will-animate">
              <StudentCard
                 name={student.name}
                 slug={student.slug}
@@ -437,6 +434,8 @@ const { kelas } = Astro.params;
   <NextClassesCTA
     prevClass={classContent.prevClass}
     nextClass={classContent.nextClass}
+    customPrev={classContent.customPrev}
+    showBackLink={false}
   />
 
   <style>

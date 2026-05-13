@@ -5,12 +5,13 @@ import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
 import { Image } from "astro:assets";
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
 import FadeOverlay from "../../FadeOverlay.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
 
-import group1 from "../../../assets/apl-b-group1.webp";
-import group2 from "../../../assets/apl-b-group2.webp";
-import group3 from "../../../assets/apl-b-group3.webp";
+const group1 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599406/apl-b-group3.webp";
+const group2 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599403/apl-b-group2.webp";
+const group3 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599326/apl-b-group1.webp";
 import radioactiveSvg from "../../../assets/radioactive.svg";
 import bgPattern from "../../../assets/b-apl-pattern.svg?raw";
 import breakerSvg1 from "../../../assets/breaker1.svg";
@@ -244,11 +245,10 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               <div
                 class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
               >
-                <Image
+                <CloudinaryImage
                   src={group1}
                   alt="12 B APL Group 1"
                   widths={[400, 800, 1200]}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 840px"
                   loading="lazy"
                   class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
@@ -309,11 +309,10 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               <div
                 class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
               >
-                <Image
+                <CloudinaryImage
                   src={group2}
                   alt="12 B APL Group 2"
                   widths={[400, 800, 1200]}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 840px"
                   loading="lazy"
                   class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
@@ -402,11 +401,10 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               <div
                 class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
               >
-                <Image
+                <CloudinaryImage
                   src={group3}
                   alt="12 B APL Group 3"
                   widths={[400, 800, 1200]}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 840px"
                   loading="lazy"
                   class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
@@ -464,33 +462,33 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
   <FadeOverlay />
 
   <section
-    class="students-section py-24 px-6 bg-[#f5f0ea]"
+    class="students-section py-32 px-6 bg-[#f5f0ea]"
     aria-label={`Daftar siswa kelas ${classContent.className}`}
   >
     <div class="max-w-7xl mx-auto">
       <div class="students-heading mb-16 text-center">
         <p
-          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label"
+          class="text-[#2A358F]/50 text-sm tracking-[0.3em] uppercase mb-4 opacity-0 students-heading-label will-animate"
         >
           Keluarga
         </p>
         <h2
-          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title"
+          class="text-5xl md:text-7xl font-bold text-[#2A358F] opacity-0 students-heading-title will-animate"
         >
           {classContent.className}
         </h2>
         <p
-          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count"
+          class="text-base text-gray-400 mt-4 opacity-0 students-heading-count will-animate"
         >
           {allStudents.length} orang yang membentuk cerita ini
         </p>
       </div>
       <div
-        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8"
       >
         {
           allStudents.map((student) => (
-            <div class="student-card-wrapper opacity-0">
+            <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
                 name={student.name}
                 slug={student.slug}
@@ -540,6 +538,15 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
     document.addEventListener("astro:page-load", async () => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // FOUC prevention BEFORE loading
+      gsap.set(".gsap-header .gsap-fade-up", { y: 40, opacity: 0 });
+      gsap.set(
+        ".students-heading-label, .students-heading-title, .students-heading-count",
+        { y: 30, opacity: 0 },
+      );
+      gsap.set(".student-card-wrapper", { y: 50, opacity: 0 });
+
       await waitForLoading();
 
       // --- STORYTELLING ANIMATIONS ---
@@ -734,10 +741,6 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       // --- END STORYTELLING ANIMATIONS ---
 
       // Heading siswa
-      gsap.set(
-        ".students-heading-label, .students-heading-title, .students-heading-count",
-        { y: 30 },
-      );
       gsap.to(".students-heading-label", {
         opacity: 1,
         y: 0,
@@ -776,24 +779,19 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       });
 
       // Student cards
-      const studentCards = gsap.utils.toArray<HTMLElement>(
-        ".student-card-wrapper",
-      );
-      gsap.set(studentCards, { y: 50 });
-      studentCards.forEach((card, i) => {
-        gsap.to(card, {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power3.out",
-          force3D: true,
-          delay: (i % 4) * 0.08,
-          scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            once: true,
-          },
-        });
+      ScrollTrigger.batch(".student-card-wrapper", {
+        onEnter: (batch) => {
+          gsap.to(batch, {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power3.out",
+            force3D: true,
+            stagger: 0.08,
+          });
+        },
+        start: "top 90%",
+        once: true,
       });
 
       // Individual falling animation

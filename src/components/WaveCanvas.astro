@@ -82,7 +82,11 @@ const gradientConfig = JSON.stringify({
     amplitude: number;
     frequency: number;
     gradientConfig: GradientConfig;
-    animationId: number | null;
+    // Tambah property untuk IntersectionObserver dan resize handler
+    animationId: number | null = null;
+    _observer: IntersectionObserver | null = null;
+    _resizeHandler: (() => void) | null = null;
+    _isRunning: boolean = false;
 
     constructor(canvas: HTMLCanvasElement) {
       this.canvas = canvas;
@@ -107,10 +111,29 @@ const gradientConfig = JSON.stringify({
       this.animationId = null;
 
       this.resize();
-      this.animate();
 
-      // Handle resize
-      window.addEventListener('resize', () => this.resize());
+      // ✅ PERFORMANCE FIX: Gunakan IntersectionObserver untuk pause rAF
+      // saat canvas tidak terlihat di viewport. Sebelumnya, semua instansi canvas
+      // menjalankan requestAnimationFrame terus-menerus meskipun tidak terlihat,
+      // menguras CPU/GPU secara sia-sia.
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              this.start();
+            } else {
+              this.stop();
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      observer.observe(canvas);
+      this._observer = observer;
+
+      // Simpan referensi bound handler agar bisa di-removeEventListener
+      this._resizeHandler = () => this.resize();
+      window.addEventListener('resize', this._resizeHandler);
     }
 
     resize() {
@@ -295,22 +318,50 @@ const gradientConfig = JSON.stringify({
       ctx.fill();
     }
 
+    start() {
+      if (this._isRunning) return;
+      this._isRunning = true;
+      this.animate();
+    }
+
+    stop() {
+      this._isRunning = false;
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+    }
+
     animate = () => {
+      if (!this._isRunning) return;
       this.offset += this.speed;
       this.draw();
       this.animationId = requestAnimationFrame(this.animate);
     }
 
     destroy() {
-      if (this.animationId) {
-        cancelAnimationFrame(this.animationId);
+      this.stop();
+      // Disconnect IntersectionObserver
+      if (this._observer) {
+        this._observer.disconnect();
+        this._observer = null;
       }
-      window.removeEventListener('resize', () => this.resize());
+      // Cleanup resize listener dengan referensi yang benar
+      if (this._resizeHandler) {
+        window.removeEventListener('resize', this._resizeHandler);
+        this._resizeHandler = null;
+      }
     }
   }
 
-  // Initialize all wave canvases
-  document.addEventListener('DOMContentLoaded', () => {
+  // Initialize wave canvases — gunakan astro:page-load agar kompatibel
+  // dengan Astro View Transitions (DOMContentLoaded hanya terpanggil sekali)
+  function initWaveCanvases() {
+    // Cleanup instansi lama jika ada (dari navigasi sebelumnya)
+    if ((window as any)._waveInstances) {
+      (window as any)._waveInstances.forEach((w: WaveCanvas) => w.destroy());
+    }
+    
     const canvases = document.querySelectorAll('[id^="wave-canvas-"]');
     const waves: WaveCanvas[] = [];
     
@@ -318,11 +369,16 @@ const gradientConfig = JSON.stringify({
       waves.push(new WaveCanvas(canvas as HTMLCanvasElement));
     });
 
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
+    // Simpan referensi untuk cleanup saat navigasi berikutnya
+    (window as any)._waveInstances = waves;
+
+    // Cleanup saat halaman di-swap oleh View Transitions
+    document.addEventListener('astro:before-swap', () => {
       waves.forEach(wave => wave.destroy());
-    });
-  });
+    }, { once: true });
+  }
+
+  document.addEventListener('astro:page-load', initWaveCanvases);
 </script>
 
 <style>

@@ -2,6 +2,7 @@
 import { getEntry, getCollection } from "astro:content";
 import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
@@ -9,17 +10,17 @@ import FadeOverlay from "../../FadeOverlay.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
 
 // Import Assets
-import paperTexture from "../../../assets/paper-texture.jpg";
+const paperTexture = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599459/paper-texture.jpg";
 import stamp1 from "../../../assets/mplb-stamp1.svg?raw";
 import paperclip from "../../../assets/paperclip.svg?raw";
 
-// Import Photos
-import group1 from "../../../assets/mplb-d-group1.webp";
-import group2 from "../../../assets/mplb-d-group2.webp";
-import group3 from "../../../assets/mplb-d-group3.webp";
-import group4 from "../../../assets/mplb-d-group4.webp";
-import group5 from "../../../assets/mplb-d-group5.webp";
-import group6 from "../../../assets/mplb-d-group6.webp";
+// Photos (Using string constants for external URLs)
+const group1 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599548/mplb-d-group1.webp";
+const group2 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599551/mplb-d-group2.webp";
+const group3 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599552/mplb-d-group3.webp";
+const group4 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599550/mplb-d-group4.webp";
+const group5 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599551/mplb-d-group5.webp";
+const group6 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599560/mplb-d-group6.webp";
 
 const classData = await getEntry("classes", "d-mplb");
 if (!classData) {
@@ -139,11 +140,11 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
               {/* Photo Area */}
               <div class={`md:col-span-7 relative group overflow-hidden bg-gray-50 aspect-4/3 border border-gray-200 ${index % 2 !== 0 ? 'md:order-2' : ''}`}>
-                <Image
+                <CloudinaryImage
                   src={story.image}
                   alt={story.id}
-                  loading={"lazy"}
-                  decoding={"async"}
+                  widths={[800, 1200]}
+                  loading="lazy"
                   class="w-full h-full object-cover grayscale-20 group-hover:grayscale-0 transition-all duration-700 will-animate opacity-0 story-photo"
                 />
                 {/* Stamp Animation Layer */}
@@ -248,12 +249,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      // Cleanup for View Transitions
-      const ctx = gsap.context(() => {});
-      document.addEventListener("astro:before-swap", () => {
-        ctx.revert();
-        ScrollTrigger.getAll().forEach((t) => t.kill());
-      }, { once: true });
+      const ctx = gsap.context(() => {
+        // --- INITIAL STATE / FOUC PREVENTION ---
+        gsap.set(".students-heading-label, .students-heading-title, .students-heading-count", { opacity: 0, y: 30 });
+        gsap.set(".students-heading-line", { opacity: 0, scaleX: 0 });
+        gsap.set(".student-card-wrapper", { opacity: 0, y: 50 });
+      });
 
       await waitForLoading();
 
@@ -280,7 +281,6 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
             const stamp = section.querySelector(".stamp-element");
             const note = section.querySelector(".bg-\\[\\#fff9c4\\], .bg-\\[\\#f0f9ff\\]");
 
-            // Initial states for pinning (except the first one which should be visible)
             if (index > 0) {
               gsap.set(section, { position: "absolute", top: 0, left: 0, width: "100%", opacity: 0 });
             }
@@ -316,10 +316,8 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               ease: "back.out(2)",
             }, "-=0.2");
 
-            // Add to master timeline with some spacing
             masterTl.add(tl, index === 0 ? 0 : `+=${0.5}`);
             
-            // Fade out previous section unless it's the last one
             if (index < storySections.length - 1) {
               masterTl.to(section, { opacity: 0, duration: 0.5 }, `+=${0.5}`);
             }
@@ -327,7 +325,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
         }
 
         // --- STUDENTS SECTION ANIMATION ---
-        const studentsTl = gsap.timeline({
+        gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.2,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: ".students-section",
             start: "top 70%",
@@ -335,30 +338,39 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           }
         });
 
-        studentsTl
-          .to(".students-heading-label", { opacity: 1, y: 0, duration: 0.8 })
-          .to(".students-heading-title", { opacity: 1, y: 0, duration: 1.2, ease: "power4.out" }, "-=0.6")
-          .to(".students-heading-line", { opacity: 1, scaleX: 1, duration: 1, ease: "expo.inOut" }, "-=0.8")
-          .to(".students-heading-count", { opacity: 1, y: 0, duration: 0.8 }, "-=0.6");
+        gsap.to(".students-heading-line", {
+          opacity: 1,
+          scaleX: 1,
+          duration: 1,
+          ease: "expo.inOut",
+          scrollTrigger: {
+            trigger: ".students-section",
+            start: "top 70%",
+            once: true,
+          }
+        });
 
-        // Cards Stagger
-        const cards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
-        cards.forEach((card, i) => {
-          gsap.to(card, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            delay: (i % 4) * 0.1,
-            ease: "power3.out",
-            force3D: true,
-            scrollTrigger: {
-              trigger: card,
-              start: "top 95%",
-              once: true,
-            }
-          });
+        // --- STUDENT CARDS (Batch Optimized) ---
+        ScrollTrigger.batch(".student-card-wrapper", {
+          onEnter: (batch) => {
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              stagger: 0.1,
+              ease: "power3.out",
+              force3D: true,
+            });
+          },
+          start: "top 95%",
+          once: true,
         });
       });
+
+      // Cleanup
+      document.addEventListener("astro:before-swap", () => {
+        ctx.revert();
+      }, { once: true });
     });
   </script>
 </div>

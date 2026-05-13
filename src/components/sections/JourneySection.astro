@@ -160,7 +160,10 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
       scrollTrigger: {
         trigger: journeySection,
         start: "top 80%",
-        toggleActions: "play none none reverse",
+        // ✅ PERFORMANCE FIX: Ganti toggleActions "reverse" dengan once:true.
+        // "reverse" memaksa GSAP track posisi scroll ke atas + replay animasi mundur.
+        // Untuk section CTA seperti ini, once:true sudah cukup dan jauh lebih ringan.
+        once: true,
         id: "journey-entrance"
       },
     });

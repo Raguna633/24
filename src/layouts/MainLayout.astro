@@ -167,10 +167,10 @@ const forceDesktopViewData = forceDesktopView;
                 applySafeVars(navBarCSSPx, storedT, storedB, exactScale);
                 
                 // Kembalikan maximum-scale agar user bisa melakukan pinch-to-zoom in
-                setTimeout(() => { 
-                  vp.setAttribute('content', `width=${desktopWidth}, initial-scale=${exactScale}, minimum-scale=${exactScale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`);
-                  window.isRecalibratingViewport = false; 
-                }, 5000);
+                // setTimeout(() => { 
+                //   vp.setAttribute('content', `width=${desktopWidth}, initial-scale=${exactScale}, minimum-scale=${exactScale}, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover`);
+                //   window.isRecalibratingViewport = false; 
+                // }, 5000);
               }, 50);
             }
           }

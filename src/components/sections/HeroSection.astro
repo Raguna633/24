@@ -7,7 +7,7 @@ import azzarqoLogo from "/src/assets/azzarqo.svg";
 import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 
-import heroBg from "../../assets/27250374_1290.webp";
+const heroBg = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1775105080/27250374_1290.webp";
 import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 ---
 
@@ -16,27 +16,13 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
   class="relative min-h-dvh flex items-center justify-center overflow-hidden"
 >
   <!-- Background Image -->
-  {
-    typeof heroBg === "string" && heroBg.includes("res.cloudinary.com") ? (
-      <CloudinaryImage
-        src="https://res.cloudinary.com/dhbps9kvp/image/upload/v1775105080/27250374_1290.webp"
-        alt="Hero section background"
-        class="absolute inset-0 w-full h-full object-cover z-0"
-        widths={[1920, 2560]}
-        loading="eager"
-      />
-    ) : (
-      <Image
-        src={heroBg as any}
-        alt="Hero section background"
-        class="absolute inset-0 w-full h-full object-cover z-0"
-        loading="eager"
-        width={1920}
-        height={1080}
-        format="webp"
-      />
-    )
-  }
+  <CloudinaryImage
+    src={heroBg}
+    alt="Hero section background"
+    class="absolute inset-0 w-full h-full object-cover z-0"
+    widths={[1920, 2560]}
+    loading="eager"
+  />
 
   <!-- Content Container -->
   <div
@@ -650,41 +636,46 @@ import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
       force3D: true,
     });
 
-    // Mouse parallax with AbortSignal
-    wrapper.style.transformStyle = "preserve-3d";
-    wrapper.addEventListener(
-      "pointermove",
-      (e) => {
-        const rect = wrapper.getBoundingClientRect();
-        const dx = (e.clientX - (rect.left + rect.width / 2)) / rect.width;
-        const dy = (e.clientY - (rect.top + rect.height / 2)) / rect.height;
-        gsap.to(svg, {
-          rotationX: -dy * 6,
-          rotationY: dx * 6,
-          x: dx * 8,
-          y: dy * 8,
-          transformPerspective: 1200,
-          duration: 0.6,
-          ease: "power3.out",
-        });
-      },
-      { signal },
-    );
+    // Mouse parallax — HANYA aktif di perangkat dengan pointer (desktop).
+    // (hover: hover) = media query yang true di desktop, false di touch-only mobile.
+    // Di mobile: tidak ada pointermove → listener ini tidak dieksekusi,
+    // sehingga transformStyle preserve-3d dan rotationX/Y tidak di-set sama sekali.
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      wrapper.style.transformStyle = "preserve-3d";
+      wrapper.addEventListener(
+        "pointermove",
+        (e) => {
+          const rect = wrapper.getBoundingClientRect();
+          const dx = (e.clientX - (rect.left + rect.width / 2)) / rect.width;
+          const dy = (e.clientY - (rect.top + rect.height / 2)) / rect.height;
+          gsap.to(svg, {
+            rotationX: -dy * 6,
+            rotationY: dx * 6,
+            x: dx * 8,
+            y: dy * 8,
+            transformPerspective: 1200,
+            duration: 0.6,
+            ease: "power3.out",
+          });
+        },
+        { signal },
+      );
 
-    wrapper.addEventListener(
-      "pointerleave",
-      () => {
-        gsap.to(svg, {
-          rotationX: 0,
-          rotationY: 0,
-          x: 0,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-        });
-      },
-      { signal },
-    );
+      wrapper.addEventListener(
+        "pointerleave",
+        () => {
+          gsap.to(svg, {
+            rotationX: 0,
+            rotationY: 0,
+            x: 0,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+        },
+        { signal },
+      );
+    }
 
     // 3. Return data for external timeline integration
     return { svg, txtAngkatan };

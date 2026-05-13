@@ -2,6 +2,7 @@
 import { getEntry, getCollection } from "astro:content";
 import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
@@ -13,9 +14,8 @@ import magazineBorder from "../../../assets/magazine-border.svg?raw";
 // import barcode from "../../../assets/magazine-barcode.svg?raw";
 import newTag from "../../../assets/new-collection-tag.svg?raw";
 
-// Import Photos
-import group1 from "../../../assets/ips1-group1.png";
-
+// Photos (Using string constants for external URLs)
+const group1 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599592/ips1-group1.webp";
 const classData = await getEntry("classes", "ips1");
 if (!classData) {
   throw new Error("Data kelas ips1 tidak ditemukan di collection");
@@ -86,10 +86,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                <div class="relative will-animate image-reveal opacity-0">
                   <div class="absolute -inset-3 pointer-events-none z-20 scale-[1.01]" set:html={magazineBorder} />
                   <div class="relative aspect-[4/5] md:aspect-auto md:h-[75vh] overflow-hidden border-[1px] border-white/10">
-                     <Image 
-                       src={story.image} 
-                       alt={story.title} 
+                     <CloudinaryImage
+                       src={story.image}
+                       alt={story.title}
                        class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-1000 scale-110 magazine-img"
+                       widths={[800, 1200]}
+                       loading="lazy"
                      />
                      {/* Overlay Gradient */}
                      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
@@ -102,14 +104,14 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
             {/* Content Container */}
             <div class={`md:col-span-5 px-4 md:px-12 space-y-6 ${index % 2 !== 0 ? 'md:order-1 text-right' : ''}`}>
-               <div class="space-y-2 will-animate text-reveal opacity-0 translate-y-10">
+               <div class="space-y-2 will-animate text-reveal opacity-0 will-animate">
                   <span class="inline-block bg-[#ccff00] text-black px-3 py-1 font-mono text-[10px] font-bold tracking-[0.2em]">{story.sub}</span>
                   <h2 class="text-6xl md:text-8xl font-black uppercase leading-[0.85] tracking-tighter italic">
                     {story.title}
                   </h2>
                </div>
                
-               <p class="text-lg md:text-xl font-light leading-relaxed text-gray-400 max-w-sm will-animate desc-reveal opacity-0 translate-y-10 ml-auto mr-auto md:ml-0 md:mr-0">
+               <p class="text-lg md:text-xl font-light leading-relaxed text-gray-400 max-w-sm will-animate desc-reveal opacity-0  ml-auto mr-auto md:ml-0 md:mr-0">
                  {story.desc}
                </p>
             </div>
@@ -131,14 +133,14 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
         <div class="absolute -top-10 left-0 w-full h-px bg-current opacity-10"></div>
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div class="space-y-2">
-              <p class="font-mono text-xs tracking-[0.5em] uppercase opacity-0 translate-y-4 students-heading-label will-animate">
+              <p class="font-mono text-xs tracking-[0.5em] uppercase opacity-0  students-heading-label will-animate">
                 Limited Edition
               </p>
-              <h2 class="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-none opacity-0 translate-y-10 students-heading-title will-animate">
+              <h2 class="text-7xl md:text-9xl font-black uppercase italic tracking-tighter leading-none opacity-0  students-heading-title will-animate">
                 {classContent.className}
               </h2>
             </div>
-            <div class="text-right opacity-0 translate-y-4 students-heading-count will-animate">
+            <div class="text-right opacity-0  students-heading-count will-animate">
               <span class="block font-mono text-4xl font-bold leading-none">{allStudents.length}</span>
               <span class="text-[10px] uppercase tracking-widest font-mono">Members Registered</span>
             </div>
@@ -148,7 +150,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
         {
           allStudents.map((student) => (
-            <div class="student-card-wrapper opacity-0 translate-y-10">
+            <div class="student-card-wrapper opacity-0 will-animate">
               <StudentCard
                 name={student.name}
                 slug={student.slug}
@@ -183,14 +185,17 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      // 1. Cleanup
-      ScrollTrigger.getAll().forEach(t => t.kill());
+      const ctx = gsap.context(() => {
+        // --- INITIAL STATE / FOUC PREVENTION ---
+        gsap.set(".students-heading-label, .students-heading-title, .students-heading-count", { opacity: 0, y: 30 });
+        gsap.set(".student-card-wrapper", { opacity: 0, y: 50 });
+        gsap.set(".text-reveal, .desc-reveal", { opacity: 0, y: 30 });
+        gsap.set(".image-reveal", { opacity: 0 });
+      });
 
-      // 2. Wait for loading
       await waitForLoading();
 
-      // 3. Setup Context
-      const ctx = gsap.context(() => {
+      ctx.add(() => {
         // --- EDITORIAL ANIMATIONS ---
         const sections = gsap.utils.toArray<HTMLElement>(".editorial-section");
         
@@ -203,27 +208,27 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
           const isReversed = section.dataset.reversed === "true";
 
-          // TIMELINE: Bertahap (Sequential)
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: section,
-              start: "top 80%", // Mulai sedikit lebih lambat agar layer siap
+              start: "top 80%",
               once: true
             }
           });
 
-          // 1. Gambar Masuk (Gunakan pergerakan lebih kecil agar lebih ringan)
-          tl.fromTo(imgWrap, 
-            { x: isReversed ? 30 : -30, opacity: 0 },
-            { x: 0, opacity: 1, duration: 1.4, ease: "power3.out", force3D: true }
-          )
-          // 2. Image scale
+          tl.to(imgWrap, { 
+            x: 0, 
+            opacity: 1, 
+            duration: 1.4, 
+            ease: "power3.out", 
+            force3D: true,
+            startAt: { x: isReversed ? 30 : -30 }
+          })
           .fromTo(img, 
             { scale: 1.1 },
             { scale: 1, duration: 1.8, ease: "power2.out", force3D: true }, 
             "-=1.0"
           )
-          // 3. Konten Teks
           .to([text, desc], {
             y: 0,
             opacity: 1,
@@ -231,14 +236,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
             stagger: 0.1,
             ease: "power3.out"
           }, "-=1.0")
-          // 4. Tag
           .fromTo(tag, 
             { scale: 0, rotation: 0, opacity: 0 },
             { scale: 1, rotation: 90, opacity: 1, duration: 1, ease: "power2.out", force3D: true }, 
             "-=0.6"
           );
 
-          // PARALLAX: Ringan
           gsap.to(img, {
             yPercent: 5,
             ease: "none",
@@ -265,14 +268,16 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           }
         });
 
+        // --- STUDENT CARDS (Batch Optimized) ---
         ScrollTrigger.batch(".student-card-wrapper", {
-          onEnter: (elements) => {
-            gsap.to(elements, {
+          onEnter: (batch) => {
+            gsap.to(batch, {
               opacity: 1,
               y: 0,
               duration: 1,
               stagger: 0.1,
-              ease: "power2.out"
+              ease: "power2.out",
+              force3D: true
             });
           },
           start: "top 95%",
@@ -280,8 +285,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
         });
       });
 
-      ScrollTrigger.refresh();
-
+      // Cleanup
       document.addEventListener("astro:before-swap", () => {
         ctx.revert();
       }, { once: true });

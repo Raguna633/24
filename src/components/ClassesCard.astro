@@ -1,11 +1,7 @@
 ---
-import { Image } from "astro:assets"
-import CloudinaryImage from "./ui/CloudinaryImage.astro"
+import { Image } from "astro:assets";
+import CloudinaryImage from "./ui/CloudinaryImage.astro";
 import type { ImageMetadata } from "astro";
-
-// import bgTitle from "../../assets/27250374_1290.webp";
-import bgPattern from "../../../src/assets/bg-pattern.webp";
-import bgTitle from "../assets/27250374_1290.webp";
 
 interface Classes {
   name: string;
@@ -23,12 +19,13 @@ interface Props {
 const { classes } = Astro.props as Props;
 ---
 
-<div class="class-grid flex flex-wrap justify-center gap-8 max-w-7xl px-4 py-8 mx-auto">
+<div
+  class="class-grid flex flex-wrap justify-center gap-8 max-w-7xl px-4 py-8 mx-auto"
+>
   {
     classes.map((kelas) => (
       <a href={kelas.url} class="class-card group">
         <div class="class-item relative overflow-hidden rounded-2xl shadow-md transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">
-          
           {/* Ribbon */}
           <div class="ribbon-container absolute top-0 right-0 w-32 h-32 overflow-hidden z-30 pointer-events-none">
             <div class="ribbon bg-white text-slate-900 py-1.5 font-bold text-[10px] md:text-xs shadow-xl text-center uppercase tracking-tighter">
@@ -39,30 +36,33 @@ const { classes } = Astro.props as Props;
           {/* Hover Overlay */}
           <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center z-20">
             <div class="text-white text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-              <span class="block text-sm opacity-80 uppercase tracking-widest mb-1">Kelas</span>
-              <span class="block font-bold text-xl md:text-2xl tracking-wide">XII {kelas.name}</span>
+              <span class="block text-sm opacity-80 uppercase tracking-widest mb-1">
+                Kelas
+              </span>
+              <span class="block font-bold text-xl md:text-2xl tracking-wide">
+                XII {kelas.name}
+              </span>
             </div>
           </div>
 
-          {
-            typeof kelas.img === "string" && kelas.img.includes("res.cloudinary.com") ? (
-              <CloudinaryImage
-                src={kelas.img}
-                alt={kelas.alt}
-                class="rounded-2xl transition-transform duration-700 group-hover:scale-110 object-cover w-full h-full"
-                widths={[400, 800]}
-                loading="lazy"
-              />
-            ) : (
-              <Image
-                src={kelas.img as any}
-                width={kelas.width}
-                height={kelas.height}
-                alt={kelas.alt}
-                class="rounded-2xl transition-transform duration-700 group-hover:scale-110"
-              />
-            )
-          }
+          {typeof kelas.img === "string" &&
+          kelas.img.includes("res.cloudinary.com") ? (
+            <CloudinaryImage
+              src={kelas.img}
+              alt={kelas.alt}
+              class="rounded-2xl transition-transform duration-700 group-hover:scale-110 object-cover w-full h-full"
+              widths={[400, 800]}
+              loading="lazy"
+            />
+          ) : (
+            <Image
+              src={kelas.img as any}
+              width={kelas.width}
+              height={kelas.height}
+              alt={kelas.alt}
+              class="rounded-2xl transition-transform duration-700 group-hover:scale-110"
+            />
+          )}
         </div>
       </a>
     ))

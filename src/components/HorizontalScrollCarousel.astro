@@ -18,7 +18,7 @@ const { id = "horizontal-carousel" } = Astro.props;
     id={id}
 >
     <div
-        class="horizontal-scroll-wrapper relative h-dvh w-screen overflow-hidden"
+        class="horizontal-scroll-wrapper relative h-screen w-screen overflow-hidden"
     >
         <slot />
     </div>
@@ -97,7 +97,7 @@ const { id = "horizontal-carousel" } = Astro.props;
                             txt.scrollHeight - txt.clientHeight,
                         );
                         // Multiply by 3 to make text scrolling slower and easier to read
-                        dist += overflow * 3;
+                        dist += overflow * 1.5;
                     }
                 });
 
@@ -110,7 +110,7 @@ const { id = "horizontal-carousel" } = Astro.props;
                     start: "top top",
                     end: () => `+=${getScrollDist()}`,
                     pin: true,
-                    scrub: 1,
+                    scrub: 0.1,
                     anticipatePin: 1,
                     fastScrollEnd: true,
                     invalidateOnRefresh: true,

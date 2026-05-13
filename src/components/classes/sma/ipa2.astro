@@ -2,6 +2,7 @@
 import { getEntry, getCollection } from "astro:content";
 import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
@@ -13,13 +14,13 @@ import plant1 from "../../../assets/plant1.svg?raw";
 import plant2 from "../../../assets/plant2.svg?raw";
 import specimenFrame from "../../../assets/specimen-frame.svg?raw";
 
-// Import Photos
-import group1 from "../../../assets/ipa2-group1.webp";
-import group2 from "../../../assets/ipa2-group2.webp";
-import group3 from "../../../assets/ipa2-group3.webp";
-import group4 from "../../../assets/ipa2-group4.webp";
-import group5 from "../../../assets/ipa2-group5.webp";
-import group6 from "../../../assets/ipa2-group6.webp";
+// Photos (Using string constants for external URLs)
+const group1 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599582/ipa2-group1.webp";
+const group2 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599581/ipa2-group2.webp";
+const group3 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599582/ipa2-group3.webp";
+const group4 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599582/ipa2-group4.webp";
+const group5 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599584/ipa2-group5.webp";
+const group6 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599583/ipa2-group6.webp";
 
 const classData = await getEntry("classes", "ipa2");
 if (!classData) {
@@ -92,10 +93,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                <div class="absolute inset-0 z-10 pointer-events-none scale-120 specimen-frame-svg-wrapper" set:html={specimenFrame} />
                <div class="w-[85%] h-[85%] rounded-full overflow-hidden border-2 border-dashed border-[#2A358F]/20 p-1 relative">
                   <div class="w-full h-full rounded-full overflow-hidden bg-gray-100 reveal-mask translate-z-0">
-                    <Image 
-                      src={specimen.image} 
-                      alt={specimen.label} 
+                    <CloudinaryImage
+                      src={specimen.image}
+                      alt={specimen.label}
                       class="w-full h-full object-cover filter sepia-[20%] group-hover:sepia-0 transition-all duration-1000 scale-110"
+                      widths={[800, 1200]}
+                      loading="lazy"
                     />
                   </div>
                </div>

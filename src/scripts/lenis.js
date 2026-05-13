@@ -13,14 +13,18 @@ export function initLenis() {
     }
 
     // 2. Create new instance
+    // 💎 PERFORMANCE FIX: duration 1.8 adalah kompromi antara feel "premium/berat"
+    // dan performa mobile. Duration 4 sebelumnya menyebabkan Lenis menghitung
+    // posisi scroll selama 4 detik penuh per swipe — sangat memberatkan CPU mid-range.
+    // syncTouch: false → biarkan iOS handle touch inertia natively (lebih smooth)
     const lenis = new Lenis({
-        duration: 4,      // 💎 Increased for slower, more "majestic" feel (Rule 02)
+        duration: 1.8,        // ✅ Turun dari 4 → masih terasa "berat premium", tidak lag
         smoothWheel: true,
-        smoothTouch: true,  // 📱 Enable smooth touch for continuous feel on mobile
-        syncTouch: true,    // 📱 Unified finger-to-scroll response
-        touchInertiaMultiplier: 0.4, // 💎 Reduced for "heavier" feel
+        smoothTouch: false,   // ✅ Disable smooth touch — native touch lebih baik di mobile
+        syncTouch: false,     // ✅ Biarkan iOS/Android handle inertia sendiri
+        touchInertiaMultiplier: 0.6, // ✅ Sedikit dinaikkan agar tidak terlalu "teredam"
         wheelMultiplier: 1,
-        touchMultiplier: 0.8, // 💎 Reduced to make scroll feel more deliberate/heavy
+        touchMultiplier: 1.0, // ✅ Natural multiplier — mobile feel lebih responsif
         infinite: false,
     });
 
@@ -40,7 +44,7 @@ export function initLenis() {
 
     // 8. Sync lag smoothing with global config (Rule 05a)
     // Don't disable it (0) as it can cause freezes on low-end devices
-    gsap.ticker.lagSmoothing(500, 33);
+    gsap.ticker.lagSmoothing(300, 16);
 
     // 8. Listen for viewport changes (ONLY ONCE using a global flag)
     if (!window.lenisEventsInitialized) {

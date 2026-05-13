@@ -14,10 +14,10 @@ export function setupGSAP(): void {
   gsap.registerPlugin(ScrollTrigger);
   gsap.registerPlugin(CSSPlugin);
  
-  // Lag Smoothing:
-  // Parameter 1 (500ms): Jika frame gap > 500ms, GSAP akan "catch up" secara smooth
-  // Parameter 2 (33ms): Interval minimum antar frame (setara ~30fps minimum)
-  gsap.ticker.lagSmoothing(500, 33);
+  // Lag Smoothing (Rule 05a):
+  // Parameter 1 (300ms): Threshold lebih agresif — catch up lebih cepat saat frame drop
+  // Parameter 2 (16ms): ~60fps minimum, lebih responsif dari 33ms sebelumnya
+  gsap.ticker.lagSmoothing(300, 16);
  
   // Batasi FPS maksimum ke 60fps
   // Perangkat lemah lebih stabil di 60fps daripada mencoba 120fps
@@ -35,9 +35,17 @@ export function setupGSAP(): void {
   ScrollTrigger.config({
     // Batasi callback yang dipanggil per frame, mencegah overload di scroll cepat
     limitCallbacks: true,
+
+    // Sync ScrollTrigger setiap 40ms, bukan setiap frame (default: setiap frame)
+    // Mengurangi CPU usage signifikan di scroll event
+    syncInterval: 40,
   });
 
-  // 📱 Normalize Scroll: Nuklir option untuk fix stuttering di mobile
-  // Mengambil alih scroll native agar sinkron dengan GSAP lerp
-  ScrollTrigger.normalizeScroll(true);
+  // ❌ ScrollTrigger.normalizeScroll(true) — DIHAPUS
+  // Alasan: Konflik fatal dengan Lenis smooth scroll.
+  // Keduanya me-intercept scroll events secara bersamaan:
+  // - Lenis: handle smooth interpolation + forward ke GSAP ticker
+  // - normalizeScroll: override scroll events di level browser
+  // Akibat pada mobile: double-interception → frame drop, ghost scroll, iOS rubber-band palsu.
+  // Lenis sudah menangani scroll normalization dengan lebih baik.
 }

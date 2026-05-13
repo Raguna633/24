@@ -4,6 +4,7 @@ import TeacherHero from "../components/teacher/TeacherHero.astro";
 import TeacherGrid from "../components/teacher/TeacherGrid.astro";
 import TeacherQuote from "../components/teacher/TeacherQuote.astro";
 import TeacherModal from "../components/teacher/TeacherModal.jsx";
+import TeacherCTA from "../components/teacher/TeacherCTA.astro";
 
 const pageTitle = "Our Beloved Teachers";
 const pageDescription =
@@ -37,7 +38,9 @@ const pageDescription =
       quote="“Education is not the filling of a pail, but the lighting of a fire.”"
       isBottom={true}
     />
-</div>
+
+    <TeacherCTA />
+  </div>
 
   {
     /* React Modal di-load client-side sejak awal agar event listener global (openTeacherModal) langsung aktif */

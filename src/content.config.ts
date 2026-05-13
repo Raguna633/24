@@ -49,6 +49,18 @@ const classes = defineCollection({
             slug: z.string(),
             jenjang: z.string(),
         }).optional(),
+        customPrev: z.object({
+            name: z.string(),
+            url: z.string(),
+            label: z.string().optional(),
+            sublabel: z.string().optional(),
+        }).optional(),
+        customNext: z.object({
+            name: z.string(),
+            url: z.string(),
+            label: z.string().optional(),
+            sublabel: z.string().optional(),
+        }).optional(),
     }),
 });
 

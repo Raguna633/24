@@ -2,6 +2,7 @@
 import { getEntry, getCollection } from "astro:content";
 import { mapStudentCollection } from "../../../utils/student";
 import { Image } from "astro:assets";
+import CloudinaryImage from "../../ui/CloudinaryImage.astro";
 import ClassHeroSection from "../ClassHeroSection.astro";
 import StudentCard from "../../StudentCard.astro";
 import NextClassesCTA from "../NextClassesCTA.astro";
@@ -11,11 +12,11 @@ import StoryTextReveal from "../../sections/StoryTextReveal.astro";
 // Import Assets
 import constellationSvg from "../../../assets/constellation-line.svg?raw";
 
-// Import Photos
-import group1 from "../../../assets/ipa1-group1.webp";
-import group2 from "../../../assets/ipa1-group2.webp";
-import group3 from "../../../assets/ipa1-group3.webp";
-import group4 from "../../../assets/ipa1-group4.webp";
+// Photos (Using string constants for external URLs)
+const group1 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599566/ipa1-group1.webp";
+const group2 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599564/ipa1-group2.webp";
+const group3 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599565/ipa1-group3.webp";
+const group4 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599563/ipa1-group4.webp";
 
 const classData = await getEntry("classes", "ipa1");
 if (!classData) {
@@ -108,10 +109,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
             <div class="relative group order-2 lg:order-1">
                 <div class="relative border border-white/80 bg-black/80 shadow-2xl will-animate cosmic-card overflow-hidden">
                   <div class="overflow-hidden">
-                    <Image 
-                      src={story.image} 
-                      alt={story.title} 
+                    <CloudinaryImage
+                      src={story.image}
+                      alt={story.title}
                       class="w-full aspect-4/3 object-cover grayscale-30 group-hover:grayscale-0 transition-all duration-1000 cosmic-photo opacity-0 scale-105"
+                      widths={[800, 1200]}
+                      loading="lazy"
                     />
                   </div>
                   {/* Decorative HUD Elements */}
@@ -210,148 +213,145 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
     gsap.registerPlugin(ScrollTrigger);
 
     document.addEventListener("astro:page-load", async () => {
-      // 1. Cleanup
-      ScrollTrigger.getAll().forEach(t => t.kill());
-      
-      await waitForLoading();
-
-      // Ensure SVG covers container
-      const svgElement = document.querySelector(".constellation-container svg");
-      if (svgElement) {
-        svgElement.setAttribute("preserveAspectRatio", "xMidYMid slice");
-      }
-
-      const cosmicWrap = document.querySelector(".cosmic-wrap") as HTMLElement;
-      const storySections = gsap.utils.toArray<HTMLElement>(".cosmic-section");
-      const starPaths = gsap.utils.toArray<SVGElement>(".constellation-container svg path, .constellation-container svg line");
-
-      if (cosmicWrap && storySections.length > 0) {
-        const isMobile = window.innerWidth < 768;
-        
-        // --- STORY TIMELINE ---
-        const storiesTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: cosmicWrap,
-            start: "top top",
-            end: "+=300%", 
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1,
-          }
-        });
-
-        // 3. Background stays fixed relative to pinned cosmicWrap
-        // The drawing duration will be synchronized with the stories transitions
-        
-        storySections.forEach((section, index) => {
-          const card = section.querySelector(".cosmic-card");
-          const title = section.querySelector(".cosmic-title");
-          const desc = section.querySelector(".cosmic-desc");
-          const hl = section.querySelector(".cosmic-line");
-          const photo = section.querySelector(".cosmic-photo");
-
-          // Initial state for stacking
-          if (index > 0) {
-            gsap.set(section, { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0 });
-          }
-
-          const tl = gsap.timeline();
-          
-          // Enter animation
-          if (index > 0) {
-            tl.to(section, { opacity: 1, duration: 1 }, 0);
-          }
-
-          if (card) tl.from(card, { opacity: 0, scale: 0.95, duration: 1.5, ease: "expo.out" }, 0.2);
-          if (photo) {
-            tl.to(photo, { 
-              opacity: 1, 
-              scale: 1, 
-              filter: "grayscale(30%)", 
-              duration: 2, 
-              ease: "power2.out" 
-            }, 0.3);
-          }
-          if (title) tl.from(title, { opacity: 0, x: -30, duration: 1, ease: "power4.out" }, "-=0.8");
-          if (desc) tl.from(desc, { opacity: 0, y: 20, duration: 1, ease: "power4.out" }, "-=0.8");
-          if (hl) tl.from(hl, { scaleX: 0, transformOrigin: "left", duration: 0.8 }, "-=0.6");
-
-          storiesTl.add(tl, index === 0 ? 0 : "-=0.5"); // Overlap for smoother transition
-
-          // Exit animation (Fade out before next, except for the last one)
-          if (index < storySections.length - 1) {
-            storiesTl.to(section, { opacity: 0, duration: 0.8 }, ">0.3");
-          }
-        });
-
-        // --- BACKGROUND DRAWING (Sync with total timeline duration) ---
-        if (starPaths.length > 0) {
-          const totalTimelineDur = storiesTl.duration();
-          
-          starPaths.forEach((path) => {
-            const p = path as unknown as SVGGeometryElement;
-            const length = p instanceof SVGPathElement ? p.getTotalLength() : 1000;
-            const originalFill = p.style.fill || window.getComputedStyle(p).fill;
-
-            // Initial Set
-            gsap.set(p, {
-              strokeDasharray: length + 2,
-              strokeDashoffset: length + 2,
-              fill: "none",
-              stroke: originalFill,
-              strokeWidth: 2,
-              opacity: 0
-            });
-
-            // Draw during the whole timeline
-            storiesTl.to(p, { 
-                strokeDashoffset: 0, 
-                opacity: 1,
-                duration: totalTimelineDur, 
-                ease: "none" 
-            }, 0);
-
-            // Final fill at the end
-            storiesTl.to(p, { 
-                fill: originalFill, 
-                duration: 0.5, 
-                ease: "power2.inOut" 
-            }, ">-0.5");
-          });
-        }
-      }
-
-      // --- STUDENTS SECTION ---
-      gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
-         opacity: 1,
-         y: 0,
-         duration: 1,
-         stagger: 0.2,
-         scrollTrigger: {
-           trigger: ".students-section",
-           start: "top 80%",
-           once: true
-         }
+      const ctx = gsap.context(() => {
+        // --- INITIAL STATE / FOUC PREVENTION ---
+        gsap.set(".cosmic-photo", { opacity: 0, scale: 1.05 });
+        gsap.set(".cosmic-title, .cosmic-desc, .cosmic-card, .cosmic-line", { opacity: 0 });
+        gsap.set(".students-heading-label, .students-heading-title, .students-heading-count", { opacity: 0, y: 30 });
+        gsap.set(".student-card-wrapper", { opacity: 0, y: 50 });
       });
 
-      const studentCards = gsap.utils.toArray<HTMLElement>(".student-card-wrapper");
-      studentCards.forEach((card, i) => {
-        gsap.to(card, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          delay: (i % 4) * 0.1,
-          scrollTrigger: {
-            trigger: card,
-            start: "top 95%",
-            once: true
+      await waitForLoading();
+
+      ctx.add(() => {
+        // Ensure SVG covers container
+        const svgElement = document.querySelector(".constellation-container svg");
+        if (svgElement) {
+          svgElement.setAttribute("preserveAspectRatio", "xMidYMid slice");
+        }
+
+        const cosmicWrap = document.querySelector(".cosmic-wrap") as HTMLElement;
+        const storySections = gsap.utils.toArray<HTMLElement>(".cosmic-section");
+        const starPaths = gsap.utils.toArray<SVGElement>(".constellation-container svg path, .constellation-container svg line");
+
+        if (cosmicWrap && storySections.length > 0) {
+          // --- STORY TIMELINE ---
+          const storiesTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: cosmicWrap,
+              start: "top top",
+              end: "+=300%", 
+              pin: true,
+              scrub: 1,
+              anticipatePin: 1,
+            }
+          });
+
+          storySections.forEach((section, index) => {
+            const card = section.querySelector(".cosmic-card");
+            const title = section.querySelector(".cosmic-title");
+            const desc = section.querySelector(".cosmic-desc");
+            const hl = section.querySelector(".cosmic-line");
+            const photo = section.querySelector(".cosmic-photo");
+
+            if (index > 0) {
+              gsap.set(section, { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0 });
+            }
+
+            const tl = gsap.timeline();
+            
+            if (index > 0) {
+              tl.to(section, { opacity: 1, duration: 1 }, 0);
+            }
+
+            if (card) tl.to(card, { opacity: 1, scale: 1, duration: 1.5, ease: "expo.out" }, 0.2);
+            if (photo) {
+              tl.to(photo, { 
+                opacity: 1, 
+                scale: 1, 
+                filter: "grayscale(30%)", 
+                duration: 2, 
+                ease: "power2.out" 
+              }, 0.3);
+            }
+            if (title) tl.to(title, { opacity: 1, x: 0, duration: 1, ease: "power4.out" }, "-=0.8");
+            if (desc) tl.to(desc, { opacity: 1, y: 0, duration: 1, ease: "power4.out" }, "-=0.8");
+            if (hl) tl.to(hl, { opacity: 1, scaleX: 1, transformOrigin: "left", duration: 0.8 }, "-=0.6");
+
+            storiesTl.add(tl, index === 0 ? 0 : "-=0.5");
+
+            if (index < storySections.length - 1) {
+              storiesTl.to(section, { opacity: 0, duration: 0.8 }, ">0.3");
+            }
+          });
+
+          // --- BACKGROUND DRAWING ---
+          if (starPaths.length > 0) {
+            const totalTimelineDur = storiesTl.duration();
+            
+            starPaths.forEach((path) => {
+              const p = path as unknown as SVGGeometryElement;
+              const length = p instanceof SVGPathElement ? p.getTotalLength() : 1000;
+              const originalFill = p.style.fill || window.getComputedStyle(p).fill;
+
+              gsap.set(p, {
+                strokeDasharray: length + 2,
+                strokeDashoffset: length + 2,
+                fill: "none",
+                stroke: originalFill,
+                strokeWidth: 2,
+                opacity: 0
+              });
+
+              storiesTl.to(p, { 
+                  strokeDashoffset: 0, 
+                  opacity: 1,
+                  duration: totalTimelineDur, 
+                  ease: "none" 
+              }, 0);
+
+              storiesTl.to(p, { 
+                  fill: originalFill, 
+                  duration: 0.5, 
+                  ease: "power2.inOut" 
+              }, ">-0.5");
+            });
           }
+        }
+
+        // --- STUDENTS SECTION ---
+        gsap.to(".students-heading-label, .students-heading-title, .students-heading-count", {
+           opacity: 1,
+           y: 0,
+           duration: 1,
+           stagger: 0.2,
+           ease: "power2.out",
+           scrollTrigger: {
+             trigger: ".students-section",
+             start: "top 80%",
+             once: true
+           }
+        });
+
+        ScrollTrigger.batch(".student-card-wrapper", {
+          onEnter: (batch) => {
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              stagger: 0.1,
+              ease: "power3.out",
+              force3D: true,
+            });
+          },
+          start: "top 95%",
+          once: true,
         });
       });
 
       // Cleanup
       document.addEventListener("astro:before-swap", () => {
-        ScrollTrigger.getAll().forEach(t => t.kill());
+        ctx.revert();
       }, { once: true });
     });
   </script>

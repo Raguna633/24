@@ -5,7 +5,7 @@ import TextReveal from "../components/animations/TextReveal.astro";
 import { Image, getImage } from "astro:assets";
 import CloudinaryImage from "../components/ui/CloudinaryImage.astro";
 
-import bgTexture from "../assets/yearbook-committee/watercolor-paper-texture.jpg";
+const bgTexture = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778603629/watercolor-paper-texture.jpg";
 import headerStroke from "../assets/yearbook-committee/header-stroke.svg?raw";
 import firstStroke from "../assets/yearbook-committee/first-stroke.svg?raw";
 import secondStroke from "../assets/yearbook-committee/second-stroke.svg?raw";
@@ -17,7 +17,7 @@ const bknPutri =
   "https://res.cloudinary.com/dhbps9kvp/image/upload/bkn_putri.webp";
 
 // Optimize background texture to webp via Astro pipeline
-const optimizedBg = await getImage({ src: bgTexture, format: "webp" });
+const optimizedBg = await getImage({ src: bgTexture, format: "webp", width: 480, height: 480 });
 ---
 
 <MainLayout

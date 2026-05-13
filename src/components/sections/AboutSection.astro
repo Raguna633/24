@@ -141,7 +141,10 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 <style>
   [data-about-animate] {
     opacity: 0;
-    will-change: transform, opacity, filter;
+    /* ✅ PERFORMANCE FIX: Hapus will-change massal dari semua elemen.
+       Setiap elemen dengan will-change membuat composite layer GPU terpisah.
+       Pada perangkat dengan VRAM terbatas, ini bisa menyebabkan memory pressure.
+       Cukup terapkan di container level lewat GSAP dengan force3D: true. */
   }
 </style>
 
@@ -244,12 +247,14 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
     // 2. Initial state configuration
     if (allElements.length > 0) {
-      // Ensure elements are at their "from" state immediately to avoid jumps
+      // ✅ PERFORMANCE FIX: Hapus filter:blur dan rotationX dari initial state.
+      // - filter:blur(8px) bukan GPU property — memicu compositing overhead
+      //   dan membuat browser create composite layer baru per elemen
+      // - rotationX:10 tanpa transformPerspective menghasilkan hasil visual aneh di mobile
+      // Cukup gunakan opacity + y yang murni GPU-accelerated.
       gsap.set(allElements, {
         y: 40,
         opacity: 0,
-        rotationX: 10,
-        filter: "blur(8px)",
       });
     }
 
