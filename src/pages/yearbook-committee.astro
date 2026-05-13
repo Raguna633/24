@@ -2,7 +2,7 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import BlockReveal from "../components/BlockReveal.astro";
 import TextReveal from "../components/animations/TextReveal.astro";
-import { Image, getImage } from "astro:assets";
+
 import CloudinaryImage from "../components/ui/CloudinaryImage.astro";
 
 const bgTexture = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778603629/watercolor-paper-texture.jpg";
@@ -16,8 +16,8 @@ const bknPutra =
 const bknPutri =
   "https://res.cloudinary.com/dhbps9kvp/image/upload/bkn_putri.webp";
 
-// Optimize background texture to webp via Astro pipeline
-const optimizedBg = await getImage({ src: bgTexture, format: "webp", width: 480, height: 480 });
+// Background texture optimization via Cloudinary parameters (f_auto, q_auto)
+const optimizedBgSrc = `${bgTexture}?f_auto,q_auto,w_480,h_480,c_fill`;
 ---
 
 <MainLayout
@@ -31,7 +31,7 @@ const optimizedBg = await getImage({ src: bgTexture, format: "webp", width: 480,
     >
       <div
         class="absolute inset-0 opacity-50 bg-cover bg-center bg-no-repeat w-full h-full"
-        style={`background-image: url(${optimizedBg.src})`}
+        style={`background-image: url(${optimizedBgSrc})`}
       >
       </div>
     </div>
