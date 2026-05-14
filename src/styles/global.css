@@ -312,3 +312,15 @@ html.lenis {
   transform: translateZ(0);
   backface-visibility: hidden;
 }
+
+/* Student Section Background Texture */
+.students-section {
+  background-image: url("https://res.cloudinary.com/dhbps9kvp/image/upload/v1778690393/class-texture.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.students-section img {
+  opacity: 0.5;
+}
