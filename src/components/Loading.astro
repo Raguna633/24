@@ -9,12 +9,13 @@
    * sebelum script module (GSAP) selesai di-load.
    */
   (function() {
-    // Cek apakah ini navigasi VT atau hard load
     const isNavigation = window.performance.getEntriesByType('navigation')[0].type === 'navigate';
+    const isReload = window.performance.getEntriesByType('navigation')[0].type === 'reload';
     const overlay = document.getElementById('loading-overlay');
     
-    if (overlay) {
-      // Pastikan overlay terlihat di awal jika script lambat
+    // Hanya tampilkan overlay secara paksa jika ini adalah hard load pertama (bukan VT)
+    // Untuk VT, kita biarkan logic di module script yang menanganinya via GSAP.
+    if (overlay && (isNavigation || isReload) && !window.astroVTActive) {
       overlay.style.display = 'flex';
       overlay.style.opacity = '1';
       document.body.style.overflow = 'hidden';
@@ -23,6 +24,7 @@
 </script>
 
 <div id="loading-overlay" transition:persist="loading-overlay" role="status" aria-live="polite" aria-busy="true">
+  <!-- SVG and UI content remain the same -->
   <div id="svg-wrapper">
     <svg
       id="loading-svg"
@@ -224,6 +226,11 @@
     pages: [],
   };
 
+  // Diagnostic logger
+  const log = (msg: string) => {
+    console.log(`[Loading] ${new Date().toISOString().split('T')[1].split('.')[0]} - ${msg}`);
+  };
+
   function isPageInList(pathname: string, pages: string[]): boolean {
     return pages.some((entry) => {
       if (entry.endsWith("/")) {
@@ -253,10 +260,9 @@
 
   /**
    * REALTIME PROGRESS ENGINE
-   * Menggunakan ReadableStream untuk menghitung progres unduhan HTML
+   * Membaca stream dari Response untuk menghitung progres
    */
-  async function fetchWithProgress(url: string, onProgress: (p: number) => void): Promise<string> {
-    const response = await fetch(url);
+  async function readResponseWithProgress(response: Response, onProgress: (p: number) => void): Promise<string> {
     const reader = response.body?.getReader();
     const contentLength = +(response.headers.get("Content-Length") ?? 0);
 
@@ -265,10 +271,10 @@
     let receivedLength = 0;
     const chunks = [];
     
-    // Inisialisasi simulasi jika Content-Length tidak ada
+    // Inisialisasi simulasi jika Content-Length tidak ada (chunked encoding)
     let simulatedProgress = 0;
     const interval = !contentLength ? setInterval(() => {
-      simulatedProgress += (90 - simulatedProgress) * 0.1;
+      simulatedProgress += (95 - simulatedProgress) * 0.1;
       onProgress(simulatedProgress);
     }, 150) : null;
 
@@ -299,42 +305,50 @@
    * ASSET TRACKING ENGINE
    * Mencari gambar di HTML baru dan memantau pemuatannya
    */
-  async function trackAssets(html: string, onProgress: (p: number) => void) {
+  async function trackAssets(html: string, baseUrl: string, onProgress: (p: number) => void) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
-    const images = Array.from(doc.querySelectorAll("img")).map(img => img.getAttribute("src")).filter(src => src && !src.startsWith("data:"));
+    
+    // Cari semua gambar dan resolusi URL relatifnya
+    const images = Array.from(doc.querySelectorAll("img")).map(img => {
+      const src = img.getAttribute("src");
+      if (!src || src.startsWith("data:")) return null;
+      try {
+        return new URL(src, baseUrl).href;
+      } catch {
+        return src;
+      }
+    }).filter(Boolean) as string[];
     
     if (images.length === 0) {
       onProgress(100);
-      return doc;
+      return;
     }
 
     let loadedCount = 0;
-    const total = images.length;
-    
-    // Gunakan Set untuk menghindari download gambar yang sama berulang kali
     const uniqueImages = [...new Set(images)];
+    log(`Tracking ${uniqueImages.length} assets for ${baseUrl}`);
 
     const promises = uniqueImages.map(src => {
       return new Promise((resolve) => {
         const img = new Image();
-        // Resolve baik sukses maupun error agar tidak stuck
         img.onload = img.onerror = () => {
           loadedCount++;
           onProgress((loadedCount / uniqueImages.length) * 100);
           resolve(null);
         };
-        img.src = src!;
+        img.src = src;
       });
     });
 
-    // Timeout safety: Jangan tunggu lebih dari 3 detik untuk aset (menghindari stuck di koneksi buruk)
+    // Timeout safety: Tunggu maksimal 10 detik untuk aset (lebih toleran terhadap koneksi lambat)
     await Promise.race([
       Promise.all(promises),
-      new Promise(resolve => setTimeout(resolve, 3000))
+      new Promise(resolve => setTimeout(() => {
+        log("Asset tracking timed out after 10s");
+        resolve(null);
+      }, 10000))
     ]);
-
-    return doc;
   }
 
   function updateProgressBar(percent: number, duration: number = 0.4) {
@@ -365,6 +379,7 @@
 
   function playIntroAnimation(): Promise<void> {
     return new Promise((resolve) => {
+      log("Playing intro animation");
       document.body.style.overflow = "hidden";
       if (window.lenis) window.lenis.stop();
 
@@ -426,6 +441,7 @@
   }
 
   function showLoadingOverlay(pathname: string = "/"): Promise<void> {
+    log(`Showing overlay for ${pathname}`);
     resetSvgState();
     return new Promise((resolve) => {
       document.body.style.overflow = "hidden";
@@ -463,6 +479,7 @@
   }
 
   function hideLoadingOverlay(): Promise<void> {
+    log("Hiding overlay");
     return new Promise((resolve) => {
       const tl = gsap.timeline({
         onComplete: () => {
@@ -495,20 +512,15 @@
   let isFirstLoad = true;
   let loadingTriggered = false;
 
-  // =================================================================
-  // PERUBAHAN: prepareLoading() dipanggil di awal setiap siklus,
-  // bukan di akhir. Ini menciptakan Promise baru sebelum halaman
-  // baru di-render, sehingga halaman bisa langsung await dari awal.
-  // =================================================================
+  // Track if a View Transition is active globally
+  (window as any).astroVTActive = false;
 
-  // First load: buat Promise segera saat script pertama jalan
   prepareLoading();
 
   document.addEventListener("astro:page-load", async () => {
     if (isFirstLoad) {
       isFirstLoad = false;
       await playIntroAnimation();
-      // Resolve Promise → halaman boleh mulai animasinya
       completeLoading();
     }
   });
@@ -516,22 +528,13 @@
   document.addEventListener("astro:before-preparation", (event) => {
     const destination = (event as any).to as URL;
     loadingTriggered = shouldShowLoading(destination.pathname);
+    (window as any).astroVTActive = true;
 
-    // Buat Promise baru untuk navigasi ini SEBELUM apapun terjadi.
-    // Halaman tujuan yang sudah await waitForLoading() akan menunggu
-    // Promise ini di-resolve.
+    log(`before-preparation to ${destination.pathname}, loadingTriggered=${loadingTriggered}`);
     prepareLoading();
 
     if (!loadingTriggered) {
-      // Tidak ada loading overlay.
-      // Astro View Transitions fade bawaan akan berjalan.
-      // Kita perlu resolve Promise setelah fade selesai.
-      // Caranya: hook ke astro:after-swap yang terpanggil tepat
-      // setelah konten di-swap, lalu tunggu satu frame agar
-      // browser sempat me-render konten baru.
       const resolveAfterFade = () => {
-        // requestAnimationFrame: tunggu browser selesai render
-        // satu frame, baru resolve — lebih akurat dari setTimeout
         requestAnimationFrame(() => completeLoading());
       };
       document.addEventListener("astro:after-swap", resolveAfterFade, {
@@ -542,38 +545,79 @@
 
     const originalLoader = (event as any).loader;
     (event as any).loader = async () => {
-      // 1. Tampilkan overlay
-      const overlayPromise = showLoadingOverlay(destination.pathname);
-      
-      // 2. Phase 1: Download HTML (Bobot 30%)
-      const html = await fetchWithProgress(destination.href, (p) => {
-        updateProgressBar(p * 0.3);
-      });
+      try {
+        log("Executing custom loader...");
+        const overlayPromise = showLoadingOverlay(destination.pathname);
+        
+        // DELEGATE TO ORIGINAL LOADER
+        // Ini paling aman karena Astro mengelola headers/auth internal
+        const response = await originalLoader();
+        
+        if (response instanceof Response) {
+          log(`Response received: status=${response.status}, type=${response.type}`);
+          
+          // Clone response untuk dibaca progresnya
+          const progressResponse = response.clone();
 
-      // 3. Phase 2: Track Assets (Bobot 70%)
-      // Kita mem-parsing HTML dan memantau pemuatan gambarnya
-      const doc = await trackAssets(html, (p) => {
-        updateProgressBar(30 + (p * 0.7)); // Mulai dari 30% ke 100%
-      });
+          // Phase 1: Download HTML (30%)
+          const html = await readResponseWithProgress(progressResponse, (p) => {
+            updateProgressBar(p * 0.3);
+          });
+          log(`HTML read complete (${html.length} bytes)`);
 
-      // Tunggu animasi overlay muncul sempurna jika fetch terlalu cepat
-      await overlayPromise;
-      
-      // 4. Selesai, berikan Document ke Astro untuk di-swap
-      return doc;
+          // Phase 2: Track Assets (70%)
+          await trackAssets(html, destination.href, (p) => {
+            updateProgressBar(30 + (p * 0.7));
+          });
+
+          await overlayPromise;
+          
+          log("Returning response to Astro for swap");
+          
+          /**
+           * CRITICAL: Kita kembalikan response BARU dari string HTML yang sudah dibaca.
+           * Kita harus membersihkan headers 'content-encoding' karena body sekarang sudah didecode.
+           * Jika headers lama dipertahankan, browser mungkin mencoba mendecode ulang (misal gzip)
+           * terhadap string yang sudah plaintext, menyebabkan FOUC/Broken page.
+           */
+          const newHeaders = new Headers(response.headers);
+          newHeaders.delete("content-encoding");
+          newHeaders.delete("content-length"); // Biar browser hitung sendiri dari string
+          
+          return new Response(html, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: newHeaders
+          });
+        }
+        
+        log("Loader returned non-Response object, returning as is");
+        return response;
+      } catch (error) {
+        log(`Custom loader error: ${error}`);
+        return originalLoader();
+      }
     };
+  });
+
+  document.addEventListener("astro:before-swap", () => {
+    log("before-swap triggered");
+  });
+
+  document.addEventListener("astro:after-swap", () => {
+    log(`after-swap triggered, current title: ${document.title}`);
   });
 
   document.addEventListener("astro:page-load", async () => {
     if (isFirstLoad) return;
+    log(`page-load triggered, loadingTriggered=${loadingTriggered}`);
 
     if (loadingTriggered) {
       await hideLoadingOverlay();
       loadingTriggered = false;
-      // Resolve Promise → halaman boleh mulai animasinya
       completeLoading();
     }
-    // Kasus tanpa loading: sudah di-resolve di astro:after-swap di atas
+    (window as any).astroVTActive = false;
   });
 </script>
 

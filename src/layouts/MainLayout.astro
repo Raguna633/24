@@ -220,6 +220,9 @@ const forceDesktopViewData = forceDesktopView;
         */
         document.addEventListener("astro:after-swap", function () {
           window.scrollTo({ top: 0, behavior: "instant" });
+          if (window.lenis) {
+            window.lenis.scrollTo(0, { immediate: true });
+          }
         });
       </script>
     
@@ -277,7 +280,7 @@ const forceDesktopViewData = forceDesktopView;
       }
     </script>
 
-    <ClientRouter transition:persist />
+    <ClientRouter />
     <script is:inline>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -333,30 +336,6 @@ const forceDesktopViewData = forceDesktopView;
     <ImmersiveModePrompt />
 
 
-    <!-- ==================== DEBUGGING HELPER (Remove in production) ==================== -->
-    <div 
-      id="debugInfo" 
-      style="
-        position: fixed;
-        top: 80px;
-        left: 10px;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        padding: 8px;
-        border-radius: 4px;
-        font-size: 11px;
-        z-index: 10000;
-        display: none;
-      "
-    >
-      <div id="debugContent"></div>
-      <button 
-        onclick="document.getElementById('debugInfo').style.display='none'"
-        style="margin-top: 4px; padding: 4px 8px; font-size: 10px;"
-      >
-        Close
-      </button>
-    </div>
     
     <!-- Scripts -->
     <script>
@@ -777,6 +756,12 @@ const forceDesktopViewData = forceDesktopView;
         // This ensures ScrollTrigger calculates positions on the FINAL layout.
         // This is safe for all pages and prevents common View Transition desync bugs.
         await waitForLoading();
+        
+        // Final scroll check after loading finishes
+        window.scrollTo({ top: 0, behavior: "instant" });
+        if ((window as any).lenis) {
+          (window as any).lenis.scrollTo(0, { immediate: true });
+        }
         
         // requestAnimationFrame ensures we run after the next paint cycle
         requestAnimationFrame(() => {
