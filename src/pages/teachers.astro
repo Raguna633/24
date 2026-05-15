@@ -5,6 +5,7 @@ import TeacherGrid from "../components/teacher/TeacherGrid.astro";
 import TeacherQuote from "../components/teacher/TeacherQuote.astro";
 import TeacherModal from "../components/teacher/TeacherModal.jsx";
 import TeacherCTA from "../components/teacher/TeacherCTA.astro";
+import FadeOverlay from "../components/FadeOverlay.astro";
 
 const pageTitle = "Our Beloved Teachers";
 const pageDescription =
@@ -31,7 +32,11 @@ const pageDescription =
       isMid={true}
     />
 
+    <FadeOverlay />
+
     <TeacherGrid />
+
+    <FadeOverlay />
 
     <!-- 3. Bottom Quote -->
     <TeacherQuote

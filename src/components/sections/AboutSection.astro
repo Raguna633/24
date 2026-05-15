@@ -8,7 +8,7 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
 <section
   id="about-section"
-  class="relative min-h-dvh h-full
+  class="relative min-h-screen h-full
           overflow-hidden"
 >
   <!-- Background Image & Overlay -->
@@ -85,8 +85,8 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
           style="font-size: clamp(0.8rem, 2vw, 1.8rem);"
           data-about-animate
         >
-          Kami adalah Angkatan AZZARQO, generasi yang penuh semangat dan
-          kreativitas. Dalam tiga tahun perjalanan bersama di bangku sekolah,
+          Kami adalah Angkatan Nihayatu Zayn, generasi yang penuh semangat dan
+          kreativitas. Dalam tiga tahun perjalanan bersama di lingkungan pondok dan sekolah,
           kami telah menorehkan berbagai kenangan indah yang tak terlupakan.
         </p>
 
@@ -150,8 +150,10 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
 <script>
   import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { waitForLoading } from "../../utils/loadingState";
-  import { fadeUp } from "../../utils/gsap-animations";
+
+  gsap.registerPlugin(ScrollTrigger);
 
   async function initAboutAnimations() {
     const section = document.getElementById("about-section");
@@ -247,15 +249,45 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
     // 2. Initial state configuration
     if (allElements.length > 0) {
-      // ✅ PERFORMANCE FIX: Hapus filter:blur dan rotationX dari initial state.
-      // - filter:blur(8px) bukan GPU property — memicu compositing overhead
-      //   dan membuat browser create composite layer baru per elemen
-      // - rotationX:10 tanpa transformPerspective menghasilkan hasil visual aneh di mobile
-      // Cukup gunakan opacity + y yang murni GPU-accelerated.
       gsap.set(allElements, {
         y: 40,
         opacity: 0,
       });
+
+      // --- MOBILE / UNPINNED REVEAL LOGIC ---
+      // If we are on mobile hardware, we don't rely on the parent timeline.
+      // We trigger the animation as soon as the section enters the viewport.
+      const isMobileHardware = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+                               (navigator.maxTouchPoints > 0) ||
+                               window.matchMedia("(pointer: coarse)").matches;
+      
+      if (isMobileHardware) {
+        gsap.to(allElements, {
+          y: 0,
+          opacity: 1,
+          stagger: 0.08,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%", // Trigger when top of section is at 85% of viewport
+            toggleActions: "play none none reverse",
+          }
+        });
+
+        if (sectionBg) {
+          gsap.to(sectionBg, {
+            scale: 1.1,
+            duration: 2,
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true
+            }
+          });
+        }
+      }
     }
 
     return { allElements, sectionBg };

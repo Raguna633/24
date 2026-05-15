@@ -30,13 +30,19 @@ const { id = "horizontal-carousel" } = Astro.props;
     import { waitForLoading } from "../utils/loadingState";
 
     async function initHorizontalCarousels() {
-        await waitForLoading();
+        // 🛡️ Safety timeout for loading state
+        const loadingPromise = waitForLoading();
+        const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2500));
+        await Promise.race([loadingPromise, timeoutPromise]);
+
+        // 🚀 Critical: Register plugin
+        gsap.registerPlugin(ScrollTrigger);
 
         const carousels = document.querySelectorAll(
             ".horizontal-scroll-container",
         );
 
-        carousels.forEach((container) => {
+        carousels.forEach((container, i) => {
             const wrapper = container.querySelector(
                 ".horizontal-scroll-wrapper",
             ) as HTMLElement;
@@ -45,17 +51,19 @@ const { id = "horizontal-carousel" } = Astro.props;
             const slides = Array.from(wrapper.children) as HTMLElement[];
             if (slides.length <= 1) return;
 
+            const carouselId = container.id || `carousel-${i}`;
+
             // Set each slide to exactly viewport width/height and stack them
-            slides.forEach((slide, i) => {
+            slides.forEach((slide, j) => {
                 slide.style.position = "absolute";
                 slide.style.top = "0";
                 slide.style.left = "0";
                 slide.style.width = "100vw";
                 slide.style.height = "100vh";
-                slide.style.zIndex = String(slides.length - i);
+                slide.style.zIndex = String(slides.length - j);
 
                 // Start second slide onwards offscreen to the right
-                if (i > 0) {
+                if (j > 0) {
                     gsap.set(slide, { xPercent: 100 });
                 }
 
@@ -106,6 +114,7 @@ const { id = "horizontal-carousel" } = Astro.props;
 
             const tl = gsap.timeline({
                 scrollTrigger: {
+                    id: `h-carousel-${carouselId}`,
                     trigger: container,
                     start: "top top",
                     end: () => `+=${getScrollDist()}`,
@@ -117,10 +126,10 @@ const { id = "horizontal-carousel" } = Astro.props;
                 },
             });
 
-            slides.forEach((slide, i) => {
+            slides.forEach((slide, k) => {
                 // 1. Enter the new slide and push back the previous one
-                if (i > 0) {
-                    const slideLabel = `slideEnter-${i}`;
+                if (k > 0) {
+                    const slideLabel = `slideEnter-${k}`;
                     tl.addLabel(slideLabel);
 
                     // Bring current slide in from right
@@ -137,7 +146,7 @@ const { id = "horizontal-carousel" } = Astro.props;
 
                     // Push the immediately preceding slide back
                     tl.to(
-                        slides[i - 1],
+                        slides[k - 1],
                         {
                             scale: 0.92,
                             opacity: 0,
@@ -159,7 +168,7 @@ const { id = "horizontal-carousel" } = Astro.props;
                     const scrollAmount = txt.scrollHeight - txt.clientHeight;
                     const durationVal = Math.max(1, scrollAmount * 3);
 
-                    const syncLabel = `scrollSlide-${i}`;
+                    const syncLabel = `scrollSlide-${k}`;
                     tl.to(
                         txt,
                         {
@@ -188,12 +197,25 @@ const { id = "horizontal-carousel" } = Astro.props;
 
     // Initialize on page load
     document.addEventListener("astro:page-load", () => {
-        initHorizontalCarousels();
+        // ⏳ Add small delay to ensure internal GreetingSection layout is calculated
+        // after potential layout shifts or font loading.
+        setTimeout(initHorizontalCarousels, 100);
     });
+
+    // 🧹 Cleanup
+    document.addEventListener("astro:before-swap", () => {
+        ScrollTrigger.getAll().forEach(st => {
+            if (st.vars.id?.startsWith("h-carousel-")) {
+                st.kill();
+            }
+        });
+    }, { once: true });
 </script>
 
 <style>
     .horizontal-scroll-container {
+        position: relative;
+        z-index: 10; /* Lower than Header (z-50) */
         width: 100vw;
         -ms-overflow-style: none;
         scrollbar-width: none;

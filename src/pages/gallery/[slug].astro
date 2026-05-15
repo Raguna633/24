@@ -3,6 +3,7 @@ import MainLayout from "../../layouts/MainLayout.astro";
 import ImageCard from "../../components/ImageCard.astro";
 import BentoGalleryGrid from "../../components/BentoGalleryGrid.astro";
 import TextReveal from "../../components/animations/TextReveal.astro";
+import CloudinaryImage from "../../components/ui/CloudinaryImage.astro";
 import GalleryLightbox from "../../components/GalleryLightbox.tsx";
 import { getCollection } from "astro:content";
 
@@ -15,7 +16,7 @@ export async function getStaticPaths() {
 }
 
 const { gallery } = Astro.props;
-const { title, description, galleryType, bentoLayout, photos, cta } = gallery.data;
+const { title, description, galleryType, bentoLayout, photos, heroPhotos, ip3aPhotos, ip4aPhotos, cta } = gallery.data;
 
 // If uniform, we fetch uniforms collection to pass to ImageCard
 let uniformsData: any[] = [];
@@ -39,7 +40,24 @@ if (galleryType === "uniform") {
 }
 
 // Prepare Lightbox items based on gallery type
-let lightboxItems = [];
+let lightboxItems: any[] = [];
+
+// Helper to transform custom photo objects to lightbox items
+const transformToLightbox = (items: any[] | undefined, prefix: string) => {
+  if (!items) return [];
+  return items.map((p, index) => ({
+    id: `${prefix}-${index}`,
+    src: p.url,
+    alt: p.title,
+    title: p.title,
+    subtitle: p.title
+  }));
+};
+
+const heroLightbox = transformToLightbox(heroPhotos, 'hero');
+const ip3aLightbox = transformToLightbox(ip3aPhotos, 'ip3a');
+const ip4aLightbox = transformToLightbox(ip4aPhotos, 'ip4a');
+
 if (galleryType === "uniform") {
   lightboxItems = allUniforms.map((u) => ({
     id: u.id,
@@ -49,14 +67,23 @@ if (galleryType === "uniform") {
     subtitle: `Model: <span class="text-white font-medium">${u.data.modelName || 'Anonim'}</span> (${u.data.modelClass || '-'})`,
     photos: u.data.uniformPhotos.map((photo: any) => ({ src: photo }))
   }));
-} else if (galleryType === "bento" && photos) {
-  lightboxItems = photos.map((photo, index) => ({
-    id: `photo-${index}`,
-    src: photo,
-    alt: `Photo ${index + 1}`,
-    title: title,
-    subtitle: `Photo ${index + 1} of ${photos.length}`
-  }));
+} else if (galleryType === "bento") {
+  // Merge all sections into lightboxItems for seamless navigation
+  const bentoPhotos = (photos || []).map((photo, index) => {
+    const isObject = typeof photo === "object";
+    const src = isObject ? photo.url : photo;
+    const photoTitle = isObject ? photo.title : title;
+    
+    return {
+      id: `photo-${index}`,
+      src: src,
+      alt: photoTitle,
+      title: photoTitle,
+      subtitle: `Photo ${index + 1} of ${photos?.length}`
+    };
+  });
+
+  lightboxItems = [...heroLightbox, ...ip3aLightbox, ...ip4aLightbox, ...bentoPhotos];
 }
 ---
 
@@ -131,6 +158,104 @@ if (galleryType === "uniform") {
         <div class="divider-line"></div>
       </div>
 
+      {/* Azzarqo Specific Sections */}
+      {gallery.id === 'azzarqo' && (
+        <div class="my-16 px-4 md:px-8 max-w-6xl mx-auto space-y-24">
+          {/* Hero Styles Section */}
+          <div class="space-y-12">
+            <TextReveal>
+              <h2 class="text-3xl md:text-4xl font-bold text-gray-800 text-center">Gaya Kenangan</h2>
+            </TextReveal>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {heroPhotos?.map((photo: any, i: number) => (
+                <div class="scroll-fade opacity-0 group">
+                  <button 
+                    data-gallery-id={`hero-${i}`}
+                    class="relative w-full aspect-[16/9] overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+                  >
+                    <CloudinaryImage
+                      src={photo.url}
+                      alt={photo.title}
+                      class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                      widths={[480, 800, 1200]}
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                      <p class="text-white font-medium text-lg">{photo.title}</p>
+                    </div>
+                  </button>
+                  <p class="mt-4 text-center text-gray-600 font-medium md:hidden">{photo.title}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* IP3A Division Section */}
+          <div class="space-y-12">
+             <div class="flex items-center gap-4">
+              <div class="h-px flex-1 bg-gray-300"></div>
+              <TextReveal>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 px-4">Anggota Divisi IP3A</h2>
+              </TextReveal>
+              <div class="h-px flex-1 bg-gray-300"></div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+              {ip3aPhotos?.map((photo: any, i: number) => (
+                <div class="scroll-fade opacity-0">
+                  <button 
+                    data-gallery-id={`ip3a-${i}`}
+                    class="group relative w-full aspect-[4/3] overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-500 cursor-pointer"
+                  >
+                    <CloudinaryImage
+                      src={photo.url}
+                      alt={photo.title}
+                      class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                      widths={[240, 480]}
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                      <span class="text-white text-sm font-medium text-center">{photo.title}</span>
+                    </div>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* IP4A Division Section */}
+          <div class="space-y-12">
+            <div class="flex items-center gap-4">
+              <div class="h-px flex-1 bg-gray-300"></div>
+              <TextReveal>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 px-4">Anggota Divisi IP4A</h2>
+              </TextReveal>
+              <div class="h-px flex-1 bg-gray-300"></div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+              {ip4aPhotos?.map((photo: any, i: number) => (
+                <div class="scroll-fade opacity-0">
+                  <button 
+                    data-gallery-id={`ip4a-${i}`}
+                    class="group relative w-full aspect-[4/3] overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-500 cursor-pointer"
+                  >
+                    <CloudinaryImage
+                      src={photo.url}
+                      alt={photo.title}
+                      class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                      widths={[240, 480]}
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">
+                      <span class="text-white text-sm font-medium text-center">{photo.title}</span>
+                    </div>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Gallery Grid */}
       <div class="my-12 mx-auto max-w-6xl relative px-4 md:px-8">
         {galleryType === "uniform" ? (
@@ -143,11 +268,29 @@ if (galleryType === "uniform") {
             className="relative z-10"
           />
         ) : (
-          <BentoGalleryGrid
-            photos={(photos || []).map((p: string) => p.includes('/upload/') ? p.replace('/upload/', '/upload/f_auto,q_auto,w_800/') : p)}
-            layout={bentoLayout as any}
-            className="relative z-10"
-          />
+          <>
+            {gallery.id === 'azzarqo' && (
+               <div class="flex items-center gap-4 mb-12">
+                <TextReveal>
+                  <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Kumpulan Memori</h2>
+                </TextReveal>
+                <div class="h-px flex-1 bg-gray-300"></div>
+              </div>
+            )}
+            <BentoGalleryGrid
+              photos={(photos || []).map((p: any) => {
+                if (typeof p === 'string') {
+                  return p.includes('/upload/') ? p.replace('/upload/', '/upload/f_auto,q_auto,w_800/') : p;
+                }
+                return {
+                  ...p,
+                  url: p.url.includes('/upload/') ? p.url.replace('/upload/', '/upload/f_auto,q_auto,w_800/') : p.url
+                };
+              })}
+              layout={bentoLayout as any}
+              className="relative z-10"
+            />
+          </>
         )}
       </div>
 

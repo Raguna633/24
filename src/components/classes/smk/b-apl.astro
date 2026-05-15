@@ -9,9 +9,10 @@ import CloudinaryImage from "../../ui/CloudinaryImage.astro";
 import FadeOverlay from "../../FadeOverlay.astro";
 import StoryTextReveal from "../../sections/StoryTextReveal.astro";
 
-const group1 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599406/apl-b-group3.webp";
+const group1 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599406/apl-b-group1.webp";
 const group2 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599403/apl-b-group2.webp";
-const group3 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599326/apl-b-group1.webp";
+const group3 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599326/apl-b-group3.webp";
+const group4 = "https://res.cloudinary.com/dhbps9kvp/image/upload/v1778599326/apl-b-group4.webp";
 import radioactiveSvg from "../../../assets/radioactive.svg";
 import bgPattern from "../../../assets/b-apl-pattern.svg?raw";
 import breakerSvg1 from "../../../assets/breaker1.svg";
@@ -372,9 +373,43 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
         <div
           class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
         >
+          <div
+            class="absolute top-4 left-4 text-xs text-cyan-600 tracking-widest font-mono"
+          >
+            SYS.REC.003 // APL_B
+          </div>
+
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
             <div
-              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1"
+              class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0"
+            >
+              <div
+                class="border border-cyan-500/30 p-5 rounded bg-cyan-950/20 backdrop-blur-sm shadow-[inset_0_0_20px_rgba(6,182,212,0.1)]"
+              >
+                <h3
+                  class="text-sm tracking-widest text-lime-400 mb-3 border-b border-cyan-500/30 pb-2"
+                >
+                  &lt;SUBJECT_DATA_03&gt;
+                </h3>
+                <ul class="space-y-2 text-sm text-cyan-100">
+                  <li class="flex justify-between">
+                    <span>GROUP:</span>
+                    <span>Theta</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>MEMBER_COUNT:</span>
+                    <span>06</span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span>EXP_STATUS:</span>
+                    <span class="text-lime-400 animate-pulse">ACTIVE</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0"
             >
               <!-- Floating Decoration for Group 3 -->
               <div
@@ -425,6 +460,70 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="absolute top-[450vh] left-0 w-full h-dvh flex items-center justify-center py-24 px-4 gsap-section fourth-group will-animate"
+        id="group-4"
+      >
+        <div
+          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+            <div
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1"
+            >
+              <!-- Floating Decoration for Group 4 -->
+              <div
+                class="absolute -bottom-10 -right-10 opacity-100 w-28 h-28 pointer-events-none gsap-float-fast z-20"
+              >
+                <img
+                  src={radioactiveSvg.src}
+                  alt=""
+                  class="w-full h-full object-contain mix-blend-screen"
+                />
+              </div>
+
+              <div
+                class="absolute -top-8 -left-8 opacity-100 w-16 h-16 pointer-events-none gsap-float-slow z-20"
+              >
+                <img
+                  src={breakerSvg2.src}
+                  alt=""
+                  class="w-full h-full object-contain mix-blend-screen"
+                />
+              </div>
+
+              <!-- Cyber-Lab Duotone Wrapper -->
+              <div
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+              >
+                <CloudinaryImage
+                  src={group4}
+                  alt="12 B APL Group 4"
+                  widths={[400, 800, 1200]}
+                  loading="lazy"
+                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                />
+
+                <div
+                  class="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-slate-950 via-transparent to-transparent pointer-events-none opacity-80"
+                >
+                </div>
+
+                <!-- Decorative crosshair -->
+                <div
+                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border border-lime-500/30 rounded-full pointer-events-none opacity-50 transition-opacity duration-500 group-hover:opacity-0 flex items-center justify-center"
+                >
+                  <div class="w-1 h-3 bg-lime-500/50 absolute top-0"></div>
+                  <div class="w-1 h-3 bg-lime-500/50 absolute bottom-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute left-0"></div>
+                  <div class="w-3 h-1 bg-lime-500/50 absolute right-0"></div>
+                </div>
+              </div>
+            </div>
 
             <div
               class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0 order-1 lg:order-2"
@@ -435,12 +534,12 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                 <h3
                   class="text-sm tracking-widest text-lime-400 mb-3 border-b border-cyan-500/30 pb-2"
                 >
-                  &lt;SUBJECT_DATA_03&gt;
+                  &lt;SUBJECT_DATA_04&gt;
                 </h3>
                 <ul class="space-y-2 text-sm text-cyan-100">
                   <li class="flex justify-between">
                     <span>GROUP:</span>
-                    <span>Theta</span>
+                    <span>GAMMA</span>
                   </li>
                   <li class="flex justify-between">
                     <span>MEMBER_COUNT:</span>
@@ -503,6 +602,8 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       </div>
     </div>
   </section>
+
+  <FadeOverlay />
 
   <NextClassesCTA
     prevClass={classContent.prevClass}
@@ -580,7 +681,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
         scrollTrigger: {
           trigger: ".groups-wrapper",
           start: "top top",
-          end: "+=500%",
+          end: "+=700%",
           pin: true,
           scrub: 1.0,
           anticipatePin: 1,
@@ -603,7 +704,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           bgContainer,
           {
             clipPath: "inset(0 0 0% 0)", // Fully revealed
-            duration: 4,
+            duration: 6,
             ease: "none",
           },
           0,
@@ -709,12 +810,11 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       );
       groupsTl.fromTo(
         "#group-3 .gsap-photo",
-        { y: 60, opacity: 0, rotation: 2 },
+        { y: 60, opacity: 0 },
         {
           y: 0,
           opacity: 1,
           duration: 1.5,
-          rotation: 0,
           ease: "power4.out",
           force3D: true,
         },
@@ -727,6 +827,55 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       groupsTl.fromTo(
         g3Icons,
         { scale: 0, opacity: 0, rotation: 90 },
+        {
+          scale: 1,
+          opacity: 1,
+          rotation: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "back.out(1.5)",
+          force3D: true,
+        },
+        "-=1.0",
+      );
+
+      // Transition Scroll 3 -> 4
+      groupsTl.to(
+        [".groups-wrapper .gsap-section", ".falling-lines-wrapper"],
+        {
+          y: "-450vh",
+          duration: 2.5,
+          ease: "power2.inOut",
+        },
+        "+=0.3",
+      );
+
+      // Animate Group 4
+      groupsTl.fromTo(
+        "#group-4 .gsap-data-panel",
+        { x: 40, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out", force3D: true },
+      );
+      groupsTl.fromTo(
+        "#group-4 .gsap-photo",
+        { y: 80, opacity: 0, rotation: -2 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.5,
+          rotation: 0,
+          ease: "power4.out",
+          force3D: true,
+        },
+        "-=0.6",
+      );
+
+      const g4Icons = document.querySelectorAll(
+        "#group-4 .gsap-float-slow, #group-4 .gsap-float-fast, #group-4 .gsap-float-alt",
+      );
+      groupsTl.fromTo(
+        g4Icons,
+        { scale: 0, opacity: 0, rotation: -90 },
         {
           scale: 1,
           opacity: 1,

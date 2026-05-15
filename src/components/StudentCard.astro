@@ -33,7 +33,7 @@ const studentUrl = classSlug ? `/classes/${classSlug}/${slug}` : `/students/${sl
   >
     <!-- Image container -->
     <div
-      class="relative aspect-[3/4] overflow-hidden bg-gray-200 rounded-t-[16px]"
+      class="image-container relative aspect-[3/4] overflow-hidden bg-gray-200"
     >
       {
         typeof displayPhoto === "string" ? (
@@ -41,28 +41,31 @@ const studentUrl = classSlug ? `/classes/${classSlug}/${slug}` : `/students/${sl
             <CloudinaryImage
               src={displayPhoto}
               alt={`Photo of ${name}`}
-              class="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
+              class="student-photo w-full h-full object-cover group-hover:scale-115 transition-all duration-500"
               widths={[300, 600]}
               loading="lazy"
+              onload="this.classList.add('loaded'); this.parentElement.classList.add('is-loaded')"
             />
           ) : (
             <img
               src={displayPhoto}
               alt={`Photo of ${name}`}
-              class="w-full h-full object-cover group-hover:scale-115 transition-transform duration-500"
+              class="student-photo w-full h-full object-cover group-hover:scale-115 transition-all duration-500"
               loading="lazy"
+              onload="this.classList.add('loaded'); this.parentElement.classList.add('is-loaded')"
             />
           )
         ) : (
           <Image
             src={displayPhoto}
             alt={`Photo of ${name}`}
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            class="student-photo w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
             widths={[300, 600]}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             format="webp"
             quality={85}
             loading="lazy"
+            onload="this.classList.add('loaded'); this.parentElement.classList.add('is-loaded')"
           />
         )
       }
@@ -113,6 +116,46 @@ const studentUrl = classSlug ? `/classes/${classSlug}/${slug}` : `/students/${sl
 </article>
 
 <style>
+  /* Skeleton Shimmer Animation */
+  .image-container {
+    background: #f6f7f8;
+    background-image: linear-gradient(
+      to right,
+      #f6f7f8 0%,
+      #edeef1 20%,
+      #f6f7f8 40%,
+      #f6f7f8 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 800px 100%;
+    animation: shimmer 1.5s infinite linear;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0;
+    }
+  }
+
+  /* Image fade-in effect */
+  .student-photo {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out !important;
+  }
+
+  .student-photo.loaded {
+    opacity: 1;
+  }
+
+  /* Stop shimmer when loaded */
+  .image-container.is-loaded {
+    animation: none;
+    background: #f5f0ea;
+  }
+
   /* Line clamp utility untuk truncate text */
   .line-clamp-2 {
     display: -webkit-box;

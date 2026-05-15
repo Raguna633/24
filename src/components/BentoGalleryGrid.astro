@@ -5,12 +5,20 @@ import CloudinaryImage from "./ui/CloudinaryImage.astro";
 import BlockReveal from "./BlockReveal.astro";
 
 interface Props {
-  photos: string[];
+  photos: (string | { url: string; title: string })[];
   layout?: "layout-1" | "layout-2";
   className?: string;
 }
 
 const { photos = [], layout = "layout-1", className = "" } = Astro.props;
+
+// Normalize photos to objects for easier internal handling
+const normalizedPhotos = photos.map((p, i) => {
+  if (typeof p === "string") {
+    return { url: p, title: `Photo ${i + 1}` };
+  }
+  return p;
+});
 
 // Layout 1 pattern (repeats every 18 photos)
 const layout1Pattern = [
@@ -190,7 +198,7 @@ const calculatedClasses = getCalculatedSpans();
 ---
 
 <div class={`grid grid-cols-2 md:grid-cols-4 grid-flow-dense gap-2 md:gap-4 auto-rows-[150px] md:auto-rows-[250px] ${className}`}>
-  {photos.map((photo, index) => {
+  {normalizedPhotos.map((photo, index) => {
     const spanClass = calculatedClasses[index];
     // Give each photo a unique ID for the lightbox
     const id = `photo-${index}`;
@@ -200,11 +208,11 @@ const calculatedClasses = getCalculatedSpans();
         class={`group relative overflow-hidden rounded-xl bg-gray-100 will-animate opacity-0 translate-y-10 focus:outline-none cursor-pointer ${spanClass}`}
         data-gallery-id={id}
         data-animate-scroll="true"
-        aria-label={`View photo ${index + 1}`}
+        aria-label={`View ${photo.title}`}
       >
         <CloudinaryImage
-          src={photo}
-          alt={`Gallery photo ${index + 1}`}
+          src={photo.url}
+          alt={photo.title}
           class="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-105"
           widths={[400, 800, 1200]}
           loading="lazy"

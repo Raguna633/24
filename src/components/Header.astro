@@ -25,7 +25,8 @@ function isActive(href: string, currentPath: string): boolean {
 ---
 
 <!-- Floating Header Container -->
-<div id="floating-header" class="fixed top-4 right-4 z-50">
+
+<div id="floating-header" class="fixed top-4 right-4 z-[1000010] rounded-full" transition:persist="floating-header">
   <!-- Logo Button (Floating) -->
   <button
     id="logo-button"
@@ -38,10 +39,7 @@ function isActive(href: string, currentPath: string): boolean {
     aria-label="Toggle navigation menu"
   >
     <!-- Logo SVG -->
-    <div
-      class="w-8 h-8 bg-[url('/src/assets/azzarqo.svg')] bg-contain bg-center bg-no-repeat"
-    >
-    </div>
+    <img src="https://res.cloudinary.com/dhbps9kvp/image/upload/v1778746203/logo.svg" alt="Logo" class="w-10 h-10" />
 
     <!-- Pulse effect on hover -->
     <div
@@ -212,19 +210,25 @@ function isActive(href: string, currentPath: string): boolean {
 
     // Tampilkan/sembunyikan logo saat scroll
     const handleScroll = () => {
-      const shouldShowLogo = window.scrollY > 100;
+      // 🚀 Threshold dikurangi agar lebih cepat muncul
+      // Dan ditambahkan check untuk homepage vs halaman lain
+      const threshold = 10;
+      const shouldShowLogo = window.scrollY > threshold;
 
       if (shouldShowLogo !== isLogoVisible) {
         isLogoVisible = shouldShowLogo;
         if (shouldShowLogo) {
-          btn.classList.remove("opacity-0", "scale-0");
-          btn.classList.add("opacity-100", "scale-100");
+          btn.classList.remove("opacity-0", "scale-0", "pointer-events-none");
+          btn.classList.add("opacity-100", "scale-100", "pointer-events-auto");
         } else {
-          btn.classList.remove("opacity-100", "scale-100");
-          btn.classList.add("opacity-0", "scale-0");
+          btn.classList.remove("opacity-100", "scale-100", "pointer-events-auto");
+          btn.classList.add("opacity-0", "scale-0", "pointer-events-none");
         }
       }
     };
+
+    // 🚀 Jalankan segera untuk check posisi scroll saat ini (penting saat refresh/back)
+    handleScroll();
 
     // Toggle desktop navigation (untuk klik)
     const toggleDesktopNav = () => {

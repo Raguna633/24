@@ -22,16 +22,16 @@ interface Props {
 
 const { 
   title, 
-  description = 'Yearbook Digital AZZARQO - Kenangan indah perjalanan kami',
+  description = 'Yearbook Digital Nihayatu Zayn - Kenangan indah perjalanan kami',
   image = '/og-image.jpg',
   noIndex = false,
   forceDesktopView = false // 👈 Ini akan memaksa halaman selalu desktop view
 } = Astro.props;
 
 // Site info
-const siteTitle = 'Yearbook AZZARQO';
+const siteTitle = 'Yearbook Nihayatu Zayn';
 const fullTitle = title === siteTitle ? siteTitle : `${title} | ${siteTitle}`;
-const siteUrl = Astro.site?.toString() || 'https://yearbook2025.vercel.app';
+const siteUrl = Astro.site?.toString() || 'https://nihayatu-zayn-24.vercel.app';
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 
 // 🔧 Pass forceDesktopView to client-side script
@@ -78,7 +78,14 @@ const forceDesktopViewData = forceDesktopView;
           sessionStorage.setItem('forced-desktop-view', 'true');
         } else {
           sessionStorage.removeItem('forced-desktop-view');
-          const savedMode = localStorage.getItem('view-mode');
+          let savedMode = localStorage.getItem('view-mode');
+          
+          // 🆕 Inisialisasi default jika kunjungan pertama
+          if (!savedMode) {
+            savedMode = window.innerWidth > window.innerHeight ? 'desktop' : 'mobile';
+            localStorage.setItem('view-mode', savedMode);
+          }
+
           if (savedMode === 'desktop') {
             setDesktopViewport(true);
           } else {
@@ -254,6 +261,7 @@ const forceDesktopViewData = forceDesktopView;
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Michroma&display=block"
     />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" rel="stylesheet">
     
     <!-- Theme color -->
     <meta name="theme-color" content="#3b82f6" />
@@ -292,8 +300,20 @@ const forceDesktopViewData = forceDesktopView;
       Skip to main content
     </a>
     
-    <!-- Header -->
-    <Header />
+    {/* Rotation Overlay */}
+      <div id="rotateOverlay" class="fixed inset-0 z-[1000003] bg-black/95 text-white flex flex-col items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300 touch-none" transition:persist="rotate-overlay">
+        <div id="rotateIconContainer" class="mb-8 transition-transform duration-500">
+          <svg id="rotateIcon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+        </div>
+        <h2 id="rotateTitle" class="text-2xl font-bold mb-4 text-center">Putar Perangkat Anda</h2>
+        <p id="rotateMessage" class="text-gray-300 text-center max-w-sm mb-8 text-sm">Silakan putar perangkat Anda ke posisi landscape untuk beralih ke Desktop Mode.</p>
+        <button id="closeRotateOverlay" class="px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">Batal</button>
+      </div>
+
+    {/* Header removed from here to move it lower in DOM */}
 
     
     <!-- Main content -->
@@ -304,57 +324,11 @@ const forceDesktopViewData = forceDesktopView;
     <!-- Footer -->
     <Footer />
     
-    <!-- Back to top button -->
-    <button
-      id="back-to-top"
-      class="fixed bottom-8 right-8 z-40 p-3 bg-primary-600 text-white
-             rounded-full shadow-lg opacity-0 pointer-events-none
-             transition-all duration-300 hover:bg-primary-700
-             hover:scale-110 focus:outline-none focus:ring-2
-             focus:ring-primary-500 focus:ring-offset-2"
-      aria-label="Back to top"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M5 10l7-7m0 0l7 7m-7-7v18"
-        />
-      </svg>
-    </button>
 
-    {/* View Mode Toggle Button */}
-    <button 
-      id="viewModeToggle"
-      class="view-mode-toggle group"
-      aria-label="Toggle view mode"
-    >
-      <div id="toggleIcon" class="toggle-icon">📱</div>
-      <div id="toggleLabels" class="overflow-hidden flex items-center">
-        <span id="toggleText" class="toggle-text">Mobile View</span>
-        <span id="toastText" class="toast-text hidden">Gunakan Desktop View Untuk Pengalaman Terbaik 😊</span>
-      </div>
-    </button>
+    {/* Back to top removed */}
 
-    <!-- Overlay Rotate Device -->
-    <div id="rotateOverlay" class="fixed inset-0 z-[100000] bg-black/95 text-white flex flex-col items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity duration-300 touch-none">
-      <div id="rotateIconContainer" class="mb-8 transition-transform duration-500">
-        <svg id="rotateIcon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
-          <line x1="12" y1="18" x2="12.01" y2="18"></line>
-        </svg>
-      </div>
-      <h2 id="rotateTitle" class="text-2xl font-bold mb-4 text-center">Putar Perangkat Anda</h2>
-      <p id="rotateMessage" class="text-gray-300 text-center max-w-sm mb-8 text-sm">Silakan putar perangkat Anda ke posisi landscape untuk beralih ke Desktop Mode.</p>
-      <button id="closeRotateOverlay" class="px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors">Batal</button>
-    </div>
+
+    {/* Floating Elements removed from here to move to bottom of body */}
 
     <ImmersiveModePrompt />
 
@@ -412,6 +386,13 @@ const forceDesktopViewData = forceDesktopView;
 
         // Check if this page is forced to desktop view
         const isForced = sessionStorage.getItem('forced-desktop-view') === 'true';
+
+        // Initialize orientation state tracking with robust logic
+        if ((window as any).lastOrientation === undefined) {
+          const isPortraitMedia = window.matchMedia("(orientation: portrait)").matches;
+          const isLandscapePhysical = window.innerWidth > window.innerHeight;
+          (window as any).lastOrientation = isPortraitMedia && !isLandscapePhysical;
+        }
 
         // --- Helper Functions ---
         
@@ -471,35 +452,41 @@ const forceDesktopViewData = forceDesktopView;
         }
 
         function showRotateOverlay(targetMode: 'mobile' | 'desktop') {
-          if (!rotateOverlay) return;
-          rotateOverlay.setAttribute('data-requested-mode', targetMode);
+          const overlay = document.getElementById('rotateOverlay');
+          if (!overlay) return;
+          overlay.setAttribute('data-requested-mode', targetMode);
           
+          const title = document.getElementById('rotateTitle');
+          const message = document.getElementById('rotateMessage');
+          const iconContainer = document.getElementById('rotateIconContainer');
+          const closeBtn = document.getElementById('closeRotateOverlay');
+          const isForcedCurrent = sessionStorage.getItem('forced-desktop-view') === 'true';
+
           if (targetMode === 'desktop') {
-            if (rotateTitle) rotateTitle.textContent = 'Rotasi ke Landscape';
-            if (rotateMessage) rotateMessage.textContent = 'Untuk beralih ke Desktop Mode, mohon letakkan perangkat Anda ke posisi mendatar (landscape).';
-            if (rotateIconContainer) rotateIconContainer.style.transform = 'rotate(-90deg)';
+            if (title) title.textContent = 'Rotasi ke Landscape';
+            if (message) message.textContent = 'Untuk beralih ke Desktop Mode, mohon letakkan perangkat Anda ke posisi mendatar (landscape).';
+            if (iconContainer) iconContainer.style.transform = 'rotate(-90deg)';
           } else {
-            if (rotateTitle) rotateTitle.textContent = 'Rotasi ke Portrait';
-            if (rotateMessage) rotateMessage.textContent = 'Untuk beralih ke Mobile Mode, mohon letakkan perangkat Anda ke posisi tegak (portrait).';
-            if (rotateIconContainer) rotateIconContainer.style.transform = 'rotate(0deg)';
+            if (title) title.textContent = 'Rotasi ke Portrait';
+            if (message) message.textContent = 'Untuk beralih ke Mobile Mode, mohon letakkan perangkat Anda ke posisi tegak (portrait).';
+            if (iconContainer) iconContainer.style.transform = 'rotate(0deg)';
           }
 
           // 🔒 If forced, hide the close button as they MUST rotate to see content
-          if (isForced) {
-            if (closeRotateOverlayBtn) closeRotateOverlayBtn.style.display = 'none';
+          if (isForcedCurrent) {
+            if (closeBtn) closeBtn.style.display = 'none';
           } else {
-            if (closeRotateOverlayBtn) closeRotateOverlayBtn.style.display = 'inline-block';
+            if (closeBtn) closeBtn.style.display = 'inline-block';
           }
           
-          rotateOverlay.classList.remove('opacity-0', 'pointer-events-none');
-          rotateOverlay.classList.add('active-overlay', 'opacity-100', 'pointer-events-auto');
+          overlay.classList.remove('opacity-0', 'pointer-events-none');
+          overlay.classList.add('active-overlay', 'opacity-100', 'pointer-events-auto');
 
-          // 🔒 Prevent scrolling (Robust implementation)
+          // 🔒 Prevent scrolling
           document.documentElement.classList.add('lock-scroll');
-          document.body.classList.add('lock-scroll');
+          document.body.classList.add('lock-scroll', 'active-overlay-visible');
           if ((window as any).lenis) (window as any).lenis.stop();
 
-          // Block scroll-related events
           window.addEventListener('wheel', preventDefault, { passive: false });
           window.addEventListener('touchmove', preventDefault, { passive: false });
           window.addEventListener('keydown', preventScrollKeys, { passive: false });
@@ -517,17 +504,17 @@ const forceDesktopViewData = forceDesktopView;
         }
 
         function hideRotateOverlay() {
-          if (!rotateOverlay) return;
-          rotateOverlay.classList.remove('active-overlay', 'opacity-100', 'pointer-events-auto');
-          rotateOverlay.classList.add('opacity-0', 'pointer-events-none');
-          rotateOverlay.removeAttribute('data-requested-mode');
+          const overlay = document.getElementById('rotateOverlay');
+          if (!overlay) return;
+          overlay.classList.remove('active-overlay', 'opacity-100', 'pointer-events-auto');
+          overlay.classList.add('opacity-0', 'pointer-events-none');
+          overlay.removeAttribute('data-requested-mode');
 
           // 🔒 Restore scrolling
           document.documentElement.classList.remove('lock-scroll');
-          document.body.classList.remove('lock-scroll');
+          document.body.classList.remove('lock-scroll', 'active-overlay-visible');
           if ((window as any).lenis) (window as any).lenis.start();
 
-          // Remove block listeners
           window.removeEventListener('wheel', preventDefault);
           window.removeEventListener('touchmove', preventDefault);
           window.removeEventListener('keydown', preventScrollKeys);
@@ -572,23 +559,28 @@ const forceDesktopViewData = forceDesktopView;
         }
 
         function handleResize() {
-          const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+          // Robust orientation detection: 
+          // 1. Check matchMedia
+          // 2. Physical aspect ratio check (Width > Height = Landscape)
+          // 3. Physical width threshold (If width > 1000px, it's effectively a desktop view)
+          const isPortraitMedia = window.matchMedia("(orientation: portrait)").matches;
+          const isLandscapePhysical = window.innerWidth > window.innerHeight;
+          const isPortrait = isPortraitMedia && !isLandscapePhysical;
           
-          // Mencegah infinite loop: Abaikan event resize jika orientasi fisik layar tidak berubah
-          if (isPortrait === (window as any).lastOrientation) {
-            return;
-          }
+          // Update orientation state immediately
           (window as any).lastOrientation = isPortrait;
 
           const currentMode = getCurrentMode();
           const desktopWidth = 1440;
+          const isForcedCurrent = sessionStorage.getItem('forced-desktop-view') === 'true';
+          const overlay = document.getElementById('rotateOverlay');
 
           // 🔒 Handle forced desktop mode specifically
-          if (isForced) {
+          if (isForcedCurrent) {
             if (isPortrait) {
               showRotateOverlay('desktop');
             } else {
-              if (rotateOverlay?.classList.contains('active-overlay')) {
+              if (overlay?.classList.contains('active-overlay')) {
                 hideRotateOverlay();
               }
               // Recalculate scale correctly with asynchronous calibration
@@ -608,8 +600,8 @@ const forceDesktopViewData = forceDesktopView;
           }
 
           // Handle active rotation overlay
-          if (rotateOverlay?.classList.contains('active-overlay')) {
-            const requestedMode = rotateOverlay.getAttribute('data-requested-mode') as 'mobile' | 'desktop' | null;
+          if (overlay?.classList.contains('active-overlay')) {
+            const requestedMode = overlay.getAttribute('data-requested-mode') as 'mobile' | 'desktop' | null;
             if ((requestedMode === 'desktop' && !isPortrait) || (requestedMode === 'mobile' && isPortrait)) {
               hideRotateOverlay();
               switchToMode(requestedMode as 'mobile' | 'desktop');
@@ -620,7 +612,7 @@ const forceDesktopViewData = forceDesktopView;
           // Automatic mode switching based on rotation
           if (!isPortrait && currentMode !== 'desktop') {
             switchToMode('desktop');
-          } else if (isPortrait && currentMode !== 'mobile' && !isForced) {
+          } else if (isPortrait && currentMode !== 'mobile' && !isForcedCurrent) {
             switchToMode('mobile');
           } else if (currentMode === 'desktop') {
             // Recalculate scale correctly with asynchronous calibration
@@ -650,12 +642,19 @@ const forceDesktopViewData = forceDesktopView;
         function initDesktopViewToast() {
           if (!toggleButton || toggleButton.classList.contains('forced')) return;
           const isMobileDevice = window.innerWidth < 1024;
+          
           if (isMobileDevice && getCurrentMode() === 'mobile') {
-            setTimeout(() => {
+            // 🧹 Cleanup old timer
+            if ((window as any)._viewModeToastTimer) {
+              clearTimeout((window as any)._viewModeToastTimer);
+            }
+
+            (window as any)._viewModeToastTimer = setTimeout(() => {
               if (getCurrentMode() === 'mobile' && !toggleButton.classList.contains('active')) {
                 if (toastText) toastText.classList.remove('hidden');
                 toggleButton.classList.add('is-toast');
-                setTimeout(() => {
+                
+                (window as any)._viewModeToastTimer = setTimeout(() => {
                   if (toastText) toastText.classList.add('hidden');
                   toggleButton.classList.remove('is-toast');
                 }, 5000);
@@ -694,6 +693,17 @@ const forceDesktopViewData = forceDesktopView;
         updateToggleButton();
         initDesktopViewToast();
 
+        // 🔒 Initial orientation check: if Landscape but Mobile mode, switch to Desktop
+        const initialIsPortrait = (window as any).lastOrientation;
+        const initialMode = getCurrentMode();
+        if (!initialIsPortrait && initialMode === 'mobile' && !isForced) {
+          // Add a small delay to ensure we don't conflict with initial rendering
+          setTimeout(() => {
+            const checkAgain = window.innerWidth > window.innerHeight;
+            if (checkAgain) switchToMode('desktop');
+          }, 200);
+        }
+
         // 🔒 Initial orientation check for forced desktop
         const isInitialPortrait = window.matchMedia("(orientation: portrait)").matches;
         if (isForced && isInitialPortrait) {
@@ -710,7 +720,21 @@ const forceDesktopViewData = forceDesktopView;
         if (!(window as any).mainLayoutInitialized) {
           let resizeTimeout: any;
           window.addEventListener('resize', () => {
+            // Robust orientation detection (Same logic as handleResize)
+            const isPortraitMedia = window.matchMedia("(orientation: portrait)").matches;
+            const isLandscapePhysical = window.innerWidth > window.innerHeight;
+            const currentIsPortrait = isPortraitMedia && !isLandscapePhysical;
+            
+            // PRIORITY 1: Detection of orientation change
+            if (currentIsPortrait !== (window as any).lastOrientation) {
+              clearTimeout(resizeTimeout);
+              handleResize();
+              return;
+            }
+
+            // PRIORITY 2: Scale recalibration (only if not already recalibrating)
             if ((window as any).isRecalibratingViewport) return;
+            
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(handleResize, 300);
           });
@@ -781,19 +805,47 @@ const forceDesktopViewData = forceDesktopView;
       html.lock-scroll,
       body.lock-scroll {
         overflow: hidden !important;
-        position: fixed !important;
-        width: 100% !important;
+        /* 
+           Nuclear Option: position: fixed resets scroll to 0. 
+           We only use it when the rotate overlay is ACTIVE to prevent
+           accidental scrolls on iOS/Android during rotation.
+        */
         height: 100% !important;
         touch-action: none !important;
         -webkit-overflow-scrolling: none !important;
       }
+      
+      /* 🛡️ Ensure html/body doesn't break fixed positioning for floating-ui-container */
+      html, body {
+        transform: none !important;
+        filter: none !important;
+        perspective: none !important;
+      }
 
-      /* ==================== VIEW MODE TOGGLE BUTTON ==================== */
+      /* Mobile specifically needs this for rotate overlay */
+      body.lock-scroll.active-overlay-visible {
+        position: fixed !important;
+        width: 100% !important;
+      }
+
+
+      /* Floating UI Container for consistent stacking */
+      .floating-ui-container {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1000000;
+      }
+
+      .floating-ui-container > * {
+        pointer-events: auto;
+      }
+
       .view-mode-toggle {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        z-index: 9999;
+        z-index: 1000005; /* 🚀 Ensure it stays above everything */
         
         display: flex;
         align-items: center;
@@ -1014,6 +1066,39 @@ const forceDesktopViewData = forceDesktopView;
         }
       }
     </style>
+
+
+    {/* Floating UI Container - Place at the bottom for stacking advantage */}
+    <div class="floating-ui-container" transition:persist="floating-ui-container">
+      <Header />
+
+      {/* View Mode Toggle Button */}
+      <button 
+        id="viewModeToggle"
+        class="view-mode-toggle group"
+        aria-label="Toggle view mode"
+      >
+        <div id="toggleIcon" class="toggle-icon">📱</div>
+        <div id="toggleLabels" class="overflow-hidden flex items-center">
+          <span id="toggleText" class="toggle-text">Mobile View</span>
+          <span id="toastText" class="toast-text hidden">Gunakan Desktop View Untuk Pengalaman Terbaik 😊</span>
+        </div>
+      </button>
+
+      {/* Back to Top Button */}
+      <button 
+        id="back-to-top"
+        class="back-to-top opacity-0 pointer-events-none"
+        aria-label="Back to top"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </button>
+
+      
+    </div>
+
     <script is:inline>
       /*
         Re-apply safe area CSS custom properties setelah navigasi Astro.

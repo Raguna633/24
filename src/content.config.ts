@@ -71,7 +71,25 @@ const galleries = defineCollection({
         description: z.string().optional(),
         galleryType: z.enum(['uniform', 'bento']),
         bentoLayout: z.enum(['layout-1', 'layout-2']).optional(),
-        photos: z.array(z.string()).optional(),
+        photos: z.union([
+            z.array(z.string()),
+            z.array(z.object({
+                url: z.string(),
+                title: z.string(),
+            }))
+        ]).optional(),
+        heroPhotos: z.array(z.object({
+            url: z.string(),
+            title: z.string(),
+        })).optional(),
+        ip3aPhotos: z.array(z.object({
+            url: z.string(),
+            title: z.string(),
+        })).optional(),
+        ip4aPhotos: z.array(z.object({
+            url: z.string(),
+            title: z.string(),
+        })).optional(),
         cta: z.object({
             text_title: z.string(),
             text: z.string(),

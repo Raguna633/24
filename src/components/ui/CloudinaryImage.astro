@@ -9,6 +9,7 @@ interface Props {
   sizes?: string;
   loading?: "lazy" | "eager";
   decoding?: "async" | "sync" | "auto";
+  fetchpriority?: "high" | "low" | "auto";
 }
 
 const { 
@@ -18,7 +19,9 @@ const {
   widths = [400, 800, 1200, 1600, 1920], 
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
   loading = "lazy",
-  decoding = "async"
+  decoding = "async",
+  fetchpriority = "auto",
+  ...rest
 } = Astro.props;
 
 const optimizedSrc = getOptimizedCloudinaryUrl(src, widths[1]); // Default ke lebar menengah
@@ -33,4 +36,6 @@ const srcset = getCloudinarySrcset(src, widths);
   class={className}
   loading={loading}
   decoding={decoding}
+  fetchpriority={fetchpriority}
+  {...rest}
 />

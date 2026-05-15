@@ -22,13 +22,27 @@
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    /* GPU Layering hint */
     will-change: transform, opacity;
+  }
+
+  /* Mobile Flow Mode: Sections stack naturally to avoid pinning lag */
+  .parallax-stack-container.is-mobile {
+    position: relative;
+    height: auto !important;
+  }
+
+  .parallax-stack-container.is-mobile > :global(*) {
+    position: relative;
+    top: auto;
+    left: auto;
+    height: 100vh;
+    overflow: hidden;
   }
 </style>
 
 <script>
   import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { CSSPlugin } from "gsap/CSSPlugin";
   import { waitForLoading } from "../utils/loadingState";
 
@@ -79,10 +93,16 @@
   };
 
   async function initParallaxStack() {
-    gsap.registerPlugin(CSSPlugin);
+    gsap.registerPlugin(CSSPlugin, ScrollTrigger);
 
     const stacks = document.querySelectorAll("[data-parallax-stack]");
-    const isMobile = window.innerWidth < 768;
+    
+    // Robust Hardware Detection: Identifying mobile/tablet hardware regardless of current viewport width
+    const isMobileHardware = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+                             (navigator.maxTouchPoints > 0) ||
+                             window.matchMedia("(pointer: coarse)").matches;
+                             
+    const isMobile = isMobileHardware;
 
     // Phase 1: Immediate Stacking Order (Prevent FOUC/Sequence Flash)
     stacks.forEach((stack) => {
@@ -92,32 +112,92 @@
       });
     });
 
-    // Phase 2: Wait for Loading to start GSAP setup
-    await waitForLoading();
+    // Phase 2: Wait for Loading with safety timeout
+    const loadingPromise = waitForLoading();
+    const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2500));
+    await Promise.race([loadingPromise, timeoutPromise]);
 
-    stacks.forEach(async (stack) => {
+    stacks.forEach(async (stack, i) => {
       const stackEl = stack as HTMLElement;
       const sections = Array.from(stackEl.children) as HTMLElement[];
       if (sections.length < 2) return;
 
-      // Mobile check: reduce scroll distance on mobile to save CPU/Battery
-      // Lower duration = faster transitions = less time spending CPU on interpolation
-      const duration = isMobile ? window.innerHeight * 1.2 : window.innerHeight * 1.5;
+      const stackId = stackEl.id || `stack-${i}`;
+
+      if (isMobile) {
+        stackEl.classList.add("is-mobile");
+        
+        // 🕒 RACE CONDITION FIX: Wait for the promise to be defined on window
+        const getHeroData = async () => {
+          let attempts = 0;
+          while (!(window as any).heroSectionPromise && attempts < 20) {
+            await new Promise(r => setTimeout(r, 50));
+            attempts++;
+          }
+          return await (window as any).heroSectionPromise;
+        };
+
+        const heroData = await getHeroData();
+
+        if (heroData) {
+          // One-Shot Exit Animation for Hero CONTENT only (preserves background)
+          const heroExitTl = gsap.timeline({ 
+            paused: true,
+            defaults: { ease: "power2.inOut", duration: 0.8 }
+          });
+          
+          if (heroData.contentElements && heroData.contentElements.length > 0) {
+            heroExitTl.to(heroData.contentElements, { 
+              autoAlpha: 0, 
+              y: -40,
+              stagger: 0.1,
+              overwrite: true, // Force this animation to win over any entrance animations
+            });
+          }
+
+          ScrollTrigger.create({
+            id: `pstack-mobile-${stackId}`,
+            trigger: stackEl,
+            start: "top top",
+            end: "+=100%", // Match section height for snapping
+            snap: {
+              snapTo: [0, 1],
+              duration: { min: 0.4, max: 0.6 },
+              delay: 0,
+              ease: "power1.inOut"
+            },
+            onUpdate: (self) => {
+              // Smoothly sync timeline progress with scroll progress
+              if (self.progress > 0.05) {
+                if (heroExitTl.progress() < 1) heroExitTl.play();
+                heroData.pauseAmbient?.();
+              } else {
+                if (heroExitTl.progress() > 0) heroExitTl.reverse();
+                heroData.resumeAmbient?.();
+              }
+            }
+          });
+        }
+        return; 
+      }
+      
+      // --- DESKTOP CINEMATIC STACK (GSAP PINNING) ---
+      const duration = window.innerHeight * 1.5;
 
       const tl = gsap.timeline({
         scrollTrigger: {
+          id: `pstack-desktop-${stackId}`,
           trigger: stackEl,
-          scrub: isMobile ? 0.5 : 1, // Faster scrub response on mobile
+          scrub: 1, 
           start: "top top",
           end: `+=${sections.length * duration}`,
           pin: true,
           anticipatePin: 1,
-          invalidateOnRefresh: true, // Crucial for responsive resizing
+          invalidateOnRefresh: true,
         },
       });
 
       // Phase 3: Content Animation Sync (Unified Timeline)
-      // We use a for...of loop to ensure sequential timeline construction
       for (const [index, section] of sections.entries()) {
         if (index === sections.length - 1) continue;
 
@@ -142,19 +222,26 @@
           const aboutData = await aPromise;
           
           if (heroData?.txtAngkatan && heroData?.svg) {
-            tl.to(heroData.txtAngkatan, { 
-              opacity: 0, 
-              filter: "blur(10px)", 
-              y: -30, 
-              duration: 0.5 
+            // Stop ambient animations during exit transition to save CPU
+            tl.to({}, { 
+              duration: 0.1, 
+              onStart: () => heroData.pauseAmbient?.(),
+              onReverseComplete: () => heroData.resumeAmbient?.()
             }, 0);
+
+            // Using fromTo to ENSURE we start from visible state
+            // and return to it when scrolling back to top.
+            tl.fromTo(heroData.txtAngkatan, 
+              { autoAlpha: 1, y: 0 },
+              { autoAlpha: 0, y: -30, duration: 0.5 }, 
+              0
+            );
             
-            tl.to(heroData.svg, { 
-              scale: 0.85, 
-              opacity: 0, 
-              rotation: -3, 
-              duration: 0.8 
-            }, 0);
+            tl.fromTo(heroData.svg, 
+              { autoAlpha: 1, scale: 1, rotation: 0 },
+              { autoAlpha: 0, scale: 0.85, rotation: -3, duration: 0.8 }, 
+              0
+            );
           }
 
           if (aboutData?.allElements && aboutData?.allElements.length > 0) {
@@ -197,4 +284,13 @@
   document.addEventListener("astro:page-load", () => {
     initParallaxStack();
   });
+
+  // 🧹 Cleanup
+  document.addEventListener("astro:before-swap", () => {
+    ScrollTrigger.getAll().forEach(st => {
+      if (st.vars.id?.startsWith("pstack-")) {
+        st.kill();
+      }
+    });
+  }, { once: true });
 </script>
