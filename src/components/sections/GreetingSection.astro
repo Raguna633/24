@@ -92,7 +92,7 @@ const overlayDirection = isTeacherLayout
 
   <!-- Content Container -->
   <div
-    class="relative z-15 container-custom p-4 sm:p-6 lg:p-8 pb-4 lg:pb-8 w-full h-dvh max-h-dvh flex flex-col justify-center"
+    class="relative z-15 container-custom p-4 sm:p-6 lg:p-8 pb-4 lg:pb-8 w-full h-screen max-h-screen flex flex-col justify-center"
   >
     <div
       class={`max-w-screen h-full max-h-full mx-4 md:mx-16 text-white flex flex-col lg:flex ${flexDirection} lg:items-center lg:gap-12 xl:gap-16`}
@@ -252,22 +252,25 @@ const overlayDirection = isTeacherLayout
   import { fadeUp, prefersReducedMotion } from "../../utils/gsap-animations";
 
   document.addEventListener("astro:page-load", async () => {
-    await waitForLoading();
+    // 🛡️ Safety timeout for loading state
+    const loadingPromise = waitForLoading();
+    const timeoutPromise = new Promise(resolve => setTimeout(resolve, 2000));
+    await Promise.race([loadingPromise, timeoutPromise]);
 
     if (prefersReducedMotion()) return;
 
     const sections = document.querySelectorAll("[data-greeting]");
     
     sections.forEach((sec) => {
-      // 🔥 CRITICAL: Skip internal GSAP if managed by HorizontalCarousel
-      if (sec.closest(".horizontal-scroll-container")) return;
-
       const txt = sec.querySelector(".greeting-text-content") as HTMLElement;
       const hint = sec.querySelector(".scroll-hint") as HTMLElement;
       const id = sec.id || `sec-${Math.random().toString(36).substr(2, 9)}`;
       
       // 1. Unified Text Scroller & Hint Timeline
-      if (txt) {
+      // 🔥 CRITICAL: ONLY Skip text scroll GSAP if managed by HorizontalCarousel
+      const isInCarousel = !!sec.closest(".horizontal-scroll-container");
+      
+      if (txt && !isInCarousel) {
         const getOverflow = () => Math.max(0, txt.scrollHeight - txt.clientHeight);
 
         if (getOverflow() > 10) {
@@ -279,12 +282,15 @@ const overlayDirection = isTeacherLayout
             hint.style.opacity = "1";
           }
 
+          const isMobileHardware = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
+                                   (navigator.maxTouchPoints > 0);
+
           const scrollerTl = gsap.timeline({
             scrollTrigger: {
               trigger: sec,
               start: "top top",
               end: () => `+=${getOverflow() * 1.5}`,
-              pin: true,
+              pin: true, // 🚀 Enabled for both Mobile & Desktop as requested
               scrub: 0.1,
               anticipatePin: 1,
               fastScrollEnd: true,
@@ -303,23 +309,24 @@ const overlayDirection = isTeacherLayout
             scrollerTl.to(hint, {
               opacity: 0,
               ease: "power1.inOut",
-            }, 0); // Start fade at same time as scroll
+            }, 0);
           }
         }
       }
 
       // 2. ✨ AWWWARDS STYLE GSAP ENTRANCE ANIMATIONS ✨
+      // This should run even inside a Carousel!
       const imageFloat = sec.querySelector(".greeting-image-float") as HTMLElement;
       const decos = sec.querySelectorAll(".gsap-greeting-deco");
       const textContent = sec.querySelector(".gsap-greeting-content") as HTMLElement;
       const floatingBgs = sec.querySelectorAll(".gsap-floating-bg");
 
-      gsap.set(imageFloat, { scale: 0.8, opacity: 0, rotationY: 15 });
-
       const entranceTl = gsap.timeline({
         scrollTrigger: {
           trigger: sec,
-          start: "top 80%",
+          // If in carousel, use the section itself as trigger, 
+          // but carousel might hide it, so "top 85%" is usually safe.
+          start: isInCarousel ? "top center" : "top 85%",
           toggleActions: "play none none reverse",
           once: true,
           id: `entrance-${id}`
@@ -327,8 +334,8 @@ const overlayDirection = isTeacherLayout
       });
 
       if (imageFloat) {
-        entranceTl.to(imageFloat, {
-          scale: 1, opacity: 1, rotationY: 0,
+        entranceTl.from(imageFloat, {
+          scale: 0.8, opacity: 0, rotationY: 15,
           duration: 1.2, ease: "power4.out", force3D: true,
         }, 0.2);
       }
