@@ -10,6 +10,7 @@ import {
 import Loading from '../components/Loading.astro';
 import Analytics from '@vercel/analytics/astro'
 import ImmersiveModePrompt from '../components/mobile/ImmersiveModePrompt.astro';
+import AudioPlayer from '../components/ui/AudioPlayer';
 
 
 interface Props {
@@ -333,7 +334,14 @@ const forceDesktopViewData = forceDesktopView;
 
     {/* Floating Elements removed from here to move to bottom of body */}
 
+
     <ImmersiveModePrompt />
+
+    <AudioPlayer 
+      transition:persist="audio-player" 
+      client:load 
+      src="https://res.cloudinary.com/dhbps9kvp/video/upload/v1777809794/mars-altie.mp3" 
+    />
 
 
     

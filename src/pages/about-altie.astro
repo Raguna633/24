@@ -5,8 +5,6 @@ import FoundersSection from "../components/sections/about/FoundersSection.astro"
 import CinematicHistory from "../components/sections/about/CinematicHistory.astro";
 import MarsSection from "../components/sections/about/MarsSection.astro";
 import AboutCTA from "../components/sections/about/AboutCTA.astro";
-import AudioPlayer from "../components/ui/AudioPlayer";
-
 import * as aboutData from "../data/about/altie.mdx";
 
 const { frontmatter } = aboutData;
@@ -48,6 +46,4 @@ const historyParagraphs = [
     
     <AboutCTA />
   </div>
-
-  <AudioPlayer client:idle src={frontmatter.mars_audio} />
 </MainLayout>

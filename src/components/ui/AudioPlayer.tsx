@@ -25,9 +25,20 @@ interface AudioPlayerProps {
 export default function AudioPlayer({ src }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [currentPath, setCurrentPath] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    // Set initial path
+    setCurrentPath(window.location.pathname);
+
+    // Sync path on Astro navigation
+    const handlePageLoad = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    document.addEventListener('astro:after-swap', handlePageLoad);
+
     let isMounted = true;
     let timer: NodeJS.Timeout;
 
@@ -48,6 +59,7 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
     return () => {
       isMounted = false;
       clearTimeout(timer);
+      document.removeEventListener('astro:after-swap', handlePageLoad);
     };
   }, [src]);
 
@@ -67,6 +79,14 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
   const handleAudioEnded = () => {
     setIsPlaying(false);
   };
+
+  // Logika Visibilitas:
+  // Komponen tetap ada jika sedang di halaman About (sumber audio)
+  // ATAU jika audio sedang aktif berputar (sedang menyeberang halaman)
+  const isAboutPage = currentPath.includes('/about-altie');
+  const shouldRender = isAboutPage || isPlaying;
+
+  if (!shouldRender) return null;
 
   return (
     <div className="fixed top-6 left-6 z-[100] flex flex-row items-center gap-4 font-sans pointer-events-none">
@@ -106,7 +126,7 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
       {/* Interactive Popup (Horizontal slide from left) */}
       <div 
         className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-left transform ${
-          showPopup 
+          showPopup && isAboutPage
             ? 'opacity-100 scale-100 translate-x-0' 
             : 'opacity-0 scale-95 -translate-x-8 pointer-events-none'
         }`}
