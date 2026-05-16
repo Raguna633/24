@@ -168,19 +168,32 @@ export default function LegalModal() {
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none p-0">
                   <li className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-2 h-2 bg-[#3557A2] rounded-full"></div>
-                    <span className="font-medium text-sm">Freepik & Flaticon</span>
+                    <span className="font-medium text-sm">
+                      <a href="https://www.freepik.com" target="_blank" rel="noopener noreferrer">Freepik (Magnific)</a></span>
                   </li>
                   <li className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-2 h-2 bg-[#3557A2] rounded-full"></div>
-                    <span className="font-medium text-sm">Vecteezy</span>
+                    <span className="font-medium text-sm">
+                      <a href="https://www.flaticon.com" target="_blank" rel="noopener noreferrer">Flaticon</a>
+                    </span>
                   </li>
                   <li className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-2 h-2 bg-[#3557A2] rounded-full"></div>
-                    <span className="font-medium text-sm">SVG Repo</span>
+                    <span className="font-medium text-sm">
+                      <a href="https://www.vecteezy.com/" target="_blank" rel="noopener noreferrer">Vecteezy</a>
+                    </span>
                   </li>
                   <li className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <div className="w-2 h-2 bg-[#3557A2] rounded-full"></div>
-                    <span className="font-medium text-sm">Google Fonts (Inter, Poppins, Outfit)</span>
+                    <span className="font-medium text-sm">
+                      <a href="https://www.svgrepo.com" target="_blank" rel="noopener noreferrer">SVG Repo</a>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-2 h-2 bg-[#3557A2] rounded-full"></div>
+                    <span className="font-medium text-sm">
+                      <a href="https://fonts.google.com" target="_blank" rel="noopener noreferrer">Google Fonts</a>
+                    </span>
                   </li>
                 </ul>
 
