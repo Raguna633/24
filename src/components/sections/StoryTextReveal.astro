@@ -58,6 +58,9 @@ const optimizedImage = bgImage.includes("cloudinary.com")
         <img
           src={optimizedImage}
           alt="Story Background"
+          fetchpriority="high"
+          loading="eager"
+          decoding="async"
           class="h-full w-full object-cover opacity-80"
         />
         <div
@@ -72,13 +75,16 @@ const optimizedImage = bgImage.includes("cloudinary.com")
     {
       walasImage && walasName && walasTitle && (
         <div
-          class="walas-card-wrapper absolute top-0 left-0 h-full flex flex-col justify-center bg-[#f5f0ea] z-10 will-animate shadow-[10px_0_20px_rgba(0,0,0,0.1)] pl-[clamp(1.5rem,3vw,4rem)] pr-[clamp(1.5rem,3vw,3rem)] rounded-br-[clamp(2rem,6vw,8rem)] border-2 border-[#b1b2b5FF]"
+          class="walas-card-wrapper absolute top-0 left-0 h-full flex flex-col justify-center bg-[#f5f0ea] z-10 will-animate shadow-[10px_0_20px_rgba(0,0,0,0.1)] pl-[clamp(1.5rem,3vw,4rem)] pr-[clamp(1.5rem,3vw,3rem)] pb-[clamp(1.5rem,3vw,4rem)] rounded-br-[clamp(2rem,6vw,8rem)] border-2 border-[#b1b2b5FF]"
           style="width: clamp(280px, 32vw, 450px);"
         >
           <div class="walas-photo w-full aspect-3/4 overflow-hidden mb-6 relative z-10">
             <img
               src={walasImage}
               alt={walasName}
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
               class="w-full h-full object-cover"
             />
           </div>

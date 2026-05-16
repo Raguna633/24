@@ -41,16 +41,15 @@ export function normalizePhotoPath(path?: any): string {
   return '/assets/placeholder.jpg';
 }
 
-export function generateStudentPassword(name: string, id: string): string {
-  const base = `${name}-${id}-YEARBOOK2025`;
-  let hash = 0;
+// Universal download password for all students.
+// The plaintext "nihayatu24yn" is NEVER stored in MDX files.
+// This constant is the password that will be compared at runtime.
+// It is baked into the bundle at build time, not exposed as a data attribute.
+export const UNIVERSAL_DOWNLOAD_PASSWORD = "nihayatu24yn";
 
-  for (const char of base) {
-    hash = ((hash << 5) - hash) + char.charCodeAt(0);
-    hash |= 0;
-  }
-
-  return Math.abs(hash).toString(36).slice(0, 8).toUpperCase();
+export function generateStudentPassword(_name: string, _id: string): string {
+  // Kept for backward compatibility. All students share the universal password.
+  return UNIVERSAL_DOWNLOAD_PASSWORD;
 }
 
 export function mapStudentCollection(

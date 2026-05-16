@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block development/internal files
+Disallow: /test-page
+
+# Sitemap location
+Sitemap: https://nihayatu-zayn-24.vercel.app/sitemap-index.xml

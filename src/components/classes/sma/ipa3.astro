@@ -68,7 +68,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 <div class="overflow-x-hidden bg-[#fdfaf6]">
   <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
 
-  <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
+  <!-- <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" /> -->
 
   <StoryTextReveal
     walasImage={walasPic}
@@ -108,7 +108,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                       alt={file.label}
                       class="w-full h-full object-cover filter contrast-[1.1] grayscale-[10%] group-hover:grayscale-0 transition-all duration-1000 scale-110"
                       widths={[800, 1200]}
-                      loading="lazy"
+                      loading="eager"
+                      fetchpriority="high"
+                      decoding="async"
                     />
                   </div>
                   {/* Glass Reflection Effect */}

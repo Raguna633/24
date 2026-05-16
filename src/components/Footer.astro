@@ -7,20 +7,20 @@ const currentYear = new Date().getFullYear();
 // Footer links organized by columns
 const footerLinks = {
   about: [
-    { href: "/about", label: "About Us" },
-    { href: "/about#team", label: "Our Team" },
-    { href: "/contact", label: "Contact" },
+    { href: "/about-altie", label: "Altie History" },
+    { href: "/yearbook-committee", label: "Our Team" },
   ],
   explore: [
-    { href: "/students", label: "All Students" },
-    { href: "/gallery", label: "Photo Gallery" },
-    { href: "/memories", label: "Memories" },
+    { href: "/", label: "Home" },
     { href: "/teachers", label: "Teachers" },
+    { href: "/classes", label: "Classes" },
+    { href: "/gallery", label: "Gallery" },
+    { href: "/song", label: "Song" },
   ],
   legal: [
-    { href: "/privacy-policy", label: "Privacy Policy" },
-    { href: "/terms", label: "Terms of Service" },
-    { href: "/request-deletion", label: "Delete My Data" },
+    { href: "#", label: "Privacy Policy", type: "privacy" },
+    { href: "#", label: "Terms of Service", type: "terms" },
+    { href: "#", label: "Credits & Assets", type: "credits" },
   ],
 };
 
@@ -28,7 +28,7 @@ const footerLinks = {
 const socialLinks = [
   {
     name: "Instagram",
-    href: "https://www.instagram.com/az24rqo",
+    href: "https://www.instagram.com/nihayatu24yn",
     icon: "instagram",
     ariaLabel: "Follow us on Instagram",
   },
@@ -37,12 +37,6 @@ const socialLinks = [
     href: "https://chat.whatsapp.com/xxxxx",
     icon: "whatsapp",
     ariaLabel: "Join our WhatsApp group",
-  },
-  {
-    name: "Email",
-    href: "mailto:info@yearbook2025.com",
-    icon: "mail",
-    ariaLabel: "Email us",
   },
 ];
 ---
@@ -144,7 +138,8 @@ const socialLinks = [
               <li>
                 <a
                   href={link.href}
-                  class="text-sm hover:text-black transition-colors duration-200"
+                  data-legal-link={link.type}
+                  class="text-sm hover:text-black transition-colors duration-200 cursor-pointer"
                 >
                   {link.label}
                 </a>
@@ -198,3 +193,26 @@ const socialLinks = [
     </div>
   </div>
 </footer>
+
+<script>
+  function setupLegalModalTriggers() {
+    const legalLinks = document.querySelectorAll('[data-legal-link]');
+    
+    legalLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const type = link.getAttribute('data-legal-link');
+        
+        window.dispatchEvent(new CustomEvent('open-legal-modal', { 
+          detail: { type } 
+        }));
+      });
+    });
+  }
+
+  // Run on initial load
+  setupLegalModalTriggers();
+
+  // Re-run after page transitions
+  document.addEventListener('astro:page-load', setupLegalModalTriggers);
+</script>

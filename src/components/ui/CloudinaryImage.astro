@@ -10,6 +10,8 @@ interface Props {
   loading?: "lazy" | "eager";
   decoding?: "async" | "sync" | "auto";
   fetchpriority?: "high" | "low" | "auto";
+  fallbackSrc?: string;
+  [key: string]: any;
 }
 
 const { 
@@ -21,6 +23,7 @@ const {
   loading = "lazy",
   decoding = "async",
   fetchpriority = "auto",
+  fallbackSrc = "/assets/placeholder.jpg",
   ...rest
 } = Astro.props;
 
@@ -37,5 +40,6 @@ const srcset = getCloudinarySrcset(src, widths);
   loading={loading}
   decoding={decoding}
   fetchpriority={fetchpriority}
+  onerror={`this.onerror=null;this.srcset='';this.src='${fallbackSrc}';this.classList.add('cloudinary-fallback');`}
   {...rest}
 />

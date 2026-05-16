@@ -165,6 +165,8 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               widths={[650, 1300]}
               class="w-full max-w-[650px] h-auto drop-shadow-2xl object-contain relative z-30"
               loading="eager"
+              fetchpriority="high"
+              decoding="async"
             />
           </div>
         </div>
@@ -222,7 +224,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
     </div>
   </section>
 
-    <FadeOverlay />
+    <!-- <FadeOverlay /> -->
 
     <!-- Students Roster Section -->
     <section

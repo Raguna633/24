@@ -63,7 +63,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 <div class="overflow-x-hidden">
   <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
 
-  <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
+  <!-- <FadeOverlay connectorHeight="200" zIndex={10}  showTop={false} /> -->
 
   <StoryTextReveal
     walasImage={walasPic}
@@ -101,6 +101,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           <div class="animate-float-1">
             <img
               src={cppIcon.src}
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
               alt="C++"
               class="w-12 h-12 lg:w-16 lg:h-16 will-animate drop-shadow-[0_8px_8px_rgba(0,0,0,0.3)]"
             />
@@ -113,6 +116,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           <div class="animate-float-2">
             <img
               src={csharpIcon.src}
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
               alt="C#"
               class="w-14 h-14 lg:w-20 lg:h-20 will-animate drop-shadow-[0_8px_8px_rgba(0,0,0,0.3)]"
             />
@@ -125,6 +131,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           <div class="animate-float-3">
             <img
               src={jsIcon.src}
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
               alt="JS"
               class="w-16 h-16 lg:w-24 lg:h-24 will-animate drop-shadow-[0_8px_8px_rgba(0,0,0,0.3)]"
             />
@@ -137,6 +146,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
           <div class="animate-float-4">
             <img
               src={unityIcon.src}
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
               alt="Unity"
               class="w-20 h-20 lg:w-28 lg:h-28 will-animate drop-shadow-[0_8px_8px_rgba(0,0,0,0.3)] opacity-70"
             />
@@ -230,8 +242,10 @@ const { kelas } = Astro.params;
         <CloudinaryImage
           src={tefaGroup}
           alt={"Tim Tefa Pertama :v"}
-          widths={[800, 1200]}
+          fetchpriority="high"
           loading="eager"
+          decoding="async"
+          widths={[800, 1200]}
           class="-bottom-10 relative object-contain w-full h-full drop-shadow-[4px_4px_4px_rgba(0,0,0,0.5)]"
         />
       </div>
@@ -263,11 +277,11 @@ const { kelas } = Astro.params;
       class="first-group absolute inset-0 flex flex-row gap-6 items-center justify-center w-screen h-dvh p-8 mt-8 will-animate"
     >
       <div class="laptop-wrapper relative w-3/5 will-animate">
-        <img src={laptop.src} alt="Laptop" class="laptop-svg" />
+        <img src={laptop.src} fetchpriority="high" loading="eager" decoding="async" alt="Laptop" class="laptop-svg" />
 
         <div class="screen-area">
           <div class="screen-layer" id="boot-screen">
-            <img src={xpLogo.src} alt="Windows XP" class="xp-logo" />
+            <img src={xpLogo.src} fetchpriority="high" loading="eager" decoding="async" alt="Windows XP" class="xp-logo" />
             <div class="loading-container">
               <div class="loading-bar"></div>
             </div>
@@ -285,6 +299,9 @@ const { kelas } = Astro.params;
                 <i
                   ><img
                     src={xpLogo.src}
+                    fetchpriority="low"
+                    loading="eager"
+                    decoding="async"
                     alt="Start"
                     style="height:12px; margin-right:5px;"
                   /></i
@@ -295,9 +312,11 @@ const { kelas } = Astro.params;
             <div id="grup-anomali" class="z-0 w-full h-full">
               <CloudinaryImage
                 src={grup}
+                fetchpriority="high"
+                loading="eager"
+                decoding="async"
                 widths={[400, 800]}
                 alt="Bliss"
-                loading="eager"
                 class="w-full h-full object-contain"
               />
             </div>
@@ -340,26 +359,37 @@ const { kelas } = Astro.params;
         >
           <CloudinaryImage
             src={pplgGroup2}
+            fetchpriority="high"
+            loading="eager"
+            decoding="async"
             alt="Group 2"
-            loading={"eager"}
             widths={[800, 1200]}
             class="w-full h-auto object-cover select-none border border-gray-100"
           />
 
           <img
             src={logoMl.src}
+            fetchpriority="low"
+            loading="eager"
+            decoding="async"
             alt="ML Logo"
             class="second-icon absolute -top-[12%] -left-[16%] w-[45%] md:w-[40%] -rotate-12 pointer-events-none drop-shadow-xl z-20 will-animate"
           />
 
           <img
             src={pramuka.src}
+            fetchpriority="low"
+            loading="eager"
+            decoding="async"
             alt="Pramuka"
             class="second-icon absolute -top-[5%] -right-[12%] w-[18%] md:w-[15%] rotate-12 pointer-events-none drop-shadow-xl z-20 text-[#3B4D7B] will-animate"
           />
 
           <img
             src={jenggotFf.src}
+            fetchpriority="low"
+            loading="eager"
+            decoding="async"
             alt="Jenggot FF"
             class="second-icon absolute top-[11%] left-[37%] w-[12%] pointer-events-none drop-shadow-md z-20 will-animate"
           />
@@ -630,8 +660,7 @@ const { kelas } = Astro.params;
     }
 
     #desktop-screen {
-      /* Ganti dengan URL background Bliss XP */
-      background-image: url("https://res.cloudinary.com/dhbps9kvp/image/upload/v1775903985/Bliss.png");
+      background-image: url("https://res.cloudinary.com/dhbps9kvp/image/upload/v1775903985/Bliss.png") !important;
       background-size: cover;
       background-position: center;
       will-change: opacity;

@@ -194,7 +194,16 @@ const overlayDirection = isTeacherLayout
                     )
                 }
               </div>
+              <!-- Signature -->
+            <div class={`shrink-0 absolute -bottom-14 ${textAlign}`}>
+              <div
+                class="text-accent-200 font-medium text-[clamp(0.8rem,2vw,1.125rem)] inline-block"
+              >
+                <BlockReveal blockColor="#fff" text={`— ${name}`} />
+              </div>
             </div>
+            </div>
+
 
             <!-- Scroll Hint -->
             <div class="scroll-hint">
@@ -214,14 +223,7 @@ const overlayDirection = isTeacherLayout
             </div>
           </div>
 
-          <!-- Signature -->
-          <div class={`shrink-0 pt-4 sm:pt-6 ${textAlign}`}>
-            <div
-              class="text-accent-200 font-medium text-[clamp(0.8rem,2vw,1.125rem)] inline-block"
-            >
-              <BlockReveal blockColor="#fff" text={`— ${name}`} delay={1} />
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

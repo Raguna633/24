@@ -65,7 +65,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 <div class="overflow-x-hidden bg-[#e5e7eb]">
   <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
 
-  <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
+  <!-- <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" /> -->
 
   <StoryTextReveal
     walasImage={walasPic}
@@ -107,7 +107,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                          alt={`Memory ${index+1}`}
                          class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700"
                          widths={[400, 800]}
-                         loading="lazy"
+                         loading="eager"
+                         fetchpriority="high"
+                         decoding="async"
                        />
                        {/* <div class="absolute inset-0 z-10 pointer-events-none" set:html={polaroidMask} /> */}
                     </div>

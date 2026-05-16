@@ -62,7 +62,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 <div class="overflow-x-hidden">
   <ClassHeroSection className={classContent.className} heroImageSrc={heroBg1} />
 
-  <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" />
+  <!-- <FadeOverlay connectorHeight="200" zIndex={10} translateY="-100%" /> -->
 
   <StoryTextReveal
     walasImage={walasPic}
@@ -157,6 +157,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
         >
           <img
             src={reportSvg.src}
+            fetchpriority="low"
+            loading="eager"
+            decoding="async"
             alt=""
             class="w-full h-full object-contain mix-blend-screen"
           />
@@ -231,6 +234,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={atomSvg.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain"
                 />
@@ -241,6 +247,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={breakerSvg1.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain mix-blend-screen"
                 />
@@ -254,7 +263,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   src={group1}
                   alt="12 B APL Group 1"
                   widths={[400, 800, 1200]}
-                  loading="lazy"
+                  fetchpriority="high"
+                  loading="eager"
+                  decoding="async"
                   class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 
@@ -295,6 +306,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={radioactiveSvg.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain mix-blend-screen"
                 />
@@ -305,6 +319,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={breakerSvg2.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain mix-blend-screen"
                 />
@@ -318,7 +335,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   src={group2}
                   alt="12 B APL Group 2"
                   widths={[400, 800, 1200]}
-                  loading="lazy"
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
                   class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 
@@ -387,6 +406,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={microscopeSvg.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain"
                 />
@@ -397,6 +419,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={breakerSvg3.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain mix-blend-screen"
                 />
@@ -410,7 +435,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   src={group3}
                   alt="12 B APL Group 3"
                   widths={[400, 800, 1200]}
-                  loading="lazy"
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
                   class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 
@@ -479,6 +506,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={radioactiveSvg.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain mix-blend-screen"
                 />
@@ -489,6 +519,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
               >
                 <img
                   src={breakerSvg2.src}
+                  fetchpriority="low"
+                  loading="eager"
+                  decoding="async"
                   alt=""
                   class="w-full h-full object-contain mix-blend-screen"
                 />
@@ -502,7 +535,9 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   src={group4}
                   alt="12 B APL Group 4"
                   widths={[400, 800, 1200]}
-                  loading="lazy"
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
                   class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 

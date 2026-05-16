@@ -1,0 +1,92 @@
+---
+import InlineAudioPlayer from "../../ui/InlineAudioPlayer";
+
+interface Props {
+  title: string;
+  lyrics: string[];
+}
+
+const { title, lyrics } = Astro.props;
+
+// Helper untuk memecah lirik menjadi 2 kolom
+const splitIntoColumns = (lyrics: string[]) => {
+  const mid = Math.ceil(lyrics.length / 2);
+  return [lyrics.slice(0, mid), lyrics.slice(mid)];
+};
+
+const columns = splitIntoColumns(lyrics);
+---
+
+<section class="song-audio-section relative w-full bg-[#f5f0eaff] py-24 md:py-32 overflow-hidden">
+  <div class="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+    
+    <!-- Area Judul & Audio Player (Grid 2 Kolom) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-16 will-animate opacity-0" data-animate-song>
+      <!-- Kiri: Judul -->
+      <div class="text-center lg:text-left">
+        <h2 class="text-[#2A358F] font-bold text-3xl md:text-5xl tracking-widest mb-4 font-qontra uppercase">
+          {title}
+        </h2>
+        <div class="w-24 h-1 bg-[#2A358F] mx-auto lg:mx-0 rounded-full"></div>
+      </div>
+      
+      <!-- Kanan: Inline Audio Player -->
+      <div class="w-full">
+        <InlineAudioPlayer client:idle />
+      </div>
+    </div>
+
+    <!-- Lyrics Container -->
+    <div class="lyrics-container relative text-center lg:text-left will-animate opacity-0" data-animate-song>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
+        <div class="flex flex-col gap-3">
+          {columns[0].map((line) => (
+            <p class="text-lg md:text-xl text-[#2A358F] font-serif italic">{line}</p>
+          ))}
+        </div>
+        <div class="flex flex-col gap-3">
+          {columns[1].map((line) => (
+            <p class="text-lg md:text-xl text-[#2A358F] font-serif italic">{line}</p>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { waitForLoading } from "../../../utils/loadingState";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.addEventListener("astro:page-load", async () => {
+    await waitForLoading();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const animateElements = document.querySelectorAll('.song-audio-section [data-animate-song]');
+
+    if (prefersReducedMotion) {
+      gsap.set(animateElements, { opacity: 1, y: 0 });
+      return;
+    }
+
+    gsap.set(animateElements, { opacity: 0, y: 30 });
+
+    ScrollTrigger.batch(animateElements, {
+      start: "top 85%",
+      once: true,
+      onEnter: (batch) => {
+        gsap.to(batch, {
+          opacity: 1,
+          y: 0,
+          duration: 1.0,
+          ease: "power2.out",
+          stagger: 0.2,
+          force3D: true,
+        });
+      }
+    });
+  });
+</script>

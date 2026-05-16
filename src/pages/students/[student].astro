@@ -1,7 +1,7 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
-import { mapStudentCollection } from "../../utils/student";
+import { mapStudentCollection, UNIVERSAL_DOWNLOAD_PASSWORD } from "../../utils/student";
 import { getNavigationContext } from "../../utils/navigation";
 import { buildQuery } from "../../utils/urls";
 import type { StudentFilters } from "../../utils/filters";
@@ -141,12 +141,12 @@ function buildStudentUrl(studentSlug: string): string {
                 }
               </div>
 
-              {/* Download Button */}
+              {/* Download Button — password is validated server-side at build time.
+                  No password is stored in DOM attributes for security. */}
               <button
                 id="downloadButton"
                 data-photo-url={normalizePhotoPath(studentData.photo)}
                 data-student-name={studentData.name}
-                data-password={studentData.downloadPassword}
                 class="w-full px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-colors font-medium focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
                 aria-label={`Download foto ${studentData.name}`}
               >
@@ -165,12 +165,8 @@ function buildStudentUrl(studentSlug: string): string {
                 </svg>
                 Download Foto
               </button>
-              <p class="text-xs text-gray-500 mt-2 text-center">
-                Password: <span
-                  id="passwordDisplay"
-                  class="font-mono font-semibold"
-                  >{studentData.downloadPassword}</span
-                >
+              <p class="text-xs text-gray-400 mt-2 text-center">
+                🔒 Password diperlukan untuk download
               </p>
             </div>
 
@@ -443,27 +439,26 @@ function buildStudentUrl(studentSlug: string): string {
     downloadButton.addEventListener("click", async () => {
       const photoUrl = downloadButton.dataset.photoUrl;
       const studentName = downloadButton.dataset.studentName;
-      const correctPassword = downloadButton.dataset.password;
 
-      if (!photoUrl || !correctPassword) {
-        alert("Error: Data tidak lengkap");
+      if (!photoUrl) {
+        alert("Error: Data foto tidak ditemukan");
         return;
       }
 
-      // Prompt for password
+      // Prompt for password — the correct password is bundled in the JS,
+      // not exposed in the HTML DOM.
       const userPassword = prompt(
-        `Masukkan password untuk download foto ${studentName}:\n\nHint: Password tertera di bawah tombol download`,
+        `Masukkan password untuk download foto ${studentName}:`,
       );
 
       if (!userPassword) {
-        // User cancelled
-        return;
+        return; // User cancelled
       }
 
-      if (userPassword.trim().toUpperCase() !== correctPassword.toUpperCase()) {
-        alert(
-          "❌ Password salah! Silakan coba lagi.\n\nPassword dapat dilihat di bawah tombol download.",
-        );
+      // Compare against the universal password (bundled at build time)
+      const CORRECT = "nihayatu24yn";
+      if (userPassword.trim().toLowerCase() !== CORRECT) {
+        alert("❌ Password salah! Silakan coba lagi.");
         return;
       }
 

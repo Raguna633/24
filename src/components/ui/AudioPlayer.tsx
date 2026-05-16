@@ -81,10 +81,10 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
   };
 
   // Logika Visibilitas:
-  // Komponen tetap ada jika sedang di halaman About (sumber audio)
+  // Komponen tetap ada jika sedang di halaman About atau Song (sumber audio)
   // ATAU jika audio sedang aktif berputar (sedang menyeberang halaman)
-  const isAboutPage = currentPath.includes('/about-altie');
-  const shouldRender = isAboutPage || isPlaying;
+  const isAudioPage = currentPath.includes('/about-altie') || currentPath.includes('/song');
+  const shouldRender = isAudioPage || isPlaying;
 
   if (!shouldRender) return null;
 
@@ -126,7 +126,7 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
       {/* Interactive Popup (Horizontal slide from left) */}
       <div 
         className={`pointer-events-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-left transform ${
-          showPopup && isAboutPage
+          showPopup && isAudioPage
             ? 'opacity-100 scale-100 translate-x-0' 
             : 'opacity-0 scale-95 -translate-x-8 pointer-events-none'
         }`}

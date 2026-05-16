@@ -40,16 +40,17 @@ const modalImg = optimizeCloudinaryUrl(displayImg, 1200);
   data-subjects={subjects} 
   data-img={modalImg}
 >
-  <div class="relative mb-4 overflow-hidden rounded-xl bg-white shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)]">
+  <div class="image-container relative mb-4 overflow-hidden rounded-xl bg-gray-200 shadow-[0_20px_40px_-20px_rgba(24,63,137,0.12)]">
     <img 
       src={optimizedImg} 
       alt={name} 
       width="600"
       height="800"
       transition:name={`teacher-photo-${index}`} 
-      class="w-full aspect-[3/4] object-cover group-hover:scale-105 transition-transform duration-700" 
+      class="teacher-photo w-full aspect-[3/4] object-cover group-hover:scale-105 transition-all duration-700" 
       loading="lazy" 
       decoding="async"
+      onload="this.classList.add('loaded'); this.parentElement.classList.add('is-loaded')"
     />
     <div class="absolute inset-0 bg-[#183f89]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"></div>
   </div>
@@ -64,3 +65,45 @@ const modalImg = optimizeCloudinaryUrl(displayImg, 1200);
     </div>
   </div>
 </div>
+
+<style>
+  /* Skeleton Shimmer Animation */
+  .image-container {
+    background: #f6f7f8;
+    background-image: linear-gradient(
+      to right,
+      #f6f7f8 0%,
+      #edeef1 20%,
+      #f6f7f8 40%,
+      #f6f7f8 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 800px 100%;
+    animation: shimmer 1.5s infinite linear;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -468px 0;
+    }
+    100% {
+      background-position: 468px 0;
+    }
+  }
+
+  /* Image fade-in effect */
+  .teacher-photo {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out, transform 0.7s ease-in-out !important;
+  }
+
+  .teacher-photo.loaded {
+    opacity: 1;
+  }
+
+  /* Stop shimmer when loaded */
+  .image-container.is-loaded {
+    animation: none;
+    background: transparent;
+  }
+</style>

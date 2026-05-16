@@ -11,6 +11,7 @@ import Loading from '../components/Loading.astro';
 import Analytics from '@vercel/analytics/astro'
 import ImmersiveModePrompt from '../components/mobile/ImmersiveModePrompt.astro';
 import AudioPlayer from '../components/ui/AudioPlayer';
+import LegalModal from '../components/ui/LegalModal';
 
 
 interface Props {
@@ -19,6 +20,7 @@ interface Props {
   image?: string;
   noIndex?: boolean;
   forceDesktopView?: boolean;
+  audioSrc?: string;
 }
 
 const { 
@@ -26,7 +28,8 @@ const {
   description = 'Yearbook Digital Nihayatu Zayn - Kenangan indah perjalanan kami',
   image = '/og-image.jpg',
   noIndex = false,
-  forceDesktopView = false // 👈 Ini akan memaksa halaman selalu desktop view
+  forceDesktopView = false, // 👈 Ini akan memaksa halaman selalu desktop view
+  audioSrc = "https://res.cloudinary.com/dhbps9kvp/video/upload/v1777809794/mars-altie.mp3"
 } = Astro.props;
 
 // Site info
@@ -340,8 +343,10 @@ const forceDesktopViewData = forceDesktopView;
     <AudioPlayer 
       transition:persist="audio-player" 
       client:load 
-      src="https://res.cloudinary.com/dhbps9kvp/video/upload/v1777809794/mars-altie.mp3" 
+      src={audioSrc}
     />
+
+    <LegalModal client:load />
 
 
     

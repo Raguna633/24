@@ -1,0 +1,30 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import SongTeamSection from "../components/sections/song/SongTeamSection.astro";
+import SongAudioSection from "../components/sections/song/SongAudioSection.astro";
+import SongCTA from "../components/sections/song/SongCTA.astro";
+import * as songData from "../data/song/song.mdx";
+
+const { frontmatter } = songData;
+---
+
+<MainLayout 
+  title={`${frontmatter.title} - Lagu Angkatan`}
+  audioSrc={frontmatter.audio_player}
+>
+  <div class="w-full relative bg-[#f5f0eaff]">
+    <SongTeamSection 
+      maleName={frontmatter.male_name}
+      malePhoto={frontmatter.male_photo}
+      femaleName={frontmatter.female_name}
+      femalePhoto={frontmatter.female_photo}
+    />
+    
+    <SongAudioSection 
+      title={frontmatter.title}
+      lyrics={frontmatter.lyrics}
+    />
+
+    <SongCTA />
+  </div>
+</MainLayout>

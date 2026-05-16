@@ -6,11 +6,30 @@
   "display": "standalone",
   "background_color": "#f5f0ea",
   "theme_color": "#2A358F",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/192x192.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/512x512.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/180x180.jpg",
+      "sizes": "180x180",
+      "type": "image/jpeg",
       "purpose": "any"
     }
   ]
