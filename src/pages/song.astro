@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import SongTeamSection from "../components/sections/song/SongTeamSection.astro";
 import SongAudioSection from "../components/sections/song/SongAudioSection.astro";
 import SongCTA from "../components/sections/song/SongCTA.astro";
+import CloudinaryImage from "../components/ui/CloudinaryImage.astro";
 import * as songData from "../data/song/song.mdx";
 
 const { frontmatter } = songData;
@@ -12,19 +13,35 @@ const { frontmatter } = songData;
   title={`${frontmatter.title} - Lagu Angkatan`}
   audioSrc={frontmatter.audio_player}
 >
-  <div class="w-full relative bg-[#f5f0eaff]">
-    <SongTeamSection 
-      maleName={frontmatter.male_name}
-      malePhoto={frontmatter.male_photo}
-      femaleName={frontmatter.female_name}
-      femalePhoto={frontmatter.female_photo}
-    />
-    
-    <SongAudioSection 
-      title={frontmatter.title}
-      lyrics={frontmatter.lyrics}
-    />
+  <div class="w-full relative min-h-screen bg-[#f5f0eaff]">
+    <!-- Background Image -->
+    <div class="fixed inset-0 z-0">
+      <CloudinaryImage 
+        src={frontmatter.background_photo}
+        alt="Song Background"
+        class="w-full h-full object-cover opacity-20"
+        widths={[1920]}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="absolute inset-0 bg-linear-to-b from-[#f5f0eaff]/50 via-transparent to-[#f5f0eaff]/80"></div>
+    </div>
 
-    <SongCTA />
+    <!-- Content -->
+    <div class="relative z-10">
+      <SongTeamSection 
+        maleName={frontmatter.male_name}
+        malePhoto={frontmatter.male_photo}
+        femaleName={frontmatter.female_name}
+        femalePhoto={frontmatter.female_photo}
+      />
+      
+      <SongAudioSection 
+        title={frontmatter.title}
+        lyrics={frontmatter.lyrics}
+      />
+
+      <SongCTA />
+    </div>
   </div>
 </MainLayout>

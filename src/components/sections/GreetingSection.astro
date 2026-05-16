@@ -78,10 +78,11 @@ const overlayDirection = isTeacherLayout
           >
             <CloudinaryImage
               src={schoolLogo}
-              widths={[400]}
+              widths={[200]}
               alt="School Logo"
               class="w-full h-full object-contain opacity-75"
-              loading="lazy"
+              loading="eager"
+              fetchpriority="high"
               decoding="auto"
             />
           </div>

@@ -23,7 +23,7 @@ export function initLenis() {
         smoothTouch: false,   // ✅ Disable smooth touch — native touch lebih baik di mobile
         syncTouch: false,     // ✅ Biarkan iOS/Android handle inertia sendiri
         touchInertiaMultiplier: 0.6, // ✅ Sedikit dinaikkan agar tidak terlalu "teredam"
-        wheelMultiplier: 1,
+        wheelMultiplier: 1.6,
         touchMultiplier: 1.0, // ✅ Natural multiplier — mobile feel lebih responsif
         infinite: false,
     });

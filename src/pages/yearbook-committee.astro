@@ -326,6 +326,89 @@ const bknPutri =
           </h2>
         </div>
       </section>
+      <!-- SECTION 6: Closing & Modal CTA -->
+      <section
+        class="w-full mx-8 flex flex-col items-center justify-center mt-16 mb-48 text-center relative z-20"
+      >
+        <h3
+          class="text-2xl md:text-3xl font-medium tracking-wide text-black mb-8 text-shadow-lg"
+        >
+          <TextReveal animateOnScroll={true}>
+            A Message of <span class="font-bold">Gratitude</span>
+          </TextReveal>
+        </h3>
+        <button
+          id="open-thanks-modal"
+          class="px-8 py-4 bg-[#232323] text-[#f5f0ea] font-medium tracking-wider uppercase rounded-md shadow-lg hover:bg-black hover:-translate-y-1 transition-all duration-300"
+        >
+          Read Message
+        </button>
+      </section>
+
+      <!-- Thanks Modal -->
+      <dialog
+        id="thanks-modal"
+        class="bg-transparent p-0 backdrop:bg-black/70 backdrop:backdrop-blur-sm rounded-lg shadow-2xl m-auto max-w-3xl w-[90vw]"
+      >
+        <div
+          class="bg-[#f5f0ea] w-full p-8 md:p-12 rounded-lg relative flex flex-col max-h-[85vh] overflow-y-auto"
+        >
+          <button
+            id="close-thanks-modal"
+            class="absolute top-4 right-4 text-black/50 hover:text-black transition-colors"
+            aria-label="Close modal"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+
+          <h2 class="text-3xl md:text-4xl font-serif text-black mb-8 text-center">
+            Ucapan Terima Kasih
+          </h2>
+
+          <div
+            class="space-y-6 text-black/80 text-base md:text-lg leading-relaxed font-sans text-left"
+          >
+            <p>
+              Kami dari panitia buku kenangan siswa mengucapkan terima kasih
+              yang sebesar-besarnya atas segala bentuk kerja sama, dedikasi,
+              dan support internal yang telah terjalin selama proses pembuatan
+              buku kenangan ini.
+            </p>
+            <p>
+              Secara khusus, rasa terima kasih ini kami sampaikan kepada
+              pembimbing kami, <strong>Ustad Aditia Nurfalah</strong>, yang telah
+              menjembatani komunikasi dan menghubungkan gap antara panitia siswa
+              dengan segenap dewan guru, sehingga setiap proses dapat berjalan
+              dengan lancar.
+            </p>
+            <p>
+              Kami juga berterima kasih kepada semua pihak yang terlibat—teman-teman
+              siswa, guru-guru, serta pihak pondok—yang telah berkontribusi dan
+              memberikan dukungan penuh.
+            </p>
+            <p>
+              Alhamdulillah, berkat rahmat Allah SWT dan kerja keras kita semua,
+              proyek buku kenangan digital berbasis website ini dapat terselesaikan
+              dengan baik, walaupun kami menyadari masih terdapat berbagai
+              kekurangan di dalamnya. Semoga karya sederhana ini dapat menjadi
+              pengingat manis akan kebersamaan kita.
+            </p>
+          </div>
+        </div>
+      </dialog>
     </div>
   </div>
 
@@ -376,6 +459,21 @@ const bknPutri =
     height: 100%;
     object-fit: contain;
     opacity: 0;
+  }
+
+  dialog[open] {
+    animation: dialogFadeIn 0.3s ease-out normal;
+  }
+  
+  @keyframes dialogFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 </style>
 
@@ -556,6 +654,38 @@ const bknPutri =
         }),
       });
     });
+
+    // 6. Modal Logic
+    const openBtn = document.getElementById("open-thanks-modal");
+    const closeBtn = document.getElementById("close-thanks-modal");
+    const modal = document.getElementById("thanks-modal") as HTMLDialogElement;
+
+    if (openBtn && closeBtn && modal) {
+      openBtn.addEventListener("click", () => {
+        modal.showModal();
+        document.body.style.overflow = "hidden"; // Prevent background scrolling
+      });
+
+      const closeModal = () => {
+        modal.close();
+        document.body.style.overflow = ""; // Restore scrolling
+      };
+
+      closeBtn.addEventListener("click", closeModal);
+
+      // Close on backdrop click
+      modal.addEventListener("click", (e) => {
+        const dialogDimensions = modal.getBoundingClientRect();
+        if (
+          e.clientX < dialogDimensions.left ||
+          e.clientX > dialogDimensions.right ||
+          e.clientY < dialogDimensions.top ||
+          e.clientY > dialogDimensions.bottom
+        ) {
+          closeModal();
+        }
+      });
+    }
   });
 
   document.addEventListener("astro:before-swap", () => {

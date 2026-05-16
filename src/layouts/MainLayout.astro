@@ -55,6 +55,29 @@ const forceDesktopViewData = forceDesktopView;
       (function() {
         const desktopWidth = 1440;
         
+        // ================================================================
+        // 🍎 iOS/macOS DETECTION
+        // Safari di iOS & macOS memiliki quirks rendering khusus yang
+        // menyebabkan Desktop Mode (width=1440) tampil kacau.
+        // Solusi: Paksa iOS/macOS selalu gunakan Mobile Mode.
+        // ================================================================
+        const isAppleDevice = /iPhone|iPad|iPod|Macintosh/i.test(navigator.userAgent) &&
+                              // Macintosh bisa jadi iPad dengan desktop UA, cek maxTouchPoints
+                              (navigator.platform === 'iPhone' || 
+                               navigator.platform === 'iPad' || 
+                               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+                               /iPad|iPhone|iPod/.test(navigator.userAgent));
+        
+        // Simpan flag ke sessionStorage agar JS lain bisa membacanya
+        if (isAppleDevice) {
+          sessionStorage.setItem('is-apple-device', 'true');
+          // Reset ke mobile jika sebelumnya tersimpan desktop
+          localStorage.setItem('view-mode', 'mobile');
+          sessionStorage.removeItem('forced-desktop-view');
+        } else {
+          sessionStorage.removeItem('is-apple-device');
+        }
+
         // Aproksimasi awal agar halaman cepat dirender tanpa FOUC parah
         const physicalWidth = Math.max(window.screen.availWidth, window.screen.availHeight);
         const approxZoomRatio = physicalWidth / desktopWidth;
@@ -75,6 +98,12 @@ const forceDesktopViewData = forceDesktopView;
           viewport.setAttribute('content',
             'width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover'
           );
+        }
+
+        // 🍎 iOS/macOS: selalu mobile, abaikan forceDesktopView
+        if (isAppleDevice) {
+          setMobileViewport();
+          return; // Hentikan eksekusi lebih lanjut
         }
 
         if (forceDesktopView) {
@@ -295,7 +324,7 @@ const forceDesktopViewData = forceDesktopView;
 
   </head>
   
-  <body class="min-h-dvh">
+  <body class="min-h-dvh" data-force-desktop={forceDesktopView ? 'true' : 'false'}>
     <Loading />
     <Analytics/>
     <!-- Skip to main content (accessibility) -->
@@ -375,9 +404,36 @@ const forceDesktopViewData = forceDesktopView;
         const closeRotateOverlayBtn = document.getElementById('closeRotateOverlay');
         
         const backToTopButton = document.getElementById('back-to-top');
+        const iosBadge = document.getElementById('ios-info-badge');
+        const iosBottomSheet = document.getElementById('ios-desktop-hint');
+
+        // 🍎 iOS/macOS: Hide toggle, show info badge, enforce mobile mode
+        const isAppleDevice = sessionStorage.getItem('is-apple-device') === 'true';
+        const isPageForceDesktop = document.body.dataset.forceDesktop === 'true';
+
+        if (isAppleDevice) {
+          if (toggleButton) (toggleButton as HTMLElement).style.display = 'none';
+          if (iosBadge) (iosBadge as HTMLElement).style.display = 'flex';
+          // Safety net: force mobile mode in localStorage too
+          localStorage.setItem('view-mode', 'mobile');
+
+          // 🍎 Show bottom sheet ONCE per session on forceDesktop pages
+          if (isPageForceDesktop && iosBottomSheet) {
+            const shownKey = 'ios-desktop-hint-shown';
+            const alreadyShown = sessionStorage.getItem(shownKey);
+            if (!alreadyShown) {
+              setTimeout(() => {
+                (iosBottomSheet as HTMLElement).classList.add('visible');
+                sessionStorage.setItem(shownKey, 'true');
+              }, 2000); // Delay agar user sempat melihat konten dulu
+            }
+          }
+          // Early return from Apple-specific branch — skip all toggle/desktop logic
+        }
 
         // Check if this page is forced to desktop view
-        const isForced = sessionStorage.getItem('forced-desktop-view') === 'true';
+        // On Apple devices, isForced is always false (cleared in HEAD script)
+        const isForced = !isAppleDevice && sessionStorage.getItem('forced-desktop-view') === 'true';
 
         // Initialize orientation state tracking with robust logic
         if ((window as any).lastOrientation === undefined) {
@@ -661,6 +717,15 @@ const forceDesktopViewData = forceDesktopView;
           toggleButton.addEventListener('click', toggleViewMode);
         }
 
+        // 🍎 iOS Bottom Sheet dismiss logic
+        const dismissIosSheet = () => {
+          if (iosBottomSheet) (iosBottomSheet as HTMLElement).classList.remove('visible');
+        };
+        const hintClose = document.getElementById('ios-hint-close');
+        const hintDismiss = document.getElementById('ios-hint-dismiss');
+        if (hintClose) hintClose.addEventListener('click', dismissIosSheet);
+        if (hintDismiss) hintDismiss.addEventListener('click', dismissIosSheet);
+
         if (closeRotateOverlayBtn) {
           closeRotateOverlayBtn.addEventListener('click', hideRotateOverlay);
         }
@@ -682,24 +747,26 @@ const forceDesktopViewData = forceDesktopView;
 
         // --- Post-Navigation Re-Sync ---
         
-        updateToggleButton();
-        initDesktopViewToast();
+        if (!isAppleDevice) {
+          updateToggleButton();
+          initDesktopViewToast();
 
-        // 🔒 Initial orientation check: if Landscape but Mobile mode, switch to Desktop
-        const initialIsPortrait = (window as any).lastOrientation;
-        const initialMode = getCurrentMode();
-        if (!initialIsPortrait && initialMode === 'mobile' && !isForced) {
-          // Add a small delay to ensure we don't conflict with initial rendering
-          setTimeout(() => {
-            const checkAgain = window.innerWidth > window.innerHeight;
-            if (checkAgain) switchToMode('desktop');
-          }, 200);
-        }
+          // 🔒 Initial orientation check: if Landscape but Mobile mode, switch to Desktop
+          const initialIsPortrait = (window as any).lastOrientation;
+          const initialMode = getCurrentMode();
+          if (!initialIsPortrait && initialMode === 'mobile' && !isForced) {
+            // Add a small delay to ensure we don't conflict with initial rendering
+            setTimeout(() => {
+              const checkAgain = window.innerWidth > window.innerHeight;
+              if (checkAgain) switchToMode('desktop');
+            }, 200);
+          }
 
-        // 🔒 Initial orientation check for forced desktop
-        const isInitialPortrait = window.matchMedia("(orientation: portrait)").matches;
-        if (isForced && isInitialPortrait) {
-          setTimeout(() => showRotateOverlay('desktop'), 100);
+          // 🔒 Initial orientation check for forced desktop
+          const isInitialPortrait = window.matchMedia("(orientation: portrait)").matches;
+          if (isForced && isInitialPortrait) {
+            setTimeout(() => showRotateOverlay('desktop'), 100);
+          }
         }
 
         const pendingToast = sessionStorage.getItem('pending-view-mode-toast');
@@ -1042,6 +1109,156 @@ const forceDesktopViewData = forceDesktopView;
         }
       }
 
+      /* ==================== iOS INFO BADGE ==================== */
+      .ios-info-badge {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000005;
+
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        padding: 10px 16px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1.5px solid #e5e7eb;
+        border-radius: 50px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: default;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      @media (max-width: 640px) {
+        .ios-info-badge {
+          bottom: 16px;
+          right: 16px;
+          padding: 8px 14px;
+          font-size: 0.75rem;
+        }
+      }
+
+      /* ==================== iOS BOTTOM SHEET (forceDesktop pages) ==================== */
+      .ios-desktop-hint {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000006;
+        transform: translateY(110%);
+        transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+        pointer-events: none;
+      }
+
+      .ios-desktop-hint.visible {
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .ios-desktop-hint__inner {
+        background: #ffffff;
+        border-top: 1px solid #e5e7eb;
+        border-radius: 20px 20px 0 0;
+        padding: 24px 20px 32px;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .ios-desktop-hint__close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        border: none;
+        border-radius: 50%;
+        color: #6b7280;
+        cursor: pointer;
+        transition: background 0.2s;
+        min-height: unset;
+        min-width: unset;
+        padding: 0;
+      }
+
+      .ios-desktop-hint__close:hover {
+        background: #e5e7eb;
+      }
+
+      .ios-desktop-hint__icon {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+
+      .ios-desktop-hint__title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111827;
+        text-align: center;
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+
+      .ios-desktop-hint__body {
+        font-size: 0.85rem;
+        color: #4b5563;
+        text-align: center;
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+
+      .ios-desktop-hint__tip {
+        font-size: 0.8rem;
+        color: #6b7280;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px 14px;
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 18px;
+      }
+
+      .ios-desktop-hint__btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background: #2A358F;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+        min-height: unset;
+      }
+
+      .ios-desktop-hint__btn:active {
+        background: #1e2870;
+        transform: scale(0.98);
+      }
+
+      /* Handle iPhone safe area (home indicator) */
+      @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        .ios-desktop-hint__inner {
+          padding-bottom: calc(32px + env(safe-area-inset-bottom));
+        }
+      }
+
       /* ==================== DESKTOP MODE OPTIMIZATIONS ==================== */
       /* When in desktop mode, ensure better mobile experience */
       @media (max-width: 768px) {
@@ -1070,7 +1287,7 @@ const forceDesktopViewData = forceDesktopView;
     <div class="floating-ui-container" transition:persist="floating-ui-container">
       <Header />
 
-      {/* View Mode Toggle Button */}
+      {/* View Mode Toggle Button - Hidden for iOS/macOS via JS, shown for others */}
       <button 
         id="viewModeToggle"
         class="view-mode-toggle group"
@@ -1082,6 +1299,39 @@ const forceDesktopViewData = forceDesktopView;
           <span id="toastText" class="toast-text hidden">Gunakan Desktop View Untuk Pengalaman Terbaik 😊</span>
         </div>
       </button>
+
+      {/* iOS/macOS Info Badge - Only visible for Apple devices */}
+      <div
+        id="ios-info-badge"
+        style="display: none;"
+        class="ios-info-badge"
+        aria-label="iOS compatibility notice"
+      >
+        <span>🍎</span>
+        <span id="ios-badge-text">Mobile Only</span>
+      </div>
+
+      {/* iOS Bottom Sheet — Appears on forceDesktopView pages for Apple device users */}
+      <div id="ios-desktop-hint" class="ios-desktop-hint" role="dialog" aria-modal="false" aria-label="Informasi Kompatibilitas">
+        <div class="ios-desktop-hint__inner">
+          <button id="ios-hint-close" class="ios-desktop-hint__close" aria-label="Tutup">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <div class="ios-desktop-hint__icon">🖥️</div>
+          <h3 class="ios-desktop-hint__title">Tampilan Terbaik di Android & Windows</h3>
+          <p class="ios-desktop-hint__body">
+            Halaman ini dirancang dengan pengalaman <strong>Desktop Imersif</strong> yang saat ini belum dioptimalkan untuk Safari iOS.
+            Konten tetap dapat dinikmati, namun animasi dan layout mungkin berbeda.
+          </p>
+          <p class="ios-desktop-hint__tip">
+            💡 Untuk pengalaman penuh, buka di <strong>Chrome/Firefox Android</strong> atau browser desktop.
+          </p>
+          <button id="ios-hint-dismiss" class="ios-desktop-hint__btn">Oke, Mengerti</button>
+        </div>
+      </div>
 
       {/* Back to Top Button */}
       <button 

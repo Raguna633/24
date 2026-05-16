@@ -55,14 +55,14 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
   <!-- Content Container -->
   <div
-    class="relative z-10 container-custom p-4 sm:p-6 lg:p-8 h-full flex items-center justify-center"
+    class="relative z-10 w-full min-h-screen flex items-center justify-center p-6 sm:p-12 lg:p-20"
   >
-    <div class="max-w-4xl mx-auto h-full text-center flex flex-col items-center">
+    <div class="container-custom max-w-5xl mx-auto text-center flex flex-col items-center">
       <!-- Who Us? Heading -->
       <h2
-        class="font-heading font-bold text-white mb-0
+        class="font-heading font-bold text-white mb-4
                leading-tight"
-        style="font-size: clamp(1rem, 4vw, 4rem);"
+        style="font-size: clamp(2.5rem, 8vw, 5rem);"
         data-about-animate
       >
         Who Us?
@@ -70,19 +70,19 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
       <!-- Decorative line -->
       <div
-        class="flex items-center justify-center gap-4 mb-2"
+        class="flex items-center justify-center gap-4 mb-8 lg:mb-0"
         data-about-animate
       >
-        <div class="w-16 sm:w-24 h-px bg-[rgb(var(--color-primary))]"></div>
-        <div class="w-3 h-3 bg-[rgb(var(--color-primary))] rounded-full"></div>
-        <div class="w-16 sm:w-24 h-px bg-[rgb(var(--color-primary))]"></div>
+        <div class="w-12 sm:w-24 h-px bg-[rgb(var(--color-primary))] opacity-60"></div>
+        <div class="w-2 h-2 bg-[rgb(var(--color-primary))] rounded-full"></div>
+        <div class="w-12 sm:w-24 h-px bg-[rgb(var(--color-primary))] opacity-60"></div>
       </div>
 
       <!-- About Paragraph -->
-      <div class="space-y-2 sm:space-y-4 w-full max-w-4xl px-2">
+      <div class="space-y-6 sm:space-y-8 w-full max-w-4xl px-4 sm:px-0">
         <p
           class="text-white leading-relaxed font-light mx-auto"
-          style="font-size: clamp(0.7rem, 2vw, 1.7rem);"
+          style="font-size: clamp(1.1rem, 2.5vw, 1.8rem);"
           data-about-animate
         >
           Kami adalah Angkatan Nihayatu Zayn, generasi yang penuh semangat dan
@@ -91,8 +91,8 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
         </p>
 
         <p
-          class="text-white leading-relaxed mx-auto"
-          style="font-size: clamp(0.5rem, 1.5vw, 1.2rem);"
+          class="text-white leading-relaxed mx-auto opacity-90"
+          style="font-size: clamp(0.9rem, 1.8vw, 1.25rem);"
           data-about-animate
         >
           Dari momen orientasi yang penuh kegembiraan, hingga acara pelepasan
@@ -102,8 +102,8 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
         </p>
 
         <p
-          class="text-white italic leading-relaxed mx-auto"
-          style="font-size: clamp(0.5rem, 1.5vw, 1.2rem);"
+          class="text-white italic leading-relaxed mx-auto opacity-80"
+          style="font-size: clamp(0.9rem, 1.8vw, 1.25rem);"
           data-about-animate
         >
           Yearbook ini adalah bentuk apresiasi kami terhadap masa-masa berharga
@@ -113,15 +113,15 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
       </div>
 
       <!-- Call to action hint -->
-      <div class="mt-8" data-about-animate>
+      <div class="mt-12 sm:mt-16" data-about-animate>
         <p
-          class="text-[rgb(var(--color-primary))] font-medium text-xs sm:text-base"
+          class="text-[rgb(var(--color-primary))] font-medium text-sm sm:text-lg opacity-80"
         >
           Scroll ke bawah untuk melihat pesan dari guru-guru dan panitia kami
         </p>
-        <div class="mt-4 animate-bounce">
+        <div class="mt-6 animate-bounce">
           <svg
-            class="w-6 h-6 mx-auto text-[rgb(var(--color-primary))]"
+            class="w-6 h-6 sm:w-8 sm:h-8 mx-auto text-[rgb(var(--color-primary))]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -254,41 +254,33 @@ import CloudinaryImage from "../ui/CloudinaryImage.astro";
         opacity: 0,
       });
 
-      // --- MOBILE / UNPINNED REVEAL LOGIC ---
-      // If we are on mobile hardware, we don't rely on the parent timeline.
-      // We trigger the animation as soon as the section enters the viewport.
-      const isMobileHardware = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || 
-                               (navigator.maxTouchPoints > 0) ||
-                               window.matchMedia("(pointer: coarse)").matches;
-      
-      if (isMobileHardware) {
+      // --- UNIFIED REVEAL LOGIC ---
+      const triggerReveal = () => {
+        // Prevent double animation
+        if ((section as any)._isAnimated) return;
+        (section as any)._isAnimated = true;
+
         gsap.to(allElements, {
-          y: 0,
-          opacity: 1,
-          stagger: 0.08,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 85%", // Trigger when top of section is at 85% of viewport
-            toggleActions: "play none none reverse",
-          }
+          y: 0, opacity: 1, stagger: 0.08, duration: 1, ease: "power2.out",
+          overwrite: true
         });
 
         if (sectionBg) {
-          gsap.to(sectionBg, {
-            scale: 1.1,
-            duration: 2,
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true
-            }
-          });
+          gsap.to(sectionBg, { scale: 1.1, duration: 2, ease: "power1.out", overwrite: true });
         }
-      }
+      };
+
+      // Always use ScrollTrigger reveal for all devices
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top 85%",
+        onEnter: triggerReveal,
+        // Optional: reverse on leave if you want it to re-animate when scrolling back up
+        // toggleActions: "play none none reverse",
+      });
     }
+
+
 
     return { allElements, sectionBg };
   }

@@ -228,12 +228,39 @@ function isActive(href: string, currentPath: string): boolean {
       }
     };
 
+    // Force close all menus
+    const closeAllMenus = () => {
+      isDesktopNavVisible = false;
+      isMobileNavVisible = false;
+      isDesktopNavHovered = false;
+
+      // Reset Desktop Nav DOM
+      desktopNav.classList.remove("opacity-100", "translate-x-0", "pointer-events-auto");
+      desktopNav.classList.add("opacity-0", "translate-x-[-20px]", "pointer-events-none");
+
+      // Reset Mobile Nav DOM
+      mobileNav.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
+      mobileNav.classList.add("opacity-0", "translate-y-[-20px]", "pointer-events-none");
+      mobileOverlay.classList.add("hidden");
+
+      // Reset Scroll Lock
+      document.body.style.overflow = "";
+      btn.blur();
+    };
+
     // 🚀 Jalankan segera untuk check posisi scroll saat ini (penting saat refresh/back)
     handleScroll();
+    
+    // 🚀 Reset status menu saat inisialisasi (penting untuk transition:persist)
+    // Tunggu sebentar agar Astro selesai melakukan swap DOM jika perlu
+    setTimeout(() => {
+      closeAllMenus();
+    }, 10);
 
     // Toggle desktop navigation (untuk klik)
-    const toggleDesktopNav = () => {
+    const toggleDesktopNav = (event?: Event) => {
       if (window.innerWidth < 768) return;
+      if (event) event.stopPropagation();
 
       isDesktopNavVisible = !isDesktopNavVisible;
 
@@ -243,17 +270,14 @@ function isActive(href: string, currentPath: string): boolean {
         );
         desktopNav.classList.add("opacity-100", "translate-x-0", "pointer-events-auto");
       } else {
-        desktopNav.classList.remove("opacity-100", "translate-x-0", "pointer-events-auto");
-        desktopNav.classList.add(
-          "opacity-0", "translate-x-[-20px]", "pointer-events-none"
-        );
-        btn.blur();
+        closeAllMenus();
       }
     };
 
     // Toggle mobile navigation
-    const toggleMobileNav = () => {
+    const toggleMobileNav = (event?: Event) => {
       if (window.innerWidth >= 768) return;
+      if (event) event.stopPropagation();
 
       isMobileNavVisible = !isMobileNavVisible;
 
@@ -263,14 +287,9 @@ function isActive(href: string, currentPath: string): boolean {
         );
         mobileNav.classList.add("opacity-100", "translate-y-0", "pointer-events-auto");
         mobileOverlay.classList.remove("hidden");
+        document.body.style.overflow = "hidden"; // Lock scroll
       } else {
-        mobileNav.classList.remove("opacity-100", "translate-y-0", "pointer-events-auto");
-        mobileNav.classList.add(
-          "opacity-0", "translate-y-[-20px]", "pointer-events-none"
-        );
-        mobileOverlay.classList.add("hidden");
-        btn.blur();
-        document.body.style.overflow = "";
+        closeAllMenus();
       }
     };
 
@@ -307,16 +326,25 @@ function isActive(href: string, currentPath: string): boolean {
     btn.addEventListener("mouseleave", hideDesktopNavOnLeave);
 
     // Klik logo: buka/tutup nav sesuai viewport
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
       if (window.innerWidth >= 768) {
-        toggleDesktopNav();
+        toggleDesktopNav(e);
       } else {
-        toggleMobileNav();
+        toggleMobileNav(e);
       }
     });
 
     // Klik overlay untuk menutup mobile nav
-    mobileOverlay.addEventListener("click", toggleMobileNav);
+    mobileOverlay.addEventListener("click", (e) => toggleMobileNav(e));
+
+    // Tutup nav saat klik link (untuk navigasi lancar)
+    const navLinks = document.querySelectorAll("#floating-header a");
+    navLinks.forEach(link => {
+      link.addEventListener("click", () => {
+        // Beri sedikit delay agar user sempat melihat feedback klik sebelum ditutup
+        setTimeout(closeAllMenus, 100);
+      });
+    });
 
     // Tutup dengan tombol Escape
     const handleKeydown = (event: KeyboardEvent) => {
@@ -368,16 +396,7 @@ function isActive(href: string, currentPath: string): boolean {
   //    → Event khusus Astro yang terpanggil setiap kali halaman selesai
   //      dimuat, baik saat pertama kali maupun setelah navigasi
   //      View Transitions. INI adalah cara yang benar untuk Astro.
-  //
-  // 2. 'DOMContentLoaded'
-  //    → Fallback standar browser. Terpanggil saat pertama load jika
-  //      View Transitions belum aktif atau script dimuat sebelum
-  //      'astro:page-load' sempat terdaftar.
-  //
-  // Dengan mendaftar keduanya, kode ini aman di semua kondisi.
-  // =================================================================
   document.addEventListener("astro:page-load", initHeader);
-  document.addEventListener("DOMContentLoaded", initHeader);
 </script>
 
 <style>
