@@ -1,5 +1,5 @@
-const CACHE_NAME = 'nihayatu-zayn-v2';
-const STATIC_CACHE = 'static-v2';
+const CACHE_NAME = 'nihayatu-zayn-v3';
+const STATIC_CACHE = 'static-v3';
 
 // Core assets to cache immediately on install
 const PRECACHE_ASSETS = [
