@@ -2,6 +2,25 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
+const congrats = defineCollection({
+    loader: glob({ pattern: '**/*.{md,mdx}', base: 'src/data/congrats' }),
+    schema: z.object({
+        title: z.string(),
+        tagline: z.string(),
+        message: z.string().optional(),
+        smk: z.array(z.string()).optional(),
+        sma: z.array(z.string()).optional(),
+        nextCta: z.object({
+            title: z.string(),
+            url: z.string(),
+        }).optional(),
+        prevCta: z.object({
+            title: z.string(),
+            url: z.string(),
+        }).optional(),
+    }),
+});
+
 const students = defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: 'src/data/students' }),
     schema: z.object({
@@ -114,4 +133,5 @@ export const collections = {
     classes,
     galleries,
     teachers,
+    congrats,
 };

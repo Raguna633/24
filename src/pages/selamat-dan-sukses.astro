@@ -1,0 +1,188 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import * as congratsData from "../data/congrats/congrats.mdx";
+import CloudinaryImage from "../components/ui/CloudinaryImage.astro";
+import GalleryLightbox from "../components/GalleryLightbox.tsx";
+
+const { frontmatter } = congratsData;
+const { title, tagline, message, smk, sma, nextCta, prevCta } = frontmatter;
+
+// Generate Lightbox items
+const smaItems = (sma || []).map((img: string, idx: number) => ({
+  id: `sma-${idx}`,
+  src: img,
+  alt: "Siswa SMA",
+  title: "Siswa/i SMA Lolos SNBP"
+}));
+
+const smkItems = (smk || []).map((img: string, idx: number) => ({
+  id: `smk-${idx}`,
+  src: img,
+  alt: "Siswa SMK",
+  title: "Siswa/i SMK Lolos SNBP/Kerja"
+}));
+
+const lightboxItems = [...smaItems, ...smkItems];
+---
+
+<MainLayout title={title} description={message}>
+  <div class="relative min-h-screen bg-[#f5f0eaff] overflow-hidden">
+    <!-- SVG Pattern Background -->
+    <div class="absolute inset-0 z-0 opacity-[0.03]">
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="dotPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="2" fill="#2A358F" />
+            <path d="M 20 0 L 40 20 L 20 40 L 0 20 Z" fill="none" stroke="#2A358F" stroke-width="0.5" opacity="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dotPattern)" />
+      </svg>
+    </div>
+
+    <!-- Content Wrapper -->
+    <div class="relative z-10 px-6 py-24 max-w-7xl mx-auto">
+      
+      <!-- Header -->
+      <div class="text-center mb-20 space-y-6">
+        <p class="gsap-reveal text-[#2A358F]/50 text-sm md:text-base tracking-[0.3em] uppercase font-medium">{tagline}</p>
+        <h1 class="gsap-reveal text-5xl md:text-7xl font-bold text-[#2A358F] leading-tight font-serif">{title}</h1>
+        <p class="gsap-reveal max-w-3xl mx-auto text-gray-600 md:text-lg leading-relaxed mt-6">
+          {message}
+        </p>
+      </div>
+
+      <!-- SMA Section -->
+      {smaItems.length > 0 && (
+        <div class="mb-24">
+          <div class="gsap-reveal flex items-center gap-6 mb-12 justify-center">
+            <div class="h-px bg-[#2A358F]/20 flex-1 max-w-[150px]"></div>
+            <h2 class="text-3xl md:text-4xl font-bold text-[#2A358F] uppercase tracking-widest font-serif">SMA</h2>
+            <div class="h-px bg-[#2A358F]/20 flex-1 max-w-[150px]"></div>
+          </div>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {smaItems.map((item: any) => (
+              <div 
+                class="gsap-card rounded-2xl overflow-hidden shadow-lg border-4 border-white transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl bg-white opacity-0 translate-y-8"
+              >
+                <button data-gallery-id={item.id} class="w-full h-full block aspect-[3/4] relative cursor-pointer outline-none">
+                  <CloudinaryImage 
+                    src={item.src} 
+                    alt={item.alt}
+                    class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    widths={[400, 600]}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- SMK Section -->
+      {smkItems.length > 0 && (
+        <div class="mb-20">
+          <div class="gsap-reveal flex items-center gap-6 mb-12 justify-center">
+            <div class="h-px bg-[#2A358F]/20 flex-1 max-w-[150px]"></div>
+            <h2 class="text-3xl md:text-4xl font-bold text-[#2A358F] uppercase tracking-widest font-serif">SMK</h2>
+            <div class="h-px bg-[#2A358F]/20 flex-1 max-w-[150px]"></div>
+          </div>
+          
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {smkItems.map((item: any) => (
+              <div 
+                class="gsap-card rounded-2xl overflow-hidden shadow-lg border-4 border-white transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl bg-white opacity-0 translate-y-8"
+              >
+                <button data-gallery-id={item.id} class="w-full h-full block aspect-[3/4] relative cursor-pointer outline-none">
+                  <CloudinaryImage 
+                    src={item.src} 
+                    alt={item.alt}
+                    class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    widths={[400, 600]}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <!-- CTA Navigation -->
+      <div class="gsap-reveal flex flex-col sm:flex-row items-center justify-between mt-24 border-t border-[#2A358F]/10 pt-10 gap-6">
+        {prevCta && prevCta.url && (
+          <a href={prevCta.url} class="group flex items-center gap-4 px-6 py-4 rounded-full hover:bg-[#2A358F]/5 transition-all text-left w-full sm:w-auto">
+            <div class="w-12 h-12 rounded-full border border-[#2A358F]/30 flex items-center justify-center group-hover:border-[#2A358F] group-hover:-translate-x-1 transition-all shrink-0 bg-white shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#2A358F]"><path d="m15 18-6-6 6-6"/></svg>
+            </div>
+            <div>
+              <p class="text-[10px] md:text-xs text-gray-500 tracking-widest uppercase mb-1">Sebelumnya</p>
+              <p class="text-[#2A358F] font-bold md:text-lg">{prevCta.title}</p>
+            </div>
+          </a>
+        )}
+        
+        {nextCta && nextCta.url && (
+          <a href={nextCta.url} class="group flex items-center gap-4 px-6 py-4 rounded-full hover:bg-[#2A358F]/5 transition-all text-right w-full sm:w-auto sm:ml-auto justify-end">
+            <div>
+              <p class="text-[10px] md:text-xs text-gray-500 tracking-widest uppercase mb-1">Selanjutnya</p>
+              <p class="text-[#2A358F] font-bold md:text-lg">{nextCta.title}</p>
+            </div>
+            <div class="w-12 h-12 rounded-full border border-[#2A358F]/30 flex items-center justify-center group-hover:border-[#2A358F] group-hover:translate-x-1 transition-all shrink-0 bg-white shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#2A358F]"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+          </a>
+        )}
+      </div>
+
+    </div>
+  </div>
+
+  <GalleryLightbox items={lightboxItems} client:idle />
+</MainLayout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  
+  document.addEventListener("astro:page-load", () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initial state for reveals
+    gsap.set(".gsap-reveal", { y: 30, opacity: 0 });
+
+    // Header and generic reveals
+    ScrollTrigger.batch(".gsap-reveal", {
+      onEnter: (elements) => {
+        gsap.to(elements, {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power2.out"
+        });
+      },
+      once: true
+    });
+
+    // Cards staggered reveal per section
+    const cardSections = document.querySelectorAll('.mb-24, .mb-20');
+    cardSections.forEach((section) => {
+      const cards = section.querySelectorAll('.gsap-card');
+      if (cards.length > 0) {
+        gsap.to(cards, {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            once: true
+          }
+        });
+      }
+    });
+  });
+</script>
