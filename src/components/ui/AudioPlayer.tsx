@@ -107,7 +107,10 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
         className={`pointer-events-auto group relative flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-500 hover:scale-105 active:scale-95 overflow-hidden ${
           isPlaying ? 'bg-[#f5f0ea] text-[#2A358F]' : 'bg-[#2A358F] text-[#f5f0ea]'
         }`}
-        aria-label={isPlaying ? "Jeda Mars" : "Putar Mars"}
+        aria-label={isPlaying 
+          ? `Jeda ${currentPath.includes('/song') ? "Lagu" : "Mars"}` 
+          : `Putar ${currentPath.includes('/song') ? "Lagu" : "Mars"}`
+        }
       >
         {/* Ripple effect when playing - Lebih halus (opacity-20) */}
         {isPlaying && (
@@ -136,8 +139,12 @@ export default function AudioPlayer({ src }: AudioPlayerProps) {
             <MusicIcon className="w-4 h-4" />
           </div>
           <div className="whitespace-nowrap">
-            <p className="text-sm font-bold tracking-wide m-0">Dengarkan Mars</p>
-            <p className="text-xs text-[#f5f0ea]/70 font-medium tracking-wider m-0">Al-Ittihad Official</p>
+            <p className="text-sm font-bold tracking-wide m-0">
+              {currentPath.includes('/song') ? "Dengarkan Lagu Angkatan" : "Dengarkan Mars"}
+            </p>
+            <p className="text-xs text-[#f5f0ea]/70 font-medium tracking-wider m-0">
+              {currentPath.includes('/song') ? "Nihayatu Zayn Official" : "Al-Ittihad Official"}
+            </p>
           </div>
           <button 
             onClick={() => setShowPopup(false)}

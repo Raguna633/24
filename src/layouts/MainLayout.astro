@@ -732,10 +732,10 @@ const forceDesktopViewData = forceDesktopView;
 
         if (backToTopButton) {
           const scrollHandler = () => {
-            if (window.scrollY > 300) {
-              backToTopButton.classList.remove('opacity-0', 'pointer-events-none');
+            if (window.scrollY > 400) {
+              backToTopButton.classList.remove('hidden-state');
             } else {
-              backToTopButton.classList.add('opacity-0', 'pointer-events-none');
+              backToTopButton.classList.add('hidden-state');
             }
           };
           window.addEventListener('scroll', scrollHandler);
@@ -1252,6 +1252,60 @@ const forceDesktopViewData = forceDesktopView;
         transform: scale(0.98);
       }
 
+      /* ==================== BACK TO TOP ==================== */
+      .back-to-top {
+        position: fixed;
+        bottom: 90px; /* Di atas View Mode Toggle */
+        right: 20px;
+        z-index: 1000004;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        box-shadow: 
+          0 4px 12px rgba(0, 0, 0, 0.08),
+          0 2px 4px rgba(0, 0, 0, 0.05);
+        
+        color: #2A358F;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transform: translateY(0) scale(1);
+      }
+
+      .back-to-top:hover {
+        background: #ffffff;
+        transform: translateY(-4px) scale(1.1);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        color: #3557A2;
+      }
+
+      .back-to-top:active {
+        transform: translateY(-2px) scale(1.05);
+      }
+
+      .back-to-top.hidden-state {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px) scale(0.8);
+      }
+
+      @media (max-width: 640px) {
+        .back-to-top {
+          bottom: 80px;
+          right: 16px;
+          width: 40px;
+          height: 40px;
+        }
+      }
+
       /* Handle iPhone safe area (home indicator) */
       @supports (padding-bottom: env(safe-area-inset-bottom)) {
         .ios-desktop-hint__inner {
@@ -1336,7 +1390,7 @@ const forceDesktopViewData = forceDesktopView;
       {/* Back to Top Button */}
       <button 
         id="back-to-top"
-        class="back-to-top opacity-0 pointer-events-none"
+        class="back-to-top hidden-state"
         aria-label="Back to top"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
