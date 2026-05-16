@@ -395,7 +395,11 @@ function buildStudentUrl(studentSlug: string): string {
   }
 </style>
 
-<script define:vars={{ UNIVERSAL_DOWNLOAD_PASSWORD }}>
+<script is:inline define:vars={{ UNIVERSAL_DOWNLOAD_PASSWORD }}>
+  window._UNIVERSAL_DOWNLOAD_PASSWORD = UNIVERSAL_DOWNLOAD_PASSWORD;
+</script>
+
+<script>
   import gsap from "gsap";
   import { waitForLoading } from "../../../utils/loadingState";
 
@@ -462,15 +466,13 @@ function buildStudentUrl(studentSlug: string): string {
     }
 
     // --- DOWNLOAD BUTTON LOGIC ---
-    // UNIVERSAL_DOWNLOAD_PASSWORD is injected from server at build time via define:vars.
-    // It is NOT exposed as a data attribute in the DOM.
     const downloadButton = document.getElementById('downloadButton');
     
     if (!downloadButton) return;
 
     downloadButton.addEventListener('click', async () => {
-      const photoUrl = (downloadButton as HTMLElement).dataset.photoUrl;
-      const studentName = (downloadButton as HTMLElement).dataset.studentName;
+      const photoUrl = downloadButton.dataset.photoUrl;
+      const studentName = downloadButton.dataset.studentName;
 
       if (!photoUrl) {
         alert('Error: Data foto tidak ditemukan');
@@ -483,8 +485,9 @@ function buildStudentUrl(studentSlug: string): string {
 
       if (!userPassword) return;
 
-      // Compare against the universal password (injected server-side)
-      if (userPassword.trim().toLowerCase() !== UNIVERSAL_DOWNLOAD_PASSWORD) {
+      // Compare against the universal password (injected server-side via inline script)
+      // @ts-ignore - assigned via inline script
+      if (userPassword.trim().toLowerCase() !== window._UNIVERSAL_DOWNLOAD_PASSWORD) {
         alert('❌ Password salah! Silakan coba lagi.');
         return;
       }
@@ -492,7 +495,7 @@ function buildStudentUrl(studentSlug: string): string {
       try {
         const originalText = downloadButton.innerHTML;
         downloadButton.innerHTML = "Downloading...";
-        (downloadButton as HTMLButtonElement).disabled = true;
+        downloadButton.disabled = true;
 
         const response = await fetch(photoUrl);
         const blob = await response.blob();
@@ -504,10 +507,10 @@ function buildStudentUrl(studentSlug: string): string {
         window.URL.revokeObjectURL(url);
         
         downloadButton.innerHTML = originalText;
-        (downloadButton as HTMLButtonElement).disabled = false;
+        downloadButton.disabled = false;
       } catch (error) {
         alert('❌ Gagal mendownload foto.');
-        (downloadButton as HTMLButtonElement).disabled = false;
+        downloadButton.disabled = false;
       }
     });
   });
