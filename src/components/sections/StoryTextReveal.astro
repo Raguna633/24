@@ -84,7 +84,7 @@ const {
               fetchpriority="high"
               loading="eager"
               decoding="async"
-              class="w-full h-full object-cover aspect-square"
+              class="top-0 w-full h-full object-cover aspect-square"
               onload="this.parentElement.classList.add('loaded')"
             />
           </div>
@@ -199,6 +199,95 @@ const {
   @keyframes shimmer {
     100% {
       transform: translateX(100%);
+    }
+  }
+
+  /* ============================================================
+     📱 MOBILE RESPONSIVE — Hanya terpicu di viewport < 768px
+     (Desktop Mode Android = 1440px → TIDAK terpengaruh)
+     
+     Strategi: Ubah layout dua-panel (card kiri + teks kanan)
+     menjadi layout stacked vertikal:
+       - Content text: full-width, posisi atas
+       - Walas card: strip horizontal di bawah (foto kiri, nama kanan)
+     
+     CATATAN: GSAP xPercent animation TIDAK diubah.
+     Card tetap bergerak masuk dari kiri (xPercent: -120 → 0),
+     hanya ukuran & posisinya yang berubah via CSS.
+  ============================================================ */
+  @media (max-width: 768px) {
+    /* === WALAS CARD: Panel kiri → Strip bawah horizontal === */
+    .walas-card-wrapper {
+      /* Override absolute: dari top-0 ke bottom-0 */
+      top: auto !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      
+      /* Full-width strip, tinggi auto */
+      width: 100% !important;
+      height: auto !important;
+      
+      /* Horizontal layout: foto kiri, info kanan */
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 0.875rem;
+      
+      /* Visual: rounded hanya di atas, border bottom hilang */
+      border-radius: 1rem 1rem 0 0 !important;
+      border-bottom-right-radius: 0 !important;
+      
+      /* Padding lebih kompak untuk strip */
+      padding: 0.75rem 1.25rem !important;
+      padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px)) !important;
+      
+      /* Shadow ke atas */
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* Foto walas: kotak kecil di kiri strip */
+    .walas-photo {
+      width: 64px !important;
+      height: 64px !important;
+      aspect-ratio: 1 / 1 !important;
+      flex-shrink: 0 !important;
+      margin-bottom: 0 !important;
+      border-radius: 0.5rem !important;
+    }
+
+    /* Nama walas: rata kiri, truncate jika terlalu panjang */
+    .walas-name-wrapper {
+      justify-content: flex-start !important;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    /* === CONTENT CONTAINER: Full-width, beri ruang card di bawah === */
+    .content-container {
+      width: 100% !important;
+      right: 0 !important;
+      left: 0 !important;
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+      /* Ruang untuk walas strip: ~100px */
+      padding-bottom: 100px !important;
+      /* Override justify-around agar konten terpusat */
+      justify-content: center !important;
+      gap: 2rem;
+    }
+
+    /* Text item: font size lebih kecil di mobile */
+    .top-text-item h2,
+    .bottom-text-item h2 {
+      font-size: clamp(1.2rem, 5vw, 2rem) !important;
+      line-height: 1.3;
+    }
+
+    /* Text container: tinggi yang lebih kecil dan fleksibel */
+    .top-text-container,
+    .bottom-text-container {
+      height: auto !important;
+      min-height: 4rem;
     }
   }
 </style>

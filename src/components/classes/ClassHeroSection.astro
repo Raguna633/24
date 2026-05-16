@@ -68,6 +68,33 @@ const { className, heroImageSrc } = Astro.props;
     font-family: "qontra", sans-serif;
     text-shadow: -5px 5px 4px #00000033;
   }
+
+  /* ============================================================
+     📱 MOBILE RESPONSIVE — Hanya terpicu di viewport < 768px
+     (Desktop Mode Android = 1440px → TIDAK terpengaruh)
+  ============================================================ */
+  @media (max-width: 768px) {
+    /* Title box: full-width di mobile, bukan hanya right-anchored */
+    .hero-title {
+      left: 0 !important;
+      right: 0 !important;
+      max-width: 100% !important;
+      border-radius: 0 0 1rem 1rem !important;
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+    }
+
+    /* Hero image container: kurangi padding horizontal agar foto lebih besar */
+    .hero {
+      padding-left: 0.75rem !important;
+      padding-right: 0.75rem !important;
+    }
+
+    /* Image wrapper: kurangi rounded agar tidak terlalu besar di layar kecil */
+    .hero-image-wrapper {
+      border-radius: 1.5rem !important;
+    }
+  }
 </style>
 
 <script>
