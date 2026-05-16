@@ -2,6 +2,7 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection } from "astro:content";
 import { mapStudentCollection, UNIVERSAL_DOWNLOAD_PASSWORD } from "../../utils/student";
+// UNIVERSAL_DOWNLOAD_PASSWORD is passed to client via define:vars below
 import { getNavigationContext } from "../../utils/navigation";
 import { buildQuery } from "../../utils/urls";
 import type { StudentFilters } from "../../utils/filters";
@@ -429,8 +430,10 @@ function buildStudentUrl(studentSlug: string): string {
   }
 </style>
 
-<script>
+<script define:vars={{ UNIVERSAL_DOWNLOAD_PASSWORD }}>
   // ==================== PHOTO DOWNLOAD WITH PASSWORD ====================
+  // UNIVERSAL_DOWNLOAD_PASSWORD is injected from server at build time via define:vars.
+  // It is NOT exposed as a data attribute in the DOM.
   document.addEventListener("DOMContentLoaded", () => {
     const downloadButton = document.getElementById("downloadButton");
 
@@ -445,7 +448,7 @@ function buildStudentUrl(studentSlug: string): string {
         return;
       }
 
-      // Prompt for password — the correct password is bundled in the JS,
+      // Prompt for password — correct value is injected at build time,
       // not exposed in the HTML DOM.
       const userPassword = prompt(
         `Masukkan password untuk download foto ${studentName}:`,
@@ -455,9 +458,8 @@ function buildStudentUrl(studentSlug: string): string {
         return; // User cancelled
       }
 
-      // Compare against the universal password (bundled at build time)
-      const CORRECT = "nihayatu24yn";
-      if (userPassword.trim().toLowerCase() !== CORRECT) {
+      // Compare against the universal password (injected server-side)
+      if (userPassword.trim().toLowerCase() !== UNIVERSAL_DOWNLOAD_PASSWORD) {
         alert("❌ Password salah! Silakan coba lagi.");
         return;
       }

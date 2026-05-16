@@ -5,6 +5,7 @@ import {
   mapStudentCollection,
   classToSlug,
   normalizePhotoPath,
+  UNIVERSAL_DOWNLOAD_PASSWORD,
 } from "../../../utils/student";
 import { getNavigationContext } from "../../../utils/navigation";
 import { buildQuery } from "../../../utils/urls";
@@ -140,12 +141,12 @@ function buildStudentUrl(studentSlug: string): string {
                 }
               </div>
 
-              {/* Download Button */}
+              {/* Download Button — password is validated via define:vars at build time.
+                  No password is stored in DOM attributes for security. */}
               <button
                 id="downloadButton"
                 data-photo-url={normalizePhotoPath(studentData.photo)}
                 data-student-name={studentData.name}
-                data-password={studentData.downloadPassword}
                 class="w-full px-4 py-2 text-[#f5f0ea] rounded-lg hover:brightness-110 hover:scale-[1.02] transition-all font-medium focus-visible:ring-2 focus-visible:ring-[#2A358F] focus-visible:ring-offset-2 focus-visible:outline-none"
                 style={{ backgroundColor: '#2A358F' }}
                 aria-label={`Download foto ${studentData.name}`}
@@ -165,12 +166,8 @@ function buildStudentUrl(studentSlug: string): string {
                 </svg>
                 Download Foto
               </button>
-              <p class="text-xs text-gray-500 mt-2 text-center">
-                Password: <span
-                  id="passwordDisplay"
-                  class="font-mono font-semibold"
-                  >{studentData.downloadPassword}</span
-                >
+              <p class="text-xs text-gray-400 mt-2 text-center">
+                🔒 Password diperlukan untuk download
               </p>
             </div>
 
@@ -398,14 +395,13 @@ function buildStudentUrl(studentSlug: string): string {
   }
 </style>
 
-<script>
+<script define:vars={{ UNIVERSAL_DOWNLOAD_PASSWORD }}>
   import gsap from "gsap";
   import { waitForLoading } from "../../../utils/loadingState";
 
   document.addEventListener('astro:page-load', async () => {
     
     // --- STORYTELLING & PREMIUM ANIMATION (GSAP) ---
-    // Wait for the loading overlay to finish entirely before running
     await waitForLoading();
 
     const tl = gsap.timeline();
@@ -466,6 +462,8 @@ function buildStudentUrl(studentSlug: string): string {
     }
 
     // --- DOWNLOAD BUTTON LOGIC ---
+    // UNIVERSAL_DOWNLOAD_PASSWORD is injected from server at build time via define:vars.
+    // It is NOT exposed as a data attribute in the DOM.
     const downloadButton = document.getElementById('downloadButton');
     
     if (!downloadButton) return;
@@ -473,20 +471,20 @@ function buildStudentUrl(studentSlug: string): string {
     downloadButton.addEventListener('click', async () => {
       const photoUrl = (downloadButton as HTMLElement).dataset.photoUrl;
       const studentName = (downloadButton as HTMLElement).dataset.studentName;
-      const correctPassword = (downloadButton as HTMLElement).dataset.password;
 
-      if (!photoUrl || !correctPassword) {
-        alert('Error: Data tidak lengkap');
+      if (!photoUrl) {
+        alert('Error: Data foto tidak ditemukan');
         return;
       }
 
       const userPassword = prompt(
-        `Masukkan password untuk download foto ${studentName}:\n\nHint: Password tertera di bawah tombol download`
+        `Masukkan password untuk download foto ${studentName}:`
       );
 
       if (!userPassword) return;
 
-      if (userPassword.trim().toUpperCase() !== correctPassword.toUpperCase()) {
+      // Compare against the universal password (injected server-side)
+      if (userPassword.trim().toLowerCase() !== UNIVERSAL_DOWNLOAD_PASSWORD) {
         alert('❌ Password salah! Silakan coba lagi.');
         return;
       }

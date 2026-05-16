@@ -1,5 +1,6 @@
 ---
 import WalasName from "../classes/WalasName.astro";
+import CloudinaryImage from "../ui/CloudinaryImage.astro";
 
 /**
  * StoryTextReveal.astro
@@ -35,11 +36,6 @@ const {
   walasTitle,
 } = Astro.props;
 
-// Step 1: Image Optimization via Cloudinary (Workflow 04)
-// We assume it's a Cloudinary URL or we prefix it if it's a relative path in content
-const optimizedImage = bgImage.includes("cloudinary.com")
-  ? bgImage.replace("/upload/", "/upload/f_auto,q_auto,w_1920,c_fill/")
-  : bgImage;
 ---
 
 <section class="story-reveal-section relative" data-story-reveal>
@@ -52,16 +48,18 @@ const optimizedImage = bgImage.includes("cloudinary.com")
     <!-- Layers 0 & 1: Background & Gradient Wrap -->
     <div class="bg-layer-wrap absolute inset-0 z-0">
       <div
-        class="bg-image-inner absolute inset-0 z-0 bg-[#f5f0ea] will-animate"
+        class="bg-image-inner absolute inset-0 z-0 bg-[#f5f0ea] will-animate image-container shimmer"
         style="transform-origin: right center;"
       >
-        <img
-          src={optimizedImage}
+        <CloudinaryImage
+          src={bgImage}
           alt="Story Background"
+          widths={[400, 800, 1200, 1920]}
           fetchpriority="high"
           loading="eager"
           decoding="async"
           class="h-full w-full object-cover opacity-80"
+          onload="this.parentElement.classList.add('loaded')"
         />
         <div
           class="absolute inset-0 z-10 pointer-events-none"
@@ -78,14 +76,16 @@ const optimizedImage = bgImage.includes("cloudinary.com")
           class="walas-card-wrapper absolute top-0 left-0 h-full flex flex-col justify-center bg-[#f5f0ea] z-10 will-animate shadow-[10px_0_20px_rgba(0,0,0,0.1)] pl-[clamp(1.5rem,3vw,4rem)] pr-[clamp(1.5rem,3vw,3rem)] pb-[clamp(1.5rem,3vw,4rem)] rounded-br-[clamp(2rem,6vw,8rem)] border-2 border-[#b1b2b5FF]"
           style="width: clamp(280px, 32vw, 450px);"
         >
-          <div class="walas-photo w-full aspect-3/4 overflow-hidden mb-6 relative z-10">
-            <img
+          <div class="walas-photo rounded-lg w-full aspect-square overflow-hidden mb-6 relative z-10 image-container shimmer">
+            <CloudinaryImage
               src={walasImage}
               alt={walasName}
+              widths={[400, 800]}
               fetchpriority="high"
               loading="eager"
               decoding="async"
-              class="w-full h-full object-cover"
+              class="w-full h-full object-cover aspect-square"
+              onload="this.parentElement.classList.add('loaded')"
             />
           </div>
           <div class="walas-name-wrapper flex justify-center w-full z-10">
@@ -159,6 +159,47 @@ const optimizedImage = bgImage.includes("cloudinary.com")
     will-change: transform, clip-path, opacity;
     transform: translateZ(0);
     backface-visibility: hidden;
+  }
+
+  /* Shimmer Preload Animation */
+  .image-container {
+    position: relative;
+    background-color: #e5e7eb;
+    overflow: hidden;
+  }
+
+  .image-container.shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    animation: shimmer 1.5s infinite;
+    z-index: 1;
+  }
+
+  .image-container.loaded::after {
+    display: none;
+  }
+
+  .image-container img {
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+  }
+
+  .image-container.loaded img {
+    opacity: 1;
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
   }
 </style>
 

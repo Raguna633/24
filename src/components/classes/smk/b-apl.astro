@@ -92,7 +92,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
         )}
       />
       <div
-        class="absolute inset-0 bg-linear-to-b from-slate-950/90 via-slate-950/40 to-slate-950/80"
+        class="absolute inset-0 bg-linear-to-b h-full from-slate-950/90 via-slate-950/40 to-slate-950/80"
       >
       </div>
       <div class="absolute inset-0 shadow-[inset_0_0_150px_rgba(2,6,23,0.9)]">
@@ -184,11 +184,11 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       style="clip-path: inset(0);"
     >
       <section
-        class="absolute inset-0 flex items-center justify-center py-24 px-4 gsap-section first-group will-animate"
+        class="absolute inset-0 flex items-center justify-center py-2 px-4 gsap-section first-group will-animate"
         id="group-1"
       >
         <div
-          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative overflow-hidden"
+          class="w-full max-w-[1440px] h-full border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative overflow-hidden flex flex-col"
         >
           <div
             class="absolute top-4 left-4 text-xs text-cyan-600 tracking-widest font-mono"
@@ -196,7 +196,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
             SYS.REC.001 // APL_B
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 min-h-0 my-4">
             <div
               class="lg:col-span-4 flex flex-col gap-6 font-mono gsap-data-panel will-animate opacity-0"
             >
@@ -226,7 +226,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
             </div>
 
             <div
-              class="lg:col-span-8 relative gsap-photo will-animate opacity-0"
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 h-full min-h-0"
             >
               <!-- Floating Decoration for Group 1 -->
               <div
@@ -257,7 +257,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
               <!-- Cyber-Lab Duotone Wrapper -->
               <div
-                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20 h-full"
               >
                 <CloudinaryImage
                   src={group1}
@@ -266,7 +266,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   fetchpriority="high"
                   loading="eager"
                   decoding="async"
-                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                  class="w-full h-full object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 
                 <div
@@ -290,15 +290,15 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       </section>
 
       <section
-        class="absolute top-[150vh] left-0 w-full h-dvh flex items-center justify-center py-24 px-4 gsap-section second-group will-animate"
+        class="absolute top-[150vh] left-0 w-full h-dvh flex items-center justify-center py-2 px-4 gsap-section second-group will-animate"
         id="group-2"
       >
         <div
-          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
+          class="w-full max-w-[1440px] h-full border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative overflow-hidden flex flex-col"
         >
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 min-h-0 my-4">
             <div
-              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1"
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1 h-full min-h-0"
             >
               <!-- Floating Decoration for Group 2 -->
               <div
@@ -329,7 +329,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
               <!-- Cyber-Lab Duotone Wrapper -->
               <div
-                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20 h-full"
               >
                 <CloudinaryImage
                   src={group2}
@@ -338,7 +338,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   loading="eager"
                   fetchpriority="high"
                   decoding="async"
-                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                  class="w-full h-full object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 
                 <div
@@ -390,15 +390,15 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       </section>
 
       <section
-        class="absolute top-[300vh] left-0 w-full h-dvh flex items-center justify-center py-24 px-4 gsap-section third-group will-animate"
+        class="absolute top-[300vh] left-0 w-full h-dvh flex items-center justify-center py-2 px-4 gsap-section third-group will-animate"
         id="group-3"
       >
         <div
-          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
+          class="w-full max-w-[1440px] h-full border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative overflow-hidden flex flex-col"
         >
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 min-h-0 my-4">
             <div
-              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1"
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1 h-full min-h-0"
             >
               <!-- Floating Decoration for Group 3 -->
               <div
@@ -429,7 +429,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
               <!-- Cyber-Lab Duotone Wrapper -->
               <div
-                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20 h-full"
               >
                 <CloudinaryImage
                   src={group3}
@@ -438,7 +438,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   loading="eager"
                   fetchpriority="high"
                   decoding="async"
-                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                  class="w-full h-full object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 
                 <div
@@ -490,15 +490,15 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
       </section>
 
       <section
-        class="absolute top-[450vh] left-0 w-full h-dvh flex items-center justify-center py-24 px-4 gsap-section fourth-group will-animate"
+        class="absolute top-[450vh] left-0 w-full h-dvh flex items-center justify-center py-2 px-4 gsap-section fourth-group will-animate"
         id="group-4"
       >
         <div
-          class="w-full max-w-[1440px] border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative"
+          class="w-full max-w-[1440px] h-full border-2 border-cyan-800/80 rounded-xl p-4 md:p-8 bg-slate-900/40 backdrop-blur-sm relative overflow-hidden flex flex-col"
         >
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center flex-1 min-h-0 my-4">
             <div
-              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1"
+              class="lg:col-span-8 relative gsap-photo will-animate opacity-0 order-2 lg:order-1 h-full min-h-0"
             >
               <!-- Floating Decoration for Group 4 -->
               <div
@@ -529,7 +529,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
 
               <!-- Cyber-Lab Duotone Wrapper -->
               <div
-                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20"
+                class="relative rounded-lg overflow-hidden border border-cyan-500/40 group bg-linear-to-tr from-cyan-600 to-lime-500 shadow-lg shadow-cyan-900/20 h-full"
               >
                 <CloudinaryImage
                   src={group4}
@@ -538,7 +538,7 @@ allStudents.sort((a, b) => a.name.localeCompare(b.name));
                   loading="eager"
                   fetchpriority="high"
                   decoding="async"
-                  class="w-full h-auto object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
+                  class="w-full h-full object-cover transform transition-all duration-700 group-hover:scale-[1.02] mix-blend-multiply grayscale contrast-[1.2] opacity-90 group-hover:mix-blend-normal group-hover:grayscale-0 group-hover:opacity-100"
                 />
 
                 <div
