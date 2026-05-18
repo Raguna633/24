@@ -84,15 +84,16 @@ export function completeLoading(): void {
 //
 // Return value:
 //   Promise<void> yang resolve ketika loading selesai.
-//
-// Tiga skenario yang ditangani:
-//   1. Promise belum ada (first load sebelum prepareLoading dipanggil)
-//      → kembalikan Promise yang langsung resolved
-//   2. Promise ada dan belum resolved → tunggu
-//   3. Promise ada dan sudah resolved → langsung lanjut
-//      (Promise yang resolved selalu memanggil .then() secara
-//       async di microtask queue, tanpa delay tambahan)
 // -----------------------------------------------------------------
 export function waitForLoading(): Promise<void> {
-  return currentPromise ?? Promise.resolve();
+  if (!currentPromise) return Promise.resolve();
+  
+  // Timeout fail-safe: Jika loading state gagal ter-resolve secara manual 
+  // dalam 3 detik, kita paksa resolve untuk mencegah layar blank permanen 
+  // (misalnya ada script error yang menahan transisi).
+  const timeoutPromise = new Promise<void>((resolve) => {
+    setTimeout(resolve, 3000);
+  });
+  
+  return Promise.race([currentPromise, timeoutPromise]);
 }
