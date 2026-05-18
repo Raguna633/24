@@ -1,5 +1,7 @@
 # Project Roadmap: Zero-Cost HighSchool Yearbook Website
 
+**Status: Production (Aman)**
+
 # Goals & Objectives
 
 Primary Goals:
@@ -34,20 +36,20 @@ Angkatan lain (untuk inspirasi)
 Must Have (MVP):
 
 - [x] Homepage dengan hero section, sambutan & navigasi
-- [ ] Profil siswa (nama, kelas, foto, quote)
-- [ ] Profil kelas (foto bersama wali kelas, sambutan wali kelas, foto grup siswa, grid list siswa)
-- [ ] Galeri foto kegiatan
-- [ ] Timeline/memories section
-- [ ] Halaman teachers/staff
-- [ ] About/credits page
-- [ ] Search & filter siswa
-- [ ] Mobile responsive
-- [ ] Global animation on page transition (book flip alike)
+- [x] Profil siswa (nama, kelas, foto, quote)
+- [x] Profil kelas (foto bersama wali kelas, sambutan wali kelas, foto grup siswa, grid list siswa)
+- [x] Galeri foto kegiatan
+- [x] Galeri seragam/dokumentasi
+- [x] Halaman teachers/staff
+- [x] About/credits page
+- [x] Search & filter siswa
+- [x] Mobile responsive
+- [x] Global animation on page transition
 
 Nice to Have (Post-MVP):
 
-- [ ] Student Image download (password protected with each student have unique password)
-- [ ] General Image download
+- [x] Student Image download (password protected with each student have unique password)
+- [x] General Image download
 - [ ] Fun facts/statistics
 - [ ] Video highlights
 - [ ] Dark mode
@@ -255,128 +257,69 @@ Post-Launch (1 month):
 src/
 ├── pages/
 │   ├── index.astro                        # Homepage
-│   ├── about/
-│   │   ├── index.astro                    # About overview
-│   │   ├── sejarah.astro                  # Sejarah
-│   │   ├── mars.astro                     # Mars
-│   │   └── fasilitas.astro                # Fasilitas
+│   ├── about-altie.astro                  # Sejarah & Tentang Pondok
+│   ├── song.astro                         # Mars Sekolah
+│   ├── selamat-dan-sukses.astro           # Halaman Kelulusan & Prestasi
 │   ├── classes/
 │   │   ├── index.astro                    # Jenjang selection (SMK/SMA)
-│   │   └── [jenjang]/
+│   │   └── [slug]/
 │   │       ├── index.astro                # SMK/SMA classes list
-│   │       └── [kelas].astro               # SMK/SMA class detail
+│   │       └── [student].astro            # Individual student profile (in class)
 │   ├── students/
-│   │   └── [slug].astro                   # Individual student profile
-│   ├── memories/
-│   │   ├── gallery.astro                  # Photo gallery
-│   │   ├── uniforms.astro                 # Uniforms collection
-│   │   └── school-corners.astro           # School corners
+│   │   ├── index.astro                    # All students list
+│   │   └── [student].astro                # Individual student profile
+│   ├── gallery/
+│   │   ├── index.astro                    # Photo gallery overview
+│   │   └── [slug].astro                   # Dynamic gallery pages (including uniforms)
 │   ├── teachers.astro                     # Teachers page
-│   └── yearbook-team.astro                # Yearbook team
+│   └── yearbook-committee.astro           # Yearbook team
 ├── components/
-│   ├── sections/
-│   │   ├── HeroSection.astro              # Homepage hero
-│   │   ├── AboutSection.astro             # About content
-│   │   ├── ClassesSection.astro           # Classes overview
-│   │   ├── StudentsSection.astro          # Students grid
-│   │   ├── UniformsSection.astro          # Uniforms gallery
-│   │   ├── MemoriesSection.astro          # Memories gallery
-│   │   ├── TeachersSection.astro          # Teachers grid
-│   │   └── TeamSection.astro              # Yearbook team
-│   ├── cards/
-│   │   ├── StudentCard.astro              # Student profile card
-│   │   ├── TeacherCard.astro              # Teacher profile card
-│   │   ├── UniformCard.astro              # Uniform photo card
-│   │   └── MemoryCard.astro               # Memory photo card
-│   └── layouts/
-│       └── MainLayout.astro               # Main layout
-├── content/
-│   ├── leadership/
-│   │   ├── pimpinan.md                    # Pimpinan content
-│   │   ├── kepala-kepesantrenan.md        # Kepala Kepesantrenan
-│   │   ├── kepala-sekolah.md              # Kepala Sekolah
-│   │   ├── ketua-angkatan.md              # Ketua Angkatan
-│   │   └── ketua-panitia.md               # Ketua Panitia
-│   ├── about/
-│   │   ├── sejarah.md                     # Sejarah content
-│   │   ├── mars.md                        # Mars content
-│   │   └── fasilitas.md                   # Fasilitas content
-│   ├── classes/
-│   │   ├── smk/
-│   │   │   └── [class].md                 # SMK class content
-│   │   └── sma/
-│   │       └── [class].md                 # SMA class content
-│   ├── students/
-│   │   └── [student].md                   # Student profiles
-│   ├── uniforms/
-│   │   ├── putra.md                       # Putra uniforms
-│   │   ├── putri.md                       # Putri uniforms
-│   │   └── khusus.md                      # Khusus uniforms
-│   ├── memories/
-│   │   ├── gallery.md                     # Gallery content
-│   │   └── school-corners.md              # School corners
-│   ├── teachers/
-│   │   ├── smk.md                         # SMK teachers
-│   │   └── sma.md                         # SMA teachers
-│   └── yearbook-team.md                   # Team content
+│   ├── sections/                          # Section components
+│   ├── cards/                             # Card components
+│   └── layouts/                           # Layout components
+├── data/                                  # Astro Data Collections (Zod Schemas)
+│   ├── about/                             # About content
+│   ├── classes/                           # Classes content
+│   ├── congrats/                          # Selamat dan Sukses content
+│   ├── galleries/                         # Galleries content
+│   ├── song/                              # Mars content
+│   ├── students/                          # Student profiles
+│   ├── teachers/                          # Teachers data
+│   └── uniforms/                          # Uniforms content
 ├── assets/
-│   ├── images/
-│   │   ├── leadership/                    # Leadership photos
-│   │   ├── about/                         # About photos
-│   │   ├── classes/                       # Class photos
-│   │   ├── students/                      # Student photos
-│   │   ├── uniforms/                      # Uniform photos
-│   │   ├── memories/                      # Memory photos
-│   │   ├── teachers/                      # Teacher photos
-│   │   └── team/                          # Team photos
-│   └── logos/                            # Logos & branding
-│
-├─── Privacy Policy (/privacy-policy)
-│
-├─── Terms of Service (/terms)
-│
-└─── Contact (/contact)
-     └─ Contact form
+│   ├── images/                            # All project image assets
+│   └── logos/                             # Logos & branding
 ```
 
 # URL Structure
 
 ```text
 [x]     /                                       → Homepage 
-[ ]     │   ├─ Hero section (Logo angkatan)
-[ ]     │   ├─ Pengenalan singkat angkatan
-[ ]     │   ├─ Sambutan Pimpinan
-[ ]     │   ├─ Sambutan Kepala Kepesantrenan
-[ ]     │   ├─ Sambutan Kepala Sekolah
-[ ]     │   ├─ Sambutan Ketua Angkatan
-[ ]     │   ├─ Sambutan Ketua Panitia Kelulusan
-[ ]     │   ├─ Navigation menu
-[ ]     │   └─ CTA buttons
-[ ]     /about                                  → Tentang Pesantren
-[ ]     │   ├─ /about/altie                   → Sejarah pondok
-[ ]     │   ├─ /about/mars                     → Mars sekolah
-[ ]     │   └─ /about/fasilitas                → Fasilitas
-[ ]     /classes                                → Kelas & Siswa
-[ ]     │   └─ /classes/[slug]                 → Daftar Kelas SMA/SMK
-[ ]     │       └─ /classes/[slug]/[student]   → Profil Siswa
-[ ]     /students                                → Daftar semua siswa dari SMA & SMK 
-[ ]     │   └─ /students/[slug]                  → Profil siswa
-[ ]     /uniforms                               → Koleksi Seragam
-[ ]     │   ├─ Seragam Putra
-[ ]     │   ├─ Seragam Putri
-[ ]     │   └─ Seragam Khusus
-[ ]     /memories                               → Dokumentasi
-[ ]     │   ├─ /memories/gallery               → galeri foto dokumentasi
-[ ]     │   └─ /memories/school-corners        → Foto Gedung
-[ ]     /teachers                               → Guru & Staff
-[ ]     │   ├─ Guru SMK
-[ ]     │   └─ Guru SMA
-[ ]     /yearbook-team                          → Tim Panitia
-[ ]     /privacy-policy                         → Privacy policy
-[ ]     /terms                                  → Terms of service
-[ ]     /contact                                → Contact form
+[x]     │   ├─ Hero section (Logo angkatan)
+[x]     │   ├─ Pengenalan singkat angkatan
+[x]     │   ├─ Sambutan Pimpinan
+[x]     │   ├─ Sambutan Kepala Kepesantrenan
+[x]     │   ├─ Sambutan Kepala Sekolah
+[x]     │   ├─ Sambutan Ketua Angkatan
+[x]     │   ├─ Sambutan Ketua Panitia Kelulusan
+[x]     │   ├─ Navigation menu
+[x]     │   └─ CTA buttons
+[x]     /about-altie                            → Tentang Pesantren & Sejarah
+[x]     /song                                   → Mars Sekolah
+[x]     /selamat-dan-sukses                     → Halaman Kelulusan & Prestasi
+[x]     /classes                                → Kelas & Siswa
+[x]     │   └─ /classes/[slug]                  → Daftar Kelas SMA/SMK
+[x]     │       └─ /classes/[slug]/[student]    → Profil Siswa dalam Kelas
+[x]     /students                               → Daftar semua siswa dari SMA & SMK 
+[x]     │   └─ /students/[student]              → Profil siswa
+[x]     /gallery                                → Dokumentasi & Galeri
+[x]     │   ├─ /gallery/uniforms                → Koleksi Seragam (di-handle dinamis)
+[x]     │   └─ /gallery/[slug]                  → Galeri foto lainnya
+[x]     /teachers                               → Guru & Staff
+[x]     /yearbook-committee                     → Tim Panitia
 ```
 
 # Checklist
 
-[ ]
+[x] All core features implemented
+[x] Production Ready (Aman)
